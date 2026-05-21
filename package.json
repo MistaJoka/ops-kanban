@@ -1,0 +1,11 @@
+{
+  "name": "ops-kanban-ai-mvp-blueprint",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-first single-board operations Kanban MVP blueprint.",
+  "dependencies": {
+    "@google/generative-ai": "latest",
+    "@supabase/supabase-js": "latest",
+    "zod": "latest"
+  }
+}

@@ -1,0 +1,13 @@
+-- Landscaping pipeline columns (reference for signup bootstrap).
+-- Replace $org_id and $board_id when inserting from application code.
+
+-- insert into columns (organization_id, board_id, name, position, state_key) values
+--   ($org_id, $board_id, 'New inquiry',     0, 'inquiry'),
+--   ($org_id, $board_id, 'Site visit',      1, 'site_visit'),
+--   ($org_id, $board_id, 'Estimating',      2, 'estimating'),
+--   ($org_id, $board_id, 'Estimate sent',   3, 'estimate_sent'),
+--   ($org_id, $board_id, 'Approved',        4, 'approved'),
+--   ($org_id, $board_id, 'Scheduled',       5, 'scheduled'),
+--   ($org_id, $board_id, 'On site',         6, 'on_site'),
+--   ($org_id, $board_id, 'Complete',        7, 'complete'),
+--   ($org_id, $board_id, 'Closed',          8, 'closed');

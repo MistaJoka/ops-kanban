@@ -1,0 +1,23 @@
+-- Full 19-column landscaping pipeline (reference for signup when pipeline_mode = 'full').
+-- See src-starter/lib/landscaping-full-pipeline.ts
+
+-- insert into columns (organization_id, board_id, name, position, state_key) values
+--   ($org_id, $board_id, 'New inquiry',       0, 'inquiry'),
+--   ($org_id, $board_id, 'Qualified',         1, 'qualified'),
+--   ($org_id, $board_id, 'Site visit',        2, 'site_visit'),
+--   ($org_id, $board_id, 'Estimating',        3, 'estimating'),
+--   ($org_id, $board_id, 'Estimate sent',     4, 'estimate_sent'),
+--   ($org_id, $board_id, 'Negotiation',       5, 'negotiation'),
+--   ($org_id, $board_id, 'Approved',          6, 'approved'),
+--   ($org_id, $board_id, 'Scheduling',        7, 'scheduling'),
+--   ($org_id, $board_id, 'Ready',             8, 'ready'),
+--   ($org_id, $board_id, 'On site',           9, 'on_site'),
+--   ($org_id, $board_id, 'Blocked',          10, 'blocked'),
+--   ($org_id, $board_id, 'Walkthrough',      11, 'walkthrough'),
+--   ($org_id, $board_id, 'Job complete',     12, 'complete'),
+--   ($org_id, $board_id, 'Invoice prep',     13, 'invoice_prep'),
+--   ($org_id, $board_id, 'Invoice sent',     14, 'invoice_sent'),
+--   ($org_id, $board_id, 'Payment pending',  15, 'payment_pending'),
+--   ($org_id, $board_id, 'Paid',             16, 'paid'),
+--   ($org_id, $board_id, 'Follow-up',        17, 'retention'),
+--   ($org_id, $board_id, 'Archived',         18, 'archived');
