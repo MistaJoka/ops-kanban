@@ -1,107 +1,35 @@
-# Phased Build Plan — landscaping + platform waves
+# Phased build plan (redirect)
 
-> **Canonical execution:** task IDs, DoD, and dev log → [`docs/roadmap/DEVELOPMENT_ROADMAP.md`](../roadmap/DEVELOPMENT_ROADMAP.md), [`PHASE_TASKS.md`](../roadmap/PHASE_TASKS.md), [`DEFINITION_OF_DONE.md`](../roadmap/DEFINITION_OF_DONE.md).
+> **Do not use this file as the execution backlog.**  
+> Canonical: [`docs/roadmap/DEVELOPMENT_ROADMAP.md`](../roadmap/DEVELOPMENT_ROADMAP.md), [`PHASE_TASKS.md`](../roadmap/PHASE_TASKS.md), [`DEFINITION_OF_DONE.md`](../roadmap/DEFINITION_OF_DONE.md), [`AI_BUILD_PROTOCOL.md`](../roadmap/AI_BUILD_PROTOCOL.md).  
+> Full doc map: [`DOC_INDEX.md`](../roadmap/DOC_INDEX.md).
 
-Engineering phases aligned to **Wave 0–4** in `PLATFORM_CAPABILITIES.md`.  
-Product scope: `MVP_SCOPE.md`, `WORKSPACE_DESIGN.md`, `CARD_DESIGN.md`, `AI_UTILIZATION.md`.
-
----
-
-## Wave 0 — MVP core (Phases 1–5)
-
-### Phase 1: Foundation
-
-- Supabase, auth, profiles ↔ `auth.users`
-- organizations, RLS on all MVP tables
-- signup bootstrap: org + board + landscaping columns (compact default)
-- indexes
-
-**Done when:** signup works; cross-org isolation verified.
-
-### Phase 2: Workspace + pipeline
-
-- App shell: collapsible nav, support pages, Job Pipeline board
-- Column groups, filters, search, compact/full pipeline toggle
-- Board cards + drag/drop + activity log
-
-**Done when:** job runs through 9 columns manually.
-
-### Phase 3: Deep card
-
-- Detail slide-over, tabs (Overview → Money)
-- Customer/property, scope, checklist, comments, timeline
-
-**Done when:** real job data lives on one card.
-
-### Phase 4: Money drafts
-
-- Estimate + line items, invoice draft, manual paid, archive
-
-**Done when:** estimate → invoice → mark paid without integrations.
-
-### Phase 5: AI copilot
-
-- Context loader, tools Tier 1–3, dock + card rail, approvals
-- Inline summary + estimate draft CTA
-
-**Done when:** AI assists without external sends.
+This file only maps **product waves** to **engineering phases** (P0–P10).
 
 ---
 
-## Wave 1 — Money & trust (Phase 6)
+## Wave → phase map
 
-- Stripe **or** PayPal payment links on invoice
-- Webhook handler + `payments` + `integration_events`
-- Branded estimate PDF + email send (Resend)
-- **Native estimate approve** on customer portal v0 (magic link)
-- Receipt email on paid webhook
-- Settings → Integrations (payments + email)
+| Wave | Product focus | Roadmap phases | DoD |
+|------|---------------|----------------|-----|
+| **0** | MVP: board, card, money drafts, AI, RLS | **P0** scaffold → **P1–P6** | DONE-0 … DONE-6 |
+| **1** | Pay links, PDF/email, portal sign | **P7** | DONE-7 |
+| **2** | Booking, calendar, SMS/email | **P8** | DONE-8 |
+| **3** | Files, DocuSign | **P9** | DONE-9 |
+| **4** | QB, automations, reports | **P10** | DONE-10 |
 
-**Done when:** customer can pay invoice via link; card auto-updates to paid.
-
----
-
-## Wave 2 — Time & conversation (Phase 7)
-
-- Public booking page → inquiry/site visit card
-- Crew calendar page (day/week)
-- Twilio SMS thread on card
-- Resend email thread on card
-- Message templates
-- AI: draft comms (send = approved)
-
-**Done when:** inbound SMS attaches to card; visit books from public link.
+Wave 0 detail: [`MVP_CAPTURE.md`](../roadmap/MVP_CAPTURE.md), [`PLATFORM_CAPABILITIES.md`](../product/PLATFORM_CAPABILITIES.md) § Waves.
 
 ---
 
-## Wave 3 — Documents & compliance (Phase 8)
+## P0–P6 one-liners (see PHASE_TASKS for IDs)
 
-- Supabase Storage attachments on card
-- DocuSign envelope from estimate (optional provider)
-- Native sign fallback always available
-- Change orders (`parent_card_id`)
-
-**Done when:** signed estimate PDF stored on card with audit trail.
-
----
-
-## Wave 4 — Scale (Phase 9+)
-
-- Full customer portal (approve, pay, schedule view)
-- QuickBooks sync
-- Automations (column triggers)
-- Reports + reviews request after paid
-- Recurring maintenance contracts
-
-**Done when:** one pilot business runs sales→production→billing→accounting without leaving OpsBoard.
-
----
-
-## Hardening (continuous)
-
-- Rate limits, error/empty states, mobile polish
-- Integration health dashboard
-- Webhook replay from `integration_events`
-- Audit review
-
-**Done when:** safe for production pilot with real money and messages.
+| Phase | Outcome |
+|-------|---------|
+| P0 | Next.js + CI + test harness |
+| P1 | Auth, RLS, signup bootstrap (empty pipeline) |
+| P2 | Job Pipeline UI + Kanban |
+| P3 | Deep card panel |
+| P4 | Estimates + invoices + manual paid |
+| P5 | AI tools + approval |
+| P6 | G2 gate, UAT, v0.1.0 pilot |

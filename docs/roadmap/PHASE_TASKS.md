@@ -28,7 +28,7 @@
 | TASK-P0-002 | Add shadcn/ui + CSS variables (Field ledger theme) | todo | — | P0-001 |
 | TASK-P0-003 | Folder layout: `app/`, `components/`, `lib/domain/`, `lib/db/`, `lib/ai/` | todo | — | P0-001 |
 | TASK-P0-004 | Supabase clients (browser, server, service) | todo | — | P0-001 |
-| TASK-P0-005 | Copy `src-starter/lib/ai/*` into `lib/ai/` | todo | — | P0-003 |
+| TASK-P0-005 | Copy `src-starter/lib/ai/*` + `src-starter/components/*` into app | todo | — | P0-003 |
 | TASK-P0-006 | Vitest + test helpers stub | todo | — | P0-003 |
 | TASK-P0-007 | Playwright config + one smoke placeholder | todo | — | P0-006 |
 | TASK-P0-008 | GitHub Actions: lint, typecheck, unit | todo | — | P0-006 |

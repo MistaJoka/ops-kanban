@@ -4,6 +4,7 @@ This repo is a **pre-build blueprint**. Implementation follows the **AI build pr
 
 ## Start here (every session)
 
+0. [`docs/roadmap/DOC_INDEX.md`](docs/roadmap/DOC_INDEX.md) — which file is canonical (avoid duplicate plans)
 1. [`docs/roadmap/PROGRESS.md`](docs/roadmap/PROGRESS.md) — live dashboard (**read first**)
 2. [`docs/roadmap/AI_BUILD_PROTOCOL.md`](docs/roadmap/AI_BUILD_PROTOCOL.md) — session loop + per-phase steps
 3. [`docs/roadmap/PROBLEM_REGISTRY.md`](docs/roadmap/PROBLEM_REGISTRY.md) — open troubles (search before debugging)

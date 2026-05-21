@@ -1,5 +1,8 @@
 # System Architecture
 
+> **Build rules & module layout:** [`docs/roadmap/ARCHITECTURE_PRINCIPLES.md`](../roadmap/ARCHITECTURE_PRINCIPLES.md).  
+> This file is a **layer diagram** only — not the task backlog.
+
 ## Architecture principle
 
 One operational object model powers every view.

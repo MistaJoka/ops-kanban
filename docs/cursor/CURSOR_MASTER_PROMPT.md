@@ -5,10 +5,12 @@ Use this prompt inside Cursor.
 ```md
 You are building an AI-first landscaping / lawn-care Operational Command Center.
 
-**Build protocol (mandatory):** docs/roadmap/AI_BUILD_PROTOCOL.md
+**Build protocol (mandatory):** docs/roadmap/AI_BUILD_PROTOCOL.md · Doc map: docs/roadmap/DOC_INDEX.md
 - Start: read PROGRESS.md + open PROBLEM_REGISTRY.md + scan BUILD_KNOWLEDGE.md
-- Work: one TASK-Px-xxx from PHASE_TASKS.md per session
+- Work: one TASK-Px-xxx from PHASE_TASKS.md per session (roadmap P0–P10; not a second plan)
 - End: DEVELOPMENT_LOG + PROGRESS + PRB/LEARN when troubles or reusable fixes occur
+
+**Phase labels below** = product steps **after P0 scaffold**. Map: P0 scaffold → prompt Phase 1 = **P1** … prompt Phase 6 = **P6**.
 
 This is not a multi-board Trello clone. The product uses one Job Pipeline board (9 landscaping columns — see docs/product/DEFAULT_PIPELINE.md). Each card is a property job: inquiry, customer/property, scope, estimate, crew schedule, invoice, payment, activity, and AI context. MVP scope: docs/product/MVP_SCOPE.md.
 

@@ -56,6 +56,7 @@
 | Live progress | `docs/roadmap/PROGRESS.md` |
 | Problem registry | `docs/roadmap/PROBLEM_REGISTRY.md` |
 | Build knowledge | `docs/roadmap/BUILD_KNOWLEDGE.md` |
+| Doc index (canonical map) | `docs/roadmap/DOC_INDEX.md` |
 | Contributing | `CONTRIBUTING.md` |
 | Package scripts | `package.json` (pinned deps) |
 
@@ -82,3 +83,18 @@
 | Runnable app | 0% |
 
 **Overall blueprint: ~92%** — proceed to build.
+
+---
+
+## 6. Overlap cleanup (2025-05-21)
+
+| Issue | Resolution |
+|-------|------------|
+| README said `PHASED_BUILD_PLAN` canonical | **Fixed** → `DEVELOPMENT_ROADMAP` + `PHASE_TASKS` |
+| `PHASED_BUILD_PLAN` duplicated P1–P5 + wrong wave→phase numbers | **Slimmed** to wave→P0–P10 map only |
+| `IMPLEMENTATION_CHECKLIST` duplicated `PHASE_TASKS` | **Redirect** only |
+| Root `components/ai/` vs `src-starter/` | **Moved** to `src-starter/components/ai/` |
+| `MVP_CAPTURE` “paid/closed” wording | **Fixed** → `archived` |
+| No single doc map | **Added** `DOC_INDEX.md` |
+
+**Keep (intentional pairs):** `MVP_CAPTURE`+`MVP_SCOPE`, `AI_UTILIZATION`+`AI_IMPLEMENTATION`, `API_ROUTES`+`API_CONTRACTS`, `RISK_MODEL`+`FMEA`, pipeline doc + TS constants.

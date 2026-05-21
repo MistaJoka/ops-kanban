@@ -37,6 +37,7 @@ AI is the operational copilot.
 | [ARCHITECTURE_PRINCIPLES.md](docs/roadmap/ARCHITECTURE_PRINCIPLES.md) | Stable layering for future fixes |
 | [NO_MOCK_DATA_POLICY.md](docs/product/NO_MOCK_DATA_POLICY.md) | **No mock data / fake placeholders in production** |
 | [PRE_BUILD_CONFIRMATION.md](docs/roadmap/PRE_BUILD_CONFIRMATION.md) | Pre-build sign-off checklist |
+| [DOC_INDEX.md](docs/roadmap/DOC_INDEX.md) | **Which doc is canonical** (avoids duplicate plans) |
 | [REPO_COMPLETENESS_AUDIT.md](docs/roadmap/REPO_COMPLETENESS_AUDIT.md) | Repo audit (contradictions resolved) |
 | [API_ROUTES.md](docs/api/API_ROUTES.md) | REST / Server Action catalog |
 | [APPROVAL_FLOW.md](docs/api/APPROVAL_FLOW.md) | AI approval sequence |
@@ -59,7 +60,7 @@ AI is the operational copilot.
 | [INTEGRATION_ARCHITECTURE.md](docs/integrations/INTEGRATION_ARCHITECTURE.md) | Webhooks, OAuth, reliability |
 | [PROVIDER_MATRIX.md](docs/integrations/PROVIDER_MATRIX.md) | Stripe, PayPal, Twilio, DocuSign, etc. |
 | [docs/testing/README.md](docs/testing/README.md) | **QA pack** — modular tests, FMEA, risk, regression |
-| [PHASED_BUILD_PLAN.md](docs/cursor/PHASED_BUILD_PLAN.md) | Build phases (canonical order) |
+| [PHASED_BUILD_PLAN.md](docs/cursor/PHASED_BUILD_PLAN.md) | Wave → P0–P10 map (redirect; not backlog) |
 | [MVP_SCHEMA.md](docs/database/MVP_SCHEMA.md) | Tables in migration vs deferred |
 | [SIGNUP_BOOTSTRAP.md](docs/database/SIGNUP_BOOTSTRAP.md) | Org + board + column seed on signup |
 | [PRODUCT_BRIEF.md](docs/product/PRODUCT_BRIEF.md) | Success criteria |
@@ -85,25 +86,18 @@ AI is the operational copilot.
 
 ## First 30 minutes (when starting implementation)
 
-1. Read `MVP_SCOPE.md` and `DEFAULT_PIPELINE.md`.
-2. Create Supabase project; run migrations `001` through `006` in order.
-3. Scaffold Next.js app; copy `src-starter/` patterns into the app.
-4. Implement Phase 1: auth, RLS, signup bootstrap with `LANDSCAPING_DEFAULT_COLUMNS` from `src-starter/lib/landscaping-default-columns.ts`.
-5. Build the operations board (Phase 2) before estimates, AI, or extra views.
+1. Read [`AGENTS.md`](AGENTS.md) and [`docs/roadmap/DOC_INDEX.md`](docs/roadmap/DOC_INDEX.md).
+2. Read `MVP_CAPTURE.md` and `DEFAULT_PIPELINE.md`.
+3. Create Supabase project; run migrations `001` through `006` in order.
+4. Run **P0** (`TASK-P0-001` … `P0-010`): scaffold Next.js; copy all of `src-starter/` into the app.
+5. Run **P1**: auth, RLS, signup bootstrap with `LANDSCAPING_DEFAULT_COLUMNS` from `src-starter/lib/landscaping-default-columns.ts` (empty pipeline).
+6. Then **P2** Job Pipeline before money, AI, or extra views.
 
 ## Build order
 
-Canonical plan: **`docs/cursor/PHASED_BUILD_PLAN.md`**.
+Canonical: **`docs/roadmap/DEVELOPMENT_ROADMAP.md`** + **`docs/roadmap/PHASE_TASKS.md`** (task IDs P0–P10).
 
-Summary:
-
-1. Foundation + **RLS** + landscaping column seed
-2. Job pipeline board (Kanban)
-3. Deep card modal (property, scope, schedule)
-4. Estimates and invoices
-5. AI (board + card only)
-6. Minimal dashboard (defer full calendar/reports)
-7. Hardening (rate limits, polish)
+Summary: P0 scaffold → P1 foundation/RLS → P2 pipeline → P3 card → P4 money → P5 AI → P6 release → P7–P10 platform waves.
 
 ## Primitive compression
 

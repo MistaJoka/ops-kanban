@@ -9,7 +9,7 @@
 
 ## One-sentence MVP
 
-A **single Job Pipeline board** where each **card is a property job** from inquiry through paid/closed, with **deep card records**, **estimate/invoice drafts**, **manual payment**, and an **AI copilot** (board + card)—multi-tenant and RLS-safe.
+A **single Job Pipeline board** where each **card is a property job** from inquiry through paid and **`archived`**, with **deep card records**, **estimate/invoice drafts**, **manual payment**, and an **AI copilot** (board + card)—multi-tenant and RLS-safe.
 
 ---
 

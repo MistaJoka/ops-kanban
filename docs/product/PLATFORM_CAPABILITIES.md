@@ -4,7 +4,7 @@ OpsBoard replaces a **stack of disconnected tools** with one **card-centric plat
 
 **Design rule:** If it does not link to a `card_id` (or `customer_id` on a card), it does not ship.
 
-Related: `MVP_SCOPE.md` (lean v1), `PHASED_BUILD_PLAN.md`, `AI_UTILIZATION.md`, `docs/integrations/INTEGRATION_ARCHITECTURE.md`.
+Related: `MVP_SCOPE.md` (lean v1), `docs/roadmap/DEVELOPMENT_ROADMAP.md`, `AI_UTILIZATION.md`, `docs/integrations/INTEGRATION_ARCHITECTURE.md`.
 
 ---
 
@@ -302,4 +302,4 @@ Wave 4  Portal + QB + automations + reports + reviews
 
 Parallel track: expand AI tools as each wave ships.
 
-See `docs/cursor/PHASED_BUILD_PLAN.md` — align engineering phases to these waves in next doc pass.
+Engineering phases: `docs/roadmap/PHASE_TASKS.md` (P7–P10 = Waves 1–4). Map: `docs/cursor/PHASED_BUILD_PLAN.md`.

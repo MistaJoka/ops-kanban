@@ -149,7 +149,7 @@ Do not start Phase N+1 until `DONE-N` checklist complete (waivers documented in 
 - [ ] `DEVELOPMENT_LOG.md` phase entry (`complete`)
 - [ ] `BUILD_KNOWLEDGE.md` phase section harvest (new LEARN-*)
 - [ ] `PROBLEM_REGISTRY.md` open PRBs for phase resolved or carried
-- [ ] `IMPLEMENTATION_CHECKLIST.md` boxes
+- [ ] `PHASE_TASKS.md` all phase tasks `done` (see `IMPLEMENTATION_CHECKLIST.md` redirect)
 - [ ] `TRACEABILITY.md` if new REQ
 - [ ] `CHANGELOG.md` on P6
 
@@ -175,6 +175,7 @@ One task per session reduces regression risk.
 
 | File | Purpose |
 |------|---------|
+| `DOC_INDEX.md` | Canonical doc map (avoid duplicates) |
 | `AI_BUILD_PROTOCOL.md` | AI session loop + per-phase steps |
 | `PROGRESS.md` | Live dashboard (read first) |
 | `PROBLEM_REGISTRY.md` | Troubles → root cause → fix |

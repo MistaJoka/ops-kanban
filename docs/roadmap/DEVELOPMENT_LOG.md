@@ -74,6 +74,33 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ## Entries
 
+### LOG-2025-05-21-05 — Doc overlap cleanup + DOC_INDEX
+
+| Field | Value |
+|-------|-------|
+| **Phase** | Planning |
+| **Tasks** | — |
+| **Author** | planning session |
+| **Type** | decision |
+
+**Summary:** Combed repo for duplicate plans and starter paths; added canonical doc index; slimmed redirect-only files.
+
+**Progress:** `DOC_INDEX.md`; `PHASED_BUILD_PLAN` + `IMPLEMENTATION_CHECKLIST` → redirects; README/AGENTS canonical paths fixed; `AiCommandBar` consolidated under `src-starter/components/`.
+
+**Troubles:** none
+
+**Fix:** n/a
+
+**Learning:** none new (see `DOC_INDEX.md`)
+
+**Changes:** See `REPO_COMPLETENESS_AUDIT.md` §6.
+
+**Tests run:** none
+
+**Next:** TASK-P0-001
+
+---
+
 ### LOG-2025-05-21-04 — AI build protocol + reinforced learning loop
 
 | Field | Value |

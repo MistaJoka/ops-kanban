@@ -88,7 +88,7 @@ Examples:
 
 ## Product doc traceability
 
-Requirements source: `docs/product/*`, `docs/ai/*`, `docs/cursor/PHASED_BUILD_PLAN.md`.  
+Requirements source: `docs/product/*`, `docs/ai/*`, `docs/roadmap/MVP_CAPTURE.md`, `docs/roadmap/PHASE_TASKS.md`.  
 Mapping: [TRACEABILITY.md](./TRACEABILITY.md).
 
 ## CI mapping (when wired)

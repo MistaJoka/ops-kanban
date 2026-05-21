@@ -1,6 +1,6 @@
 # Landscaping vertical
 
-OpsBoard AI is configured for **landscaping and lawn-care SMBs** (owner-operator through small crews). One universal board tracks every job from first inquiry to paid and closed.
+OpsBoard AI is configured for **landscaping and lawn-care SMBs** (owner-operator through small crews). One universal board tracks every job from first inquiry through paid and **`archived`** (terminal column — see `DEFAULT_PIPELINE.md`).
 
 ## Target operator
 
