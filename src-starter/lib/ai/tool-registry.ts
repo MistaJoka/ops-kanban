@@ -91,6 +91,16 @@ export const toolRegistry: ToolDefinition[] = [
     requiredRoles: ['owner', 'manager', 'worker'],
   },
   {
+    name: 'assignCard',
+    description: 'Assign a crew lead or worker to a card.',
+    schema: z.object({
+      cardId: z.string().uuid(),
+      assigneeId: z.string().uuid(),
+    }),
+    riskLevel: classifyToolRisk('assignCard'),
+    requiredRoles: ['owner', 'manager'],
+  },
+  {
     name: 'updateCard',
     description: 'Update card fields such as next_action, dates, priority, revenue.',
     schema: z.object({

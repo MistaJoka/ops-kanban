@@ -2,7 +2,9 @@
 
 > **MVP:** Use the 9-column landscaping pipeline in `docs/product/DEFAULT_PIPELINE.md`. The full lifecycle below is the long-term model; unlisted states map to MVP columns or are post-MVP.
 
-## Universal lifecycle pipeline
+## Universal lifecycle pipeline (19 states)
+
+Maps to `FULL_PIPELINE.md`. Optional v2: `on_hold`, `lost` (21 with optional states).
 
 ```txt
 Inbound

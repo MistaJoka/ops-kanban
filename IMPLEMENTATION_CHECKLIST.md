@@ -1,6 +1,8 @@
 # Implementation Checklist
 
-Landscaping MVP — follow `docs/cursor/PHASED_BUILD_PLAN.md`. Pipeline: `docs/product/DEFAULT_PIPELINE.md`. QA: `docs/testing/README.md`.
+> **Canonical backlog:** `docs/roadmap/PHASE_TASKS.md` (prefer over this file).
+
+Landscaping MVP — **roadmap:** `docs/roadmap/DEVELOPMENT_ROADMAP.md` · **DoD:** `docs/roadmap/DEFINITION_OF_DONE.md` · **log:** `docs/roadmap/DEVELOPMENT_LOG.md` · QA: `docs/testing/README.md` · **no mock:** `docs/product/NO_MOCK_DATA_POLICY.md`.
 
 ## Foundation
 

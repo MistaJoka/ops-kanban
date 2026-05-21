@@ -78,11 +78,11 @@ Implementation: `src-starter/lib/landscaping-full-pipeline.ts` + optional seed `
 | `scheduled` | `scheduling`, `ready` |
 | `on_site` | `on_site`, `blocked`, `walkthrough` |
 | `complete` | `complete`, `invoice_prep`, `invoice_sent`, `payment_pending` |
-| `closed` | `paid`, `retention`, `archived` |
+| `archived` | `paid`, `retention`, `archived` |
 
-When switching **Compact → Full**, split cards by rules in app layer (e.g. `closed` → `paid` unless `archived_at` → `archived`).
+When switching **Compact → Full**, split cards in `archived` by invoice/payment state (e.g. unpaid → `payment_pending`, paid → `paid`, follow-up → `retention`, else `archived`).
 
-When switching **Full → Compact**, map to nearest compact key (document in migration script).
+When switching **Full → Compact**, map `paid`, `retention`, and `archived` → compact **`archived`**.
 
 ---
 

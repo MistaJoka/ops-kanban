@@ -5,13 +5,13 @@ Tables **implemented** in `supabase/migrations/001_core_schema.sql`. Everything 
 ## MVP tables
 
 ```txt
-organizations
+organizations (+ settings jsonb — migration 003)
 profiles
 organization_members
 boards
 columns
 customers
-cards
+cards (+ job_type, checklist_json — migration 003)
 activities
 comments
 quotes
@@ -20,6 +20,12 @@ invoices
 ai_tool_calls
 ai_action_approvals
 ```
+
+Migrations: `001` core → `002` auth FK → `003` extensions → `004` RLS → `005` indexes → `006` triggers.
+
+## Pipeline terminal state
+
+Compact and full pipelines end at **`archived`** (`state_key`). See `DEFAULT_PIPELINE.md`.
 
 ## Not in MVP migration (defer)
 

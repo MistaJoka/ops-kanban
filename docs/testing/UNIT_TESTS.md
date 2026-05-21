@@ -12,8 +12,8 @@
 | UNIT-PIPE-003 | Skip without role | worker | deny | P0 |
 | UNIT-PIPE-004 | scheduled without date | `scheduled`, no start | block | P0 |
 | UNIT-PIPE-005 | estimate_sent empty quote | total=0 | block | P0 |
-| UNIT-PIPE-006 | closed sets archived_at | move to `closed` | archived timestamp | P0 |
-| UNIT-PIPE-007 | Compact→full state map | `closed` card | maps to `archived` key | P2 |
+| UNIT-PIPE-006 | archived sets archived_at | move to `archived` | archived timestamp | P0 |
+| UNIT-PIPE-007 | Compact→full state map | `archived` card | maps to full `archived`/`paid`/`retention` | P2 |
 
 ## UNIT-VAL — Field validators
 

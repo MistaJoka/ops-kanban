@@ -88,7 +88,7 @@ Deferred items appear in nav **disabled** with “Soon” tooltip, or hidden unt
 | **Contact support** | Email form, expected response time, optional screenshot |
 | **Keyboard shortcuts** | Table: `N` new job, `/` search, `` ` `` sidebar, `?` shortcuts, `Esc` close panel |
 | **What’s new** | Versioned changelog (markdown) |
-| **Settings** (not support but adjacent) | Org name, pipeline mode (compact/full), members, AI rules stub |
+| **Settings** (not support but adjacent) | Org name, pipeline mode (compact/full), members; AI rules hidden or “Coming soon” (no fake rows) |
 
 Legal links in Help footer: Privacy, Terms.
 

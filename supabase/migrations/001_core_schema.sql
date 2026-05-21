@@ -26,7 +26,7 @@ create table if not exists organization_members (
 create table if not exists boards (
   id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references organizations(id) on delete cascade,
-  name text not null default 'Operations Board',
+  name text not null default 'Job Pipeline',
   is_primary boolean not null default true,
   created_at timestamptz not null default now()
 );

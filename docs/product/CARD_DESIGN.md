@@ -19,7 +19,7 @@ Related: `DEFAULT_PIPELINE.md`, `VERTICAL_LANDSCAPING.md`, `MVP_SCHEMA.md`.
 | State | `columns.state_key` only — no separate `cards.status` |
 | Customer | Optional at create; required before `estimate_sent` |
 | Money | 0–1 active estimate (`quotes`), 0–1 active invoice (`invoices`) per card in MVP |
-| Archive | `archived_at` set when moved to `closed` (or explicit archive) |
+| Archive | `archived_at` set when moved to `archived` (or explicit archive action) |
 
 ### Title convention
 
@@ -53,14 +53,14 @@ Derived when loading cards for the board or detail:
 | Field | Logic |
 |-------|--------|
 | `daysInColumn` | `now - updated_at` when `column_id` unchanged; reset on move |
-| `isOverdue` | `due_date < today` and not `closed` |
+| `isOverdue` | `due_date < today` and not in `archived` column |
 | `isScheduledToday` | `scheduled_start` is today (org timezone) |
 | `moneyBadge` | `none` \| `estimate_draft` \| `estimate_sent` \| `invoice_draft` \| `balance_due` \| `paid` |
 | `scheduleLabel` | e.g. `Thu 5/22 · Crew A` from `scheduled_start` + assignee |
 | `columnCategory` | `sales` \| `production` \| `billing` from `state_key` map below |
 
 ```ts
-const COLUMN_CATEGORY: Record<StateKey, 'sales' | 'production' | 'billing'> = {
+const COLUMN_CATEGORY: Record<StateKey, 'sales' | 'production' | 'billing' | 'aftercare'> = {
   inquiry: 'sales',
   site_visit: 'sales',
   estimating: 'sales',
@@ -69,7 +69,7 @@ const COLUMN_CATEGORY: Record<StateKey, 'sales' | 'production' | 'billing'> = {
   scheduled: 'production',
   on_site: 'production',
   complete: 'billing',
-  closed: 'billing',
+  archived: 'aftercare',
 };
 ```
 
@@ -84,9 +84,9 @@ const COLUMN_CATEGORY: Record<StateKey, 'sales' | 'production' | 'billing'> = {
 | `scheduled` | `scheduled_start` required | Modal if missing |
 | `on_site` | — | Log activity `work.started` |
 | `complete` | — | Prompt: create invoice draft |
-| `closed` | Invoice paid OR user confirms close without pay | Archive + `archived_at` |
+| `archived` | Invoice paid OR user confirms archive without pay | Set `archived_at` |
 
-**Skips** (owner/manager): `inquiry→estimating`, `estimate_sent→approved`, `on_site→complete`, `complete→closed` — require `reason` in activity metadata.
+**Skips** (owner/manager): `inquiry→estimating`, `estimate_sent→approved`, `on_site→complete`, `complete→archived` — require `reason` in activity metadata.
 
 **Workers**: can move card and edit scope/schedule on assigned cards; cannot skip columns or close without pay.
 
@@ -323,7 +323,7 @@ Avoid Inter, Roboto, system-ui-only stacks.
 | Mark estimate sent | ✓ | owner, manager |
 | Comments | ✓ | non-viewer |
 | Checklist | ✓ simple | non-viewer |
-| Files upload | placeholder | — |
+| Files upload | **Hidden in MVP** or empty state “No files yet” — no stock images/PDFs | Wave 3 |
 | AI summarize / draft / move | ✓ | per tool registry |
 | Activity timeline | ✓ read | all |
 
@@ -382,7 +382,7 @@ After AI mutation: append `ai.tool_executed` to timeline; realtime refresh card.
 1. Board card shows title, property line, money/schedule cues in &lt; 2s scan.
 2. Drag from `inquiry` → `scheduled` without date shows validation modal.
 3. Detail Estimate tab blocks `estimate_sent` until line items exist.
-4. Move to `closed` archives and grays card on board (hidden by default filter).
+4. Move to `archived` sets `archived_at` and hides card on board (default filter).
 5. Worker cannot close unpaid job without manager role.
 6. Activity shows every column change with from/to `state_key`.
 

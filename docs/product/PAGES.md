@@ -1,118 +1,73 @@
 # App Pages
 
+**MVP column:** `P0` = Wave 0 ship · `P1+` = later waves · `—` = optional stub only
+
 ## Public pages
 
-### Landing
-Explains the product and use case.
-
-### Login
-Email/password authentication.
-
-### Signup
-Creates user and organization workspace.
+| Page | MVP | Notes |
+|------|-----|-------|
+| Landing | P0 optional | Real copy or redirect to login — **no demo board** |
+| Login | P0 | Supabase auth |
+| Signup | P0 | Creates org + board + 9 columns, **zero cards** |
 
 ## App pages
 
-### Dashboard
-Executive control center.
+| Page | MVP | Notes |
+|------|-----|-------|
+| **Job Pipeline** (`/pipeline`) | **P0** | Primary workspace — `WORKSPACE_DESIGN.md` |
+| **Card detail** (slide-over) | **P0** | Not a separate route; panel on pipeline |
+| Dashboard | P0 minimal | `MINIMAL_DASHBOARD.md` — aggregates only |
+| Customers | P1+ | CRM lens — defer |
+| Calendar | P2 | Crew schedule — Wave 2 |
+| Reports | P4 | Analytics — Wave 4 |
+| Notifications | P1+ | Inline approvals on pipeline for MVP |
+| Settings | P0 minimal | Org name, pipeline mode; integrations P1+ |
 
-Shows:
+---
 
-- active revenue
-- unpaid invoices
-- overdue cards
-- today’s schedule
-- bottlenecks
-- risk alerts
-- AI daily briefing
+## Job Pipeline (P0)
 
-### Operations Board
-Main workspace. This is the primary page.
+- Universal Kanban pipeline (compact 9 / full 19)
+- Board cards, column metrics
+- AI command dock
+- Filters, search, quick actions
+- Drag/drop movement
 
-Contains:
+## Card detail (P0)
 
-- universal Kanban pipeline
-- cards
-- column metrics
-- AI command bar
-- filters
-- quick actions
-- drag/drop movement
+- Overview, Property, Scope, Estimate, Schedule, Money
+- Comments, Checklist (`checklist_json`)
+- Timeline, AI copilot rail
+- **Files tab:** hidden or empty — Wave 3
 
-### Card Detail Modal
-Deep operational record.
+## Dashboard (P0 minimal)
 
-Contains:
+- Today’s schedule, overdue, unpaid total
+- See `MINIMAL_DASHBOARD.md`
 
-- overview
-- customer section
-- job scope
-- quote section
-- scheduling section
-- financial section
-- files
-- comments
-- checklist
-- timeline
-- AI copilot panel
+## Customers (P1+)
 
-### Customers
-CRM lens over card/customer data.
+- Customer list, profile, linked cards, history
 
-Contains:
+## Calendar (P2)
 
-- customer list
-- customer profile
-- linked cards
-- past jobs
-- invoices
-- communication history
+- Day/week/month, scheduled cards, assignments
 
-### Calendar
-Scheduling lens over cards.
+## Reports (P4)
 
-Contains:
+- Velocity, bottlenecks, forecast
 
-- day view
-- week view
-- month view
-- scheduled cards
-- worker assignments
-- conflicts
+## Notifications (P1+)
 
-### Reports
-Operational intelligence view.
+- Overdue, AI approvals, payment reminders
 
-Contains:
+## Settings (P0 / P1+)
 
-- pipeline velocity
-- bottlenecks
-- revenue forecast
-- unpaid invoices
-- conversion rate
-- cycle time
-
-### Notifications
-Action center.
-
-Contains:
-
-- overdue alerts
-- approvals
-- AI action approvals
-- payment reminders
-- schedule conflicts
-
-### Settings
-Control center.
-
-Contains:
-
-- workspace settings
-- users and roles
-- pipeline columns
-- custom fields
-- automations
-- integrations
-- AI rules
-- billing
+| Section | MVP |
+|---------|-----|
+| Workspace name | P0 |
+| Pipeline mode compact/full | P0 |
+| Members & roles | P0 invite basic / P1 polish |
+| Integrations | P1+ |
+| AI rules | Hide or “Coming soon” |
+| Billing | Post-MVP |

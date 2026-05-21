@@ -1,6 +1,6 @@
 # MVP scope — landscaping (Wave 0)
 
-Single source of truth for **Wave 0** (lean v1). Feature-rich platform modules (PayPal, Calendly, DocuSign, SMS, etc.) are **Wave 1–4** in `PLATFORM_CAPABILITIES.md`. Build order: `docs/cursor/PHASED_BUILD_PLAN.md`.
+Single source of truth for **Wave 0** (lean v1). Frozen capture: `docs/roadmap/MVP_CAPTURE.md`. Build execution: `docs/roadmap/PHASE_TASKS.md` (P0–P6). Feature-rich modules (PayPal, Calendly, DocuSign, SMS, etc.) are **P7–P10 / Waves 1–4** in `PLATFORM_CAPABILITIES.md`.
 
 ## Vertical
 
@@ -45,7 +45,7 @@ Matches `PRODUCT_BRIEF.md` — a landscaping owner can run inquiry → estimate 
 | Automations | 4 | Wave 4 |
 | 19-column full pipeline | 0 optional toggle | `FULL_PIPELINE.md` |
 | Customers / Reports pages | 2–4 | Phased build |
-| File storage (live) | 3 | Supabase Storage |
+| File storage (live) | 3 | Supabase Storage — MVP: tab hidden or empty only (`NO_MOCK_DATA_POLICY.md`) |
 | Recurring contracts | 4 | Wave 4 |
 
 Wave 0 uses **manual paid**, **draft-only comms**, **card schedule fields**—by design, not omission.
@@ -54,7 +54,7 @@ Wave 0 uses **manual paid**, **draft-only comms**, **card schedule fields**—by
 
 | Page | MVP |
 |------|-----|
-| Landing | Optional stub |
+| Landing | Minimal real page or redirect to login — **no demo board, no sample jobs** |
 | Login / Signup | Yes |
 | Operations board | Yes — primary workspace |
 | Card detail modal | Yes |

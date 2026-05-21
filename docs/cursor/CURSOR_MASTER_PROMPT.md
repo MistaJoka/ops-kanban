@@ -5,12 +5,17 @@ Use this prompt inside Cursor.
 ```md
 You are building an AI-first landscaping / lawn-care Operational Command Center.
 
+**Build protocol (mandatory):** docs/roadmap/AI_BUILD_PROTOCOL.md
+- Start: read PROGRESS.md + open PROBLEM_REGISTRY.md + scan BUILD_KNOWLEDGE.md
+- Work: one TASK-Px-xxx from PHASE_TASKS.md per session
+- End: DEVELOPMENT_LOG + PROGRESS + PRB/LEARN when troubles or reusable fixes occur
+
 This is not a multi-board Trello clone. The product uses one Job Pipeline board (9 landscaping columns — see docs/product/DEFAULT_PIPELINE.md). Each card is a property job: inquiry, customer/property, scope, estimate, crew schedule, invoice, payment, activity, and AI context. MVP scope: docs/product/MVP_SCOPE.md.
 
 Use the existing code if present. Do not rewrite working code. Add onto the working system in small production-quality phases.
 
 Core product rules:
-1. The Operations Board is the main workspace.
+1. The Job Pipeline (`/pipeline`) is the main workspace.
 2. Cards are the source of truth.
 3. Columns represent business states.
 4. Other pages are views over the same data, not separate systems.
@@ -18,7 +23,12 @@ Core product rules:
 6. AI must use approved tools only.
 7. High-risk actions require human confirmation.
 8. Every AI action must be logged.
-9. No mock data should be added to production flows.
+9. No mock data in production flows — see docs/product/NO_MOCK_DATA_POLICY.md:
+   - No hardcoded cards/customers/invoices in UI or API.
+   - New orgs start with empty pipeline (columns only).
+   - Empty states only; never fake “sample” jobs.
+   - Test fixtures live under tests/ only.
+   - Wire tool-executor to real domain services (no fake “executed” without DB write).
 
 Target stack:
 - Next.js
@@ -61,11 +71,10 @@ Phase 3: Deep card modal
 - files
 - activity timeline
 
-Phase 4: CRM and financial records
-- customers
-- quotes
-- invoices
-- payments
+Phase 4: Money drafts (on card — not separate CRM page)
+- quotes + line items on card
+- invoices + manual paid
+- archive to `archived` column
 
 Phase 5: AI subsystem
 - Gemini client
@@ -78,12 +87,10 @@ Phase 5: AI subsystem
 - AI command API route
 - AI frontend components
 
-Phase 6: Reporting and dashboard
-- pipeline health
-- revenue summary
-- unpaid invoices
-- bottlenecks
-- overdue work
+Phase 6: MVP release + minimal dashboard (optional)
+- error/empty/loading states, mobile, rate limits
+- minimal dashboard: today’s jobs, overdue, unpaid total (not full reports)
+- defer: customers page, calendar app, reports — see docs/roadmap/PHASE_TASKS.md P7+
 
 Definition of Done:
 - User can manage a full customer-to-cash lifecycle from one Kanban board.

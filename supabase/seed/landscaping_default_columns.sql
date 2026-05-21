@@ -10,4 +10,4 @@
 --   ($org_id, $board_id, 'Scheduled',       5, 'scheduled'),
 --   ($org_id, $board_id, 'On site',         6, 'on_site'),
 --   ($org_id, $board_id, 'Complete',        7, 'complete'),
---   ($org_id, $board_id, 'Closed',          8, 'closed');
+--   ($org_id, $board_id, 'Archived',        8, 'archived');

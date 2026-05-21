@@ -1,5 +1,8 @@
 # Database Schema
 
+> **Legacy / long-term reference.** For MVP implementation use [`MVP_SCHEMA.md`](./MVP_SCHEMA.md) and `supabase/migrations/001_core_schema.sql`.  
+> MVP has **no** `cards.status` column (state = column `state_key`). Many tables below are **post-MVP**.
+
 ## Core tables
 
 ```txt

@@ -1,5 +1,7 @@
 # Phased Build Plan — landscaping + platform waves
 
+> **Canonical execution:** task IDs, DoD, and dev log → [`docs/roadmap/DEVELOPMENT_ROADMAP.md`](../roadmap/DEVELOPMENT_ROADMAP.md), [`PHASE_TASKS.md`](../roadmap/PHASE_TASKS.md), [`DEFINITION_OF_DONE.md`](../roadmap/DEFINITION_OF_DONE.md).
+
 Engineering phases aligned to **Wave 0–4** in `PLATFORM_CAPABILITIES.md`.  
 Product scope: `MVP_SCOPE.md`, `WORKSPACE_DESIGN.md`, `CARD_DESIGN.md`, `AI_UTILIZATION.md`.
 

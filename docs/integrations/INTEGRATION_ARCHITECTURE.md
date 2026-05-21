@@ -68,7 +68,7 @@ Processor runs idempotent: if `external_id` exists and `processed`, skip.
 
 - **Use:** Payment Links or Orders v2 capture on invoice total.
 - **Webhook:** `CHECKOUT.ORDER.APPROVED`, `PAYMENT.CAPTURE.COMPLETED`
-- **Card effect:** `payments` row + invoice paid + column `paid`/`closed`
+- **Card effect:** `payments` row + invoice paid + column `archived` (or `paid` in full pipeline)
 - **Fallback:** Manual mark paid
 
 ### Stripe

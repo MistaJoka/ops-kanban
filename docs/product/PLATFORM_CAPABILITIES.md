@@ -181,7 +181,7 @@ Stored: `signatures` table (`card_id`, `quote_id`, `signer_name`, `signed_at`, `
 | Step | Behavior |
 |------|----------|
 | Invoice issued | Generate **payment link** (`payments` row: `card_id`, `invoice_id`, `provider`, `external_id`) |
-| Customer pays | Webhook `payment.completed` → `invoice.balance_due = 0`, card → `paid` / `closed` |
+| Customer pays | Webhook `payment.completed` → `invoice.balance_due = 0`, card → `archived` (compact) or `paid` (full) |
 | Partial pay | Support deposit on approve (hardscape); balance tracked |
 | Failure | Webhook `failed` → activity + notify office; manual retry link |
 

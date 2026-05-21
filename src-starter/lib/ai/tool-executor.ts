@@ -31,12 +31,9 @@ export async function executeToolCall(params: {
     };
   }
 
-  // Route to actual domain tools here.
-  return {
-    status: 'executed',
-    riskLevel: tool.riskLevel,
-    toolName: params.toolName,
-    input: parsedInput,
-    message: 'Tool executed. Wire this to the matching domain service.',
-  };
+  // BLUEPRINT STUB — not valid for MVP. Phase 5 must call lib/domain/* and persist.
+  // Do not ship production with this return path. See docs/product/NO_MOCK_DATA_POLICY.md
+  throw new Error(
+    `Tool executor not wired: ${params.toolName}. Implement domain service in Phase 5.`,
+  );
 }

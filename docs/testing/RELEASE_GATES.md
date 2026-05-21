@@ -56,6 +56,14 @@
 - [ ] Error monitoring configured
 - [ ] Rollback plan documented
 
+### No mock data (required)
+
+- [ ] `NO_MOCK_DATA_POLICY.md` §8 checks V1–V7 pass
+- [ ] New signup shows **0 cards** (9 columns only)
+- [ ] No hardcoded pipeline arrays in production bundle (grep/CI)
+- [ ] AI tools persist to DB — refresh survives
+- [ ] `tool-executor` stub removed — real domain writes only
+
 **Approver:** product owner + QA
 
 ---

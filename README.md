@@ -2,7 +2,7 @@
 
 A production-oriented MVP blueprint for a **landscaping SMB job pipeline** on a single universal Kanban board.
 
-This is not a basic Trello clone. The app uses one **Job Pipeline** board as the main workspace. Each card is a deep operational record for a property job from inquiry through paid and closed.
+This is not a basic Trello clone. The app uses one **Job Pipeline** board as the main workspace. Each card is a deep operational record for a property job from inquiry through paid and **archived**.
 
 ## Vertical
 
@@ -20,7 +20,29 @@ Views are lenses over the same data.
 AI is the operational copilot.
 ```
 
-## Doc map (read before building)
+## Development roadmap (start here to build)
+
+| Doc | Purpose |
+|-----|---------|
+| [AGENTS.md](AGENTS.md) | **AI/agent entry** — session loop |
+| [AI_BUILD_PROTOCOL.md](docs/roadmap/AI_BUILD_PROTOCOL.md) | Phases for AI + mandatory progress/trouble/learning updates |
+| [PROGRESS.md](docs/roadmap/PROGRESS.md) | Live build dashboard (read first each session) |
+| [PROBLEM_REGISTRY.md](docs/roadmap/PROBLEM_REGISTRY.md) | Troubles → root cause → fix (problem sourcing) |
+| [BUILD_KNOWLEDGE.md](docs/roadmap/BUILD_KNOWLEDGE.md) | LEARN-* patterns for reinforced learning |
+| [DEVELOPMENT_ROADMAP.md](docs/roadmap/DEVELOPMENT_ROADMAP.md) | Phases, sprints, gates, how to extend safely |
+| [MVP_CAPTURE.md](docs/roadmap/MVP_CAPTURE.md) | Frozen Wave 0 scope |
+| [PHASE_TASKS.md](docs/roadmap/PHASE_TASKS.md) | Task IDs P0–P10 (backlog) |
+| [DEFINITION_OF_DONE.md](docs/roadmap/DEFINITION_OF_DONE.md) | Completion criteria per phase |
+| [DEVELOPMENT_LOG.md](docs/roadmap/DEVELOPMENT_LOG.md) | Chronological build log |
+| [ARCHITECTURE_PRINCIPLES.md](docs/roadmap/ARCHITECTURE_PRINCIPLES.md) | Stable layering for future fixes |
+| [NO_MOCK_DATA_POLICY.md](docs/product/NO_MOCK_DATA_POLICY.md) | **No mock data / fake placeholders in production** |
+| [PRE_BUILD_CONFIRMATION.md](docs/roadmap/PRE_BUILD_CONFIRMATION.md) | Pre-build sign-off checklist |
+| [REPO_COMPLETENESS_AUDIT.md](docs/roadmap/REPO_COMPLETENESS_AUDIT.md) | Repo audit (contradictions resolved) |
+| [API_ROUTES.md](docs/api/API_ROUTES.md) | REST / Server Action catalog |
+| [APPROVAL_FLOW.md](docs/api/APPROVAL_FLOW.md) | AI approval sequence |
+| [DESIGN_TOKENS.md](docs/product/DESIGN_TOKENS.md) | CSS variables & fonts |
+
+## Doc map (product & technical)
 
 | Doc | Purpose |
 |-----|---------|
@@ -64,7 +86,7 @@ AI is the operational copilot.
 ## First 30 minutes (when starting implementation)
 
 1. Read `MVP_SCOPE.md` and `DEFAULT_PIPELINE.md`.
-2. Create Supabase project; run `supabase/migrations/001_core_schema.sql`.
+2. Create Supabase project; run migrations `001` through `006` in order.
 3. Scaffold Next.js app; copy `src-starter/` patterns into the app.
 4. Implement Phase 1: auth, RLS, signup bootstrap with `LANDSCAPING_DEFAULT_COLUMNS` from `src-starter/lib/landscaping-default-columns.ts`.
 5. Build the operations board (Phase 2) before estimates, AI, or extra views.

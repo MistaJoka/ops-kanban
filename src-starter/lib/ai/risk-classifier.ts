@@ -12,6 +12,7 @@ const HIGH_RISK_TOOLS = new Set([
 ]);
 
 const MEDIUM_RISK_TOOLS = new Set([
+  'createCard',
   'moveCard',
   'updateCard',
   'assignCard',

@@ -1,11 +1,25 @@
 {
-  "name": "ops-kanban-ai-mvp-blueprint",
-  "version": "1.0.0",
+  "name": "ops-kanban-ai-mvp",
+  "version": "0.1.0-planning",
   "private": true,
-  "description": "AI-first single-board operations Kanban MVP blueprint.",
+  "description": "AI-first landscaping operations Kanban — blueprint + starter",
+  "scripts": {
+    "lint": "echo 'Wire ESLint in Phase 0'",
+    "typecheck": "echo 'Wire tsc in Phase 0'",
+    "test:unit": "echo 'Wire Vitest in Phase 0'",
+    "test:integration": "echo 'Wire Vitest integration in Phase 0'",
+    "test:e2e": "echo 'Wire Playwright in Phase 0'",
+    "test:e2e:smoke": "echo 'Wire Playwright smoke in Phase 0'",
+    "test:ai": "echo 'Wire AI tests in Phase 5'",
+    "test:security": "echo 'Wire RLS tests in Phase 1'",
+    "test:regression": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test:seed": "echo 'Wire test seed script in Phase 1'",
+    "check:no-mock": "bash scripts/check-no-mock.sh"
+  },
   "dependencies": {
-    "@google/generative-ai": "latest",
-    "@supabase/supabase-js": "latest",
-    "zod": "latest"
-  }
+    "@google/generative-ai": "^0.21.0",
+    "@supabase/supabase-js": "^2.47.10",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {}
 }

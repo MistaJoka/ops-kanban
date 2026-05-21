@@ -16,7 +16,7 @@
 | E2E-JOB-005 | Move to approved → scheduled with date picker | regression | P0 |
 | E2E-JOB-006 | scheduled without date shows validation | regression | P0 |
 | E2E-JOB-007 | Flow to complete → invoice draft | regression | P0 |
-| E2E-MNY-001 | Manual mark paid → closed → card hidden default filter | regression | P0 |
+| E2E-MNY-001 | Manual mark paid → archived → card hidden default filter | regression | P0 |
 | E2E-AI-001 | AI summarize card → summary on Overview | smoke | P0 |
 | E2E-AI-002 | AI move card → approval modal → approve → column change | regression | P0 |
 | E2E-AI-003 | Viewer login → no Run on destructive AI | regression | P0 |

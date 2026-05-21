@@ -22,6 +22,9 @@ Links **product requirements** → **risk** → **tests**. Update when adding fe
 | REQ-14 | AI_UTILIZATION approval | R-02 | F-12 | AI-LOG-*, INT-API-020 |
 | REQ-15 | DEFAULT_PIPELINE 9 columns | — | F-01 | INT-BOOT-001, UAT-01 |
 | REQ-16 | SUPPORT_PAGES help | — | — | E2E-SUP-001 |
+| REQ-17 | NO_MOCK_DATA_POLICY | R-03 | — | V1–V7, TASK-P6-011 |
+| REQ-18 | API_ROUTES + APPROVAL_FLOW | R-02 | F-12 | INT-API-* |
+| REQ-19 | DESIGN_TOKENS / Field ledger UI | — | — | visual review |
 
 ## Wave 1+ (placeholder)
 

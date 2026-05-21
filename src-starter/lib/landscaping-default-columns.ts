@@ -8,5 +8,5 @@ export const LANDSCAPING_DEFAULT_COLUMNS = [
   { name: 'Scheduled', position: 5, stateKey: 'scheduled' },
   { name: 'On site', position: 6, stateKey: 'on_site' },
   { name: 'Complete', position: 7, stateKey: 'complete' },
-  { name: 'Closed', position: 8, stateKey: 'closed' },
+  { name: 'Archived', position: 8, stateKey: 'archived' },
 ] as const;
