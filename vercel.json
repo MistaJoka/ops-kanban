@@ -1,0 +1,11 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci",
+  "crons": [
+    {
+      "path": "/api/contracts/run-due",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}

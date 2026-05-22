@@ -84,11 +84,33 @@ AI is the operational copilot.
 - Supabase (Auth, Postgres, Realtime)
 - Gemini 2.5 Flash (`GEMINI_API_KEY`)
 
+## Running locally
+
+1. Copy `.env.example` → `.env.local` and fill Supabase keys (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_PASSWORD`).
+2. `npm install`
+3. Apply migrations: `npm run db:migrate` (runs `001` through `015` in order).
+4. `npm run dev` — opens at [http://localhost:3000](http://localhost:3000) (redirects to `/pipeline` when `DISABLE_AUTH=true`).
+5. Verify env: [http://localhost:3000/api/health](http://localhost:3000/api/health) should return `"ok": true`.
+
+### Common commands
+
+| Command | Purpose |
+|---------|---------|
+| `npm run test:unit` | Pipeline, money, AI unit tests |
+| `npm run test:integration` | Supabase integration (requires `.env.local`) |
+| `npm run test:wave4` | Wave 4 scale tests (needs migrations 013–015) |
+| `npm run test:e2e:smoke` | Playwright smoke (`@smoke`) |
+| `npm run build` | Production build check |
+
+Env vars are validated in `lib/env/` and consumed by Supabase clients in `lib/db/supabase/`. Server-only secrets (`SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `CRON_SECRET`) never use the `NEXT_PUBLIC_` prefix.
+
+For production pilot: set `DISABLE_AUTH=false`, configure wave integrations in Settings, and set `CRON_SECRET` if using Vercel Cron for `/api/contracts/run-due`.
+
 ## First 30 minutes (when starting implementation)
 
 1. Read [`AGENTS.md`](AGENTS.md) and [`docs/roadmap/DOC_INDEX.md`](docs/roadmap/DOC_INDEX.md).
 2. Read `MVP_CAPTURE.md` and `DEFAULT_PIPELINE.md`.
-3. Create Supabase project; run migrations `001` through `006` in order.
+3. Create Supabase project; run migrations `001` through `015` in order (`npm run db:migrate`).
 4. Run **P0** (`TASK-P0-001` … `P0-010`): scaffold Next.js; copy all of `src-starter/` into the app.
 5. Run **P1**: auth, RLS, signup bootstrap with `LANDSCAPING_DEFAULT_COLUMNS` from `src-starter/lib/landscaping-default-columns.ts` (empty pipeline).
 6. Then **P2** Job Pipeline before money, AI, or extra views.
@@ -112,4 +134,4 @@ Dashboard = today’s jobs and money
 
 ## Note
 
-This repository is a **blueprint**, not a runnable app. `package.json` lists AI/Supabase libraries only; initialize Next.js at build time and pin dependency versions.
+This repository is a **runnable Next.js app** with a full landscaping operations blueprint. Run `npm run dev` after migrations and env setup. See `docs/ops/PILOT_DEPLOY_CHECKLIST.md` before production pilot.

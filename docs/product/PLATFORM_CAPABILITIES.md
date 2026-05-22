@@ -46,7 +46,7 @@ Related: `MVP_SCOPE.md` (lean v1), `docs/roadmap/DEVELOPMENT_ROADMAP.md`, `AI_UT
 | **E-sign & PDF** | DocuSign, PandaDoc | Estimate/contract sign, PDF export, audit trail | Quote on card |
 | **Payments** | Stripe, PayPal, Square | Pay link, partial pay, mark paid, receipts | Invoice on card |
 | **Documents** | Dropbox, Google Drive | Photos, plans, signed PDFs per job | Card attachments |
-| **Accounting** | QuickBooks, Xero | Sync invoice/payment/customer (one-way then two-way) | Invoice + customer |
+| **Accounting** | QuickBooks, Xero | Native AR ledger, income transactions, CSV export | Invoice + customer |
 | **Automations** | Zapier, Make | When card enters X → send Y (approval optional) | Card + column |
 | **Analytics** | Mixpanel, Looker | Pipeline velocity, $ funnel, crew utilization | Board aggregates |
 | **Customer portal** | Stripe Billing Portal, Jobber client hub | Approve estimate, pay invoice, view schedule | Magic link per card |
@@ -112,7 +112,7 @@ Already specified in `MVP_SCOPE.md`.
 
 | Capability | Scaled feature | Provider options |
 |------------|----------------|------------------|
-| **QuickBooks sync** | Customer, invoice, payment push | Intuit OAuth |
+| **QuickBooks sync** | Native accounting ledger | In-app AR + income transactions |
 | **Automations** | Column triggers + delays + conditions | Internal `automations` table |
 | **Customer portal** | Homeowner: approve estimate, pay, see schedule | Magic link JWT |
 | **Reports** | Conversion, cycle time, revenue by job type | Internal |
@@ -207,13 +207,16 @@ No full account required for homeowner.
 
 ---
 
-### 4.6 Accounting (QuickBooks)
+### 4.6 Accounting (native ledger)
 
-**Wave 4:** One-way export (invoice created → QB invoice). Then payment sync back.
+**Wave 4+:** In-app ledger — no QuickBooks API.
 
-Map: `customers` ↔ QB Customer, `invoices` ↔ QB Invoice, payments ↔ Payment.
+| Event | Ledger entry |
+|-------|--------------|
+| Invoice created | `invoice_issued` |
+| Payment settled (manual or Stripe) | `payment_received` |
 
-Conflict rule: **OpsBoard card wins** for job status; QB wins for GL codes (settings).
+Reports: AR register, aging buckets, CSV export. OpsBoard card remains canonical for job status.
 
 ---
 
@@ -223,9 +226,9 @@ Conflict rule: **OpsBoard card wins** for job status; QB wins for GL codes (sett
 Settings → Integrations
   ├── Payments      [PayPal] [Stripe]     status: connected / error
   ├── Scheduling    [Calendly] [Native]   
-  ├── E-sign        [DocuSign] [Native]   
+  ├── E-sign        [Native portal]   
   ├── Comms         [Twilio] [Resend]     
-  ├── Accounting    [QuickBooks]          
+  ├── Accounting    [Native ledger]          
   └── Webhooks      (advanced, post-MVP)  
 ```
 

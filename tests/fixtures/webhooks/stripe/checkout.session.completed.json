@@ -1,0 +1,17 @@
+{
+  "id": "evt_test_checkout_completed",
+  "type": "checkout.session.completed",
+  "data": {
+    "object": {
+      "id": "cs_test_fixture",
+      "object": "checkout.session",
+      "amount_total": 50000,
+      "currency": "usd",
+      "metadata": {
+        "organization_id": "ORG_ID",
+        "invoice_id": "INVOICE_ID",
+        "card_id": "CARD_ID"
+      }
+    }
+  }
+}

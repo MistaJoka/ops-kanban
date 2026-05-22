@@ -12,6 +12,7 @@ out/
 dist/
 .turbo/
 .vercel/
+*.tsbuildinfo
 
 # logs
 *.log
@@ -24,3 +25,6 @@ npm-debug.log*
 
 # test / coverage
 coverage/
+test-results/
+playwright-report/
+blob-report/

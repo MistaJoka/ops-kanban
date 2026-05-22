@@ -42,9 +42,7 @@ Utilization guide: `AI_UTILIZATION.md`.
 | `createPaymentLink` | 1 | Stripe / PayPal |
 | `sendEstimateEmail` | 1 | Resend |
 | `sendSms` / `sendEmail` | 2 | Twilio / Resend |
-| `createBookingFromWebhook` | 2 | Native / Calendly |
-| `sendDocuSignEnvelope` | 3 | DocuSign |
-| `syncToQuickBooks` | 4 | QuickBooks |
+| `createBookingFromWebhook` | 2 | Native booking page |
 
 AI may **draft** comms and **propose** links; execution requires approval + webhook confirmation.
 
