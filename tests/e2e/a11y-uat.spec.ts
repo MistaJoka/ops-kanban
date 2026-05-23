@@ -1,20 +1,13 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-import {
-  createJob,
-  gotoPipeline,
-  openJobPanel,
-  uniqueJobTitle,
-} from './helpers/pipeline';
+import { createJob, gotoPipeline, openJobPanel, uniqueJobTitle } from './helpers/pipeline';
 
 test.describe('Accessibility @a11y', () => {
   test('A11Y-001: pipeline has zero critical axe violations', async ({ page }) => {
     await gotoPipeline(page);
 
-    const results = await new AxeBuilder({ page })
-      .disableRules(['color-contrast'])
-      .analyze();
+    const results = await new AxeBuilder({ page }).disableRules(['color-contrast']).analyze();
 
     const critical = results.violations.filter((violation) => violation.impact === 'critical');
     expect(critical, JSON.stringify(critical, null, 2)).toEqual([]);
@@ -91,7 +84,9 @@ test.describe('UAT coverage @uat', () => {
     await createJob(page, title);
     await openJobPanel(page, title);
 
-    await page.getByPlaceholder('Ask, analyze, or act on your pipeline…').fill('move to site_visit');
+    await page
+      .getByPlaceholder('Ask, analyze, or act on your pipeline…')
+      .fill('move to site_visit');
     await page.getByRole('button', { name: 'Run' }).click();
 
     await expect(page.getByRole('heading', { name: 'Approve AI action' })).toBeVisible({

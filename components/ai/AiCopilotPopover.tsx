@@ -40,11 +40,7 @@ export function AiCopilotPopover({
 
   return (
     <>
-      <div
-        aria-hidden
-        className="ops-panel-overlay z-[70]"
-        onClick={onClose}
-      />
+      <div aria-hidden className="ops-panel-overlay z-[70]" onClick={onClose} />
       <div
         role="dialog"
         aria-modal="true"
@@ -59,7 +55,10 @@ export function AiCopilotPopover({
           boxShadow: 'var(--shadow-lift)',
         }}
       >
-        <div className="flex items-center justify-end border-b px-2 py-1.5" style={{ borderColor: 'var(--topbar-border)' }}>
+        <div
+          className="flex items-center justify-end border-b px-2 py-1.5"
+          style={{ borderColor: 'var(--topbar-border)' }}
+        >
           <button
             type="button"
             onClick={onClose}

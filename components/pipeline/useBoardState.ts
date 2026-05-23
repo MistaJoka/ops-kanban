@@ -3,10 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import type { BoardView } from '@/lib/domain/board/getBoard';
-import {
-  buildBoardSyncStatus,
-  type BoardSyncStatus,
-} from '@/lib/domain/board/boardSyncStatus';
+import { buildBoardSyncStatus, type BoardSyncStatus } from '@/lib/domain/board/boardSyncStatus';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
 import type { CardDetailView } from '@/lib/domain/cards/cardDetail';
 import {
@@ -97,25 +94,28 @@ export function useBoardState(initialBoard: BoardView) {
     setSyncIssue(null);
   }, []);
 
-  const endMutation = useCallback((success: boolean, message?: string) => {
-    mutationCountRef.current = Math.max(0, mutationCountRef.current - 1);
-    setPendingMutationCount(mutationCountRef.current);
+  const endMutation = useCallback(
+    (success: boolean, message?: string) => {
+      mutationCountRef.current = Math.max(0, mutationCountRef.current - 1);
+      setPendingMutationCount(mutationCountRef.current);
 
-    if (success) {
-      markSynced();
-      return;
-    }
-
-    if (message) {
-      setSyncIssue(message);
-      if (syncIssueTimerRef.current) {
-        clearTimeout(syncIssueTimerRef.current);
+      if (success) {
+        markSynced();
+        return;
       }
-      syncIssueTimerRef.current = setTimeout(() => {
-        setSyncIssue(null);
-      }, 8000);
-    }
-  }, [markSynced]);
+
+      if (message) {
+        setSyncIssue(message);
+        if (syncIssueTimerRef.current) {
+          clearTimeout(syncIssueTimerRef.current);
+        }
+        syncIssueTimerRef.current = setTimeout(() => {
+          setSyncIssue(null);
+        }, 8000);
+      }
+    },
+    [markSynced],
+  );
 
   const showError = useCallback((message: string) => {
     setError(message);
@@ -163,28 +163,33 @@ export function useBoardState(initialBoard: BoardView) {
     });
   }, []);
 
-  const refreshBoard = useCallback(async (includeArchived = false) => {
-    setIsRefreshing(true);
-    try {
-      const response = await fetch(
-        includeArchived ? '/api/board?includeArchived=true' : '/api/board',
-      );
-      const payload = await response.json();
-      if (response.ok) {
-        setBoard({
-          ...payload.data,
-          cards: sortBoardCards(payload.data.cards),
-        });
-        markSynced();
-      } else {
-        showError(payload.error ?? 'Failed to refresh board.');
+  const refreshBoard = useCallback(
+    async (includeArchived = false) => {
+      setIsRefreshing(true);
+      try {
+        const response = await fetch(
+          includeArchived ? '/api/board?includeArchived=true' : '/api/board',
+        );
+        const payload = await response.json();
+        if (response.ok) {
+          setBoard({
+            ...payload.data,
+            cards: sortBoardCards(payload.data.cards),
+          });
+          markSynced();
+        } else {
+          showError(payload.error ?? 'Failed to refresh board.');
+        }
+      } catch (refreshError) {
+        showError(
+          refreshError instanceof Error ? refreshError.message : 'Failed to refresh board.',
+        );
+      } finally {
+        setIsRefreshing(false);
       }
-    } catch (refreshError) {
-      showError(refreshError instanceof Error ? refreshError.message : 'Failed to refresh board.');
-    } finally {
-      setIsRefreshing(false);
-    }
-  }, [markSynced, showError]);
+    },
+    [markSynced, showError],
+  );
 
   const upsertCard = useCallback((card: BoardCardView) => {
     setBoard((current) => ({
@@ -273,8 +278,7 @@ export function useBoardState(initialBoard: BoardView) {
             patch.title = String(mutation.patch.title);
           }
           if (mutation.patch.dueDate !== undefined) {
-            patch.dueDate =
-              mutation.patch.dueDate === null ? null : String(mutation.patch.dueDate);
+            patch.dueDate = mutation.patch.dueDate === null ? null : String(mutation.patch.dueDate);
           }
           if (mutation.patch.assignedTo !== undefined) {
             patch.assignedTo =
@@ -499,21 +503,14 @@ export function useBoardState(initialBoard: BoardView) {
         return { ok: true, card: createdCard };
       } catch (createError) {
         setBoard((current) => ({ ...current, cards: previousCards }));
-        const message = createError instanceof Error ? createError.message : 'Failed to create card.';
+        const message =
+          createError instanceof Error ? createError.message : 'Failed to create card.';
         showError(message);
         endMutation(false, message);
         return { ok: false, message };
       }
     },
-    [
-      beginMutation,
-      endMutation,
-      outboundSync,
-      queueEnabled,
-      showError,
-      syncFromDetail,
-      upsertCard,
-    ],
+    [beginMutation, endMutation, outboundSync, queueEnabled, showError, syncFromDetail, upsertCard],
   );
 
   const moveCard = useCallback(

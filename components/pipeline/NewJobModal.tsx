@@ -4,7 +4,14 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import type { BoardColumnView } from '@/lib/domain/board/getBoard';
 
-const JOB_TYPES = ['maintenance', 'install', 'hardscape', 'cleanup', 'irrigation', 'other'] as const;
+const JOB_TYPES = [
+  'maintenance',
+  'install',
+  'hardscape',
+  'cleanup',
+  'irrigation',
+  'other',
+] as const;
 
 export type NewJobFormValues = {
   title: string;
@@ -170,14 +177,15 @@ export function NewJobModal({
           ) : null}
 
           <div className="flex flex-wrap justify-end gap-2 pt-2">
-            <button type="button" disabled={pending} onClick={onClose} className="ops-btn-secondary">
+            <button
+              type="button"
+              disabled={pending}
+              onClick={onClose}
+              className="ops-btn-secondary"
+            >
               Cancel
             </button>
-            <button
-              type="submit"
-              disabled={!canSubmit || pending}
-              className="ops-btn-primary"
-            >
+            <button type="submit" disabled={!canSubmit || pending} className="ops-btn-primary">
               {pending ? 'Creating…' : 'Create'}
             </button>
             <button

@@ -1,17 +1,17 @@
 import { z } from 'zod';
 
 import { jsonData, jsonError } from '@/lib/api/response';
-import { approveEstimateViaPortal, verifyPortalToken } from '@/lib/domain/integrations/portalTokens';
+import {
+  approveEstimateViaPortal,
+  verifyPortalToken,
+} from '@/lib/domain/integrations/portalTokens';
 import { createServiceClient } from '@/lib/db/supabase/service';
 
 const bodySchema = z.object({
   signerName: z.string().min(1),
 });
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ token: string }> },
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const service = createServiceClient();
   const portal = await verifyPortalToken(service, token);
@@ -33,7 +33,11 @@ export async function POST(
 
   const parsed = bodySchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Signer name is required.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Signer name is required.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   const signerIp =

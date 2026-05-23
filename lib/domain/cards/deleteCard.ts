@@ -20,10 +20,7 @@ export class DeleteCardError extends Error {
   }
 }
 
-export async function deleteCard(
-  client: SupabaseClient,
-  input: DeleteCardInput,
-): Promise<void> {
+export async function deleteCard(client: SupabaseClient, input: DeleteCardInput): Promise<void> {
   if (!canDeleteCard(input.role)) {
     throw new DeleteCardError('Your role cannot delete cards.', 'FORBIDDEN');
   }

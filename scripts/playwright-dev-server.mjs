@@ -20,8 +20,8 @@ function shouldCleanCache() {
 
   return Boolean(
     process.env.CI ||
-      process.env.PLAYWRIGHT_FRESH_SERVER === '1' ||
-      hasProductionBuildCache(path.join(projectRoot, '.next')),
+    process.env.PLAYWRIGHT_FRESH_SERVER === '1' ||
+    hasProductionBuildCache(path.join(projectRoot, '.next')),
   );
 }
 

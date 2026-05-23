@@ -10,26 +10,26 @@ See: `RELEASE_GATES.md`, `WEBHOOK_INTEGRATION_TESTS.md`, `PILOT_DEPLOY_CHECKLIST
 
 ## DONE-7 criteria
 
-| # | Criterion | Status | Evidence |
-|---|-----------|--------|----------|
-| 7.1 | Payment link on invoice (Stripe) | ✅ | `POST /api/invoices/[id]/payment-link`, Money tab UI |
-| 7.2 | WH-PAY P0 pass | ✅ | `tests/integration/payment-webhook.test.ts` (runs after 007/008 migrate) |
-| 7.3 | Manual paid still works | ✅ | `INT-MNY-004`, `settleInvoicePayment` shared path |
-| 7.4 | Estimate approve portal v0 | ✅ | `/p/[token]`, portal token + approve APIs |
-| 7.5 | Gate G3 signed | ✅ | This document |
+| #   | Criterion                        | Status | Evidence                                                                 |
+| --- | -------------------------------- | ------ | ------------------------------------------------------------------------ |
+| 7.1 | Payment link on invoice (Stripe) | ✅     | `POST /api/invoices/[id]/payment-link`, Money tab UI                     |
+| 7.2 | WH-PAY P0 pass                   | ✅     | `tests/integration/payment-webhook.test.ts` (runs after 007/008 migrate) |
+| 7.3 | Manual paid still works          | ✅     | `INT-MNY-004`, `settleInvoicePayment` shared path                        |
+| 7.4 | Estimate approve portal v0       | ✅     | `/p/[token]`, portal token + approve APIs                                |
+| 7.5 | Gate G3 signed                   | ✅     | This document                                                            |
 
 ---
 
 ## Automated verification
 
-| Item | Status | Evidence |
-|------|--------|----------|
-| Typecheck + build | ✅ | `npm run typecheck`, `npm run build` |
-| Unit P0 | ✅ | 25 tests |
-| Integration (pre-W1 tables) | ✅ | 13 tests |
-| WH-PAY suite | ✅ | 6 tests (skip until `payments` table exists) |
-| SEC-RLS (Wave 1 tables) | ✅ | Conditional in `rls-matrix.test.ts` |
-| Manual mark paid | ✅ | Money tab + webhook both call `settleInvoicePayment` |
+| Item                        | Status | Evidence                                             |
+| --------------------------- | ------ | ---------------------------------------------------- |
+| Typecheck + build           | ✅     | `npm run typecheck`, `npm run build`                 |
+| Unit P0                     | ✅     | 25 tests                                             |
+| Integration (pre-W1 tables) | ✅     | 13 tests                                             |
+| WH-PAY suite                | ✅     | 6 tests (skip until `payments` table exists)         |
+| SEC-RLS (Wave 1 tables)     | ✅     | Conditional in `rls-matrix.test.ts`                  |
+| Manual mark paid            | ✅     | Money tab + webhook both call `settleInvoicePayment` |
 
 ---
 
@@ -45,9 +45,9 @@ See: `RELEASE_GATES.md`, `WEBHOOK_INTEGRATION_TESTS.md`, `PILOT_DEPLOY_CHECKLIST
 
 ## Accepted waivers
 
-| Item | Reason |
-|------|--------|
+| Item           | Reason                                                |
+| -------------- | ----------------------------------------------------- |
 | PayPal adapter | Stripe chosen for Wave 1; PayPal deferred to Wave 1.1 |
-| PDF export | HTML estimate export v0; print-to-PDF via browser |
+| PDF export     | HTML estimate export v0; print-to-PDF via browser     |
 
 **Accepted by:** build agent **Date:** 2025-05-21

@@ -182,7 +182,9 @@ export default function ReportsPage() {
             <ul className="mt-4 grid gap-2 sm:grid-cols-4">
               {(['current', '30', '60', '90+'] as const).map((bucket) => (
                 <li key={bucket} className="rounded-lg bg-[var(--surface-rail)] px-3 py-2 text-sm">
-                  <p className="text-[var(--text-secondary)]">{bucket === 'current' ? 'Current' : `${bucket} days`}</p>
+                  <p className="text-[var(--text-secondary)]">
+                    {bucket === 'current' ? 'Current' : `${bucket} days`}
+                  </p>
                   <p className="font-semibold">${(accounting.arAging[bucket] ?? 0).toFixed(2)}</p>
                 </li>
               ))}
@@ -228,13 +230,18 @@ export default function ReportsPage() {
             {accounting.transactions.length ? (
               <ul className="mt-4 space-y-2">
                 {accounting.transactions.map((row) => (
-                  <li key={row.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                  <li
+                    key={row.id}
+                    className="flex flex-wrap items-center justify-between gap-2 text-sm"
+                  >
                     <span>
                       {new Date(row.occurredAt).toLocaleDateString()} ·{' '}
                       {row.entryType === 'invoice_issued' ? 'Invoice issued' : 'Payment received'}
                     </span>
                     <span className="font-medium">${row.amount.toFixed(2)}</span>
-                    <span className="w-full truncate text-[var(--text-secondary)]">{row.description}</span>
+                    <span className="w-full truncate text-[var(--text-secondary)]">
+                      {row.description}
+                    </span>
                   </li>
                 ))}
               </ul>

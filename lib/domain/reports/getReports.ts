@@ -34,7 +34,9 @@ export async function getReportsSummary(
 ): Promise<ReportsSummary> {
   let query = client
     .from('cards')
-    .select('id, job_type, archived_at, created_at, columns!inner(state_key), invoices(total, balance_due, status)')
+    .select(
+      'id, job_type, archived_at, created_at, columns!inner(state_key), invoices(total, balance_due, status)',
+    )
     .eq('organization_id', organizationId);
 
   if (filter.dateFrom) {
@@ -73,7 +75,8 @@ export async function getReportsSummary(
       cycleSamples += 1;
     }
 
-    const invoices = (card.invoices as Array<{ total: number; balance_due: number; status: string }> | null) ?? [];
+    const invoices =
+      (card.invoices as Array<{ total: number; balance_due: number; status: string }> | null) ?? [];
     const invoice = invoices[0];
     if (invoice) {
       const total = Number(invoice.total);

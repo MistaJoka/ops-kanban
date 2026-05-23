@@ -75,7 +75,10 @@ export async function createInvoiceDraft(
     : await getQuoteForCard(client, organizationId, cardId);
 
   if (!quote || quote.total <= 0) {
-    throw new InvoiceError('Save an estimate with line items before creating an invoice.', 'VALIDATION_ERROR');
+    throw new InvoiceError(
+      'Save an estimate with line items before creating an invoice.',
+      'VALIDATION_ERROR',
+    );
   }
 
   if (fromQuoteId && quote.id !== fromQuoteId) {

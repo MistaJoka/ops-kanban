@@ -7,9 +7,7 @@ vi.mock('server-only', () => ({}));
 
 beforeAll(async () => {
   if (!hasTestSupabaseEnv()) {
-    console.warn(
-      'Supabase env vars missing — integration tests will skip via beforeAll hooks.',
-    );
+    console.warn('Supabase env vars missing — integration tests will skip via beforeAll hooks.');
     return;
   }
 

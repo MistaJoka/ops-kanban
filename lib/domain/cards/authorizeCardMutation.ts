@@ -1,10 +1,5 @@
 import type { OrgRole } from '@/lib/domain/auth/roles';
-import {
-  ADMIN_ROLES,
-  canCreateCard,
-  canManageMoney,
-  canMoveCard,
-} from '@/lib/domain/auth/roles';
+import { ADMIN_ROLES, canCreateCard, canManageMoney, canMoveCard } from '@/lib/domain/auth/roles';
 
 export type CardAuthContext = {
   assignedTo: string | null;

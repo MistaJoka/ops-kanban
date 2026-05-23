@@ -73,7 +73,9 @@ export async function moveBoardCardToColumn(page: Page, title: string, columnNam
 
 export async function expectCardInColumn(page: Page, title: string, columnName: string) {
   const column = columnSection(page, columnName);
-  await expect(column.locator('.ops-board-card').filter({ hasText: title })).toBeVisible({ timeout: 5_000 });
+  await expect(column.locator('.ops-board-card').filter({ hasText: title })).toBeVisible({
+    timeout: 5_000,
+  });
 }
 
 export async function waitForSyncPill(page: Page, label: 'Saving' | 'Synced') {
@@ -140,7 +142,11 @@ export async function handleMovePrompts(page: Page, reason?: string) {
   return null;
 }
 
-export async function moveCardViaPanel(page: Page, columnName: string, options?: { reason?: string }) {
+export async function moveCardViaPanel(
+  page: Page,
+  columnName: string,
+  options?: { reason?: string },
+) {
   const panel = page.getByRole('dialog', { name: 'Job detail panel' });
   await selectCardColumn(page, columnName);
 
@@ -169,7 +175,9 @@ export async function advanceToColumn(
 
 export async function expectMoveBlocked(page: Page, messagePattern: RegExp) {
   const modal = moveModal(page);
-  await expect(modal.getByRole('heading', { name: 'Move blocked' })).toBeVisible({ timeout: 10_000 });
+  await expect(modal.getByRole('heading', { name: 'Move blocked' })).toBeVisible({
+    timeout: 10_000,
+  });
   await expect(modal.getByText(messagePattern)).toBeVisible();
 }
 
@@ -178,10 +186,7 @@ export async function openCardTab(page: Page, tabName: string) {
   await panel.getByRole('button', { name: tabName, exact: true }).click();
 }
 
-export async function saveProperty(
-  page: Page,
-  data: { name: string; address: string },
-) {
+export async function saveProperty(page: Page, data: { name: string; address: string }) {
   await openCardTab(page, 'Property');
   const panel = page.getByRole('dialog', { name: 'Job detail panel' });
   await panel.locator('input[name="name"]').fill(data.name);
@@ -208,8 +213,7 @@ export async function setScheduleDate(page: Page) {
   await scheduleInput.fill(localValue);
 
   const patchResponse = page.waitForResponse(
-    (response) =>
-      response.url().includes('/api/cards/') && response.request().method() === 'PATCH',
+    (response) => response.url().includes('/api/cards/') && response.request().method() === 'PATCH',
   );
   await scheduleInput.blur();
   const response = await patchResponse;

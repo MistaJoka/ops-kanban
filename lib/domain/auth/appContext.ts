@@ -4,7 +4,10 @@ import { redirect } from 'next/navigation';
 
 import type { OrgRole } from '@/lib/domain/auth/roles';
 import { ensureDevWorkspace } from '@/lib/domain/dev/workspace';
-import { getPrimaryBoardColumns, getUserOrganization } from '@/lib/domain/bootstrap/signupBootstrap';
+import {
+  getPrimaryBoardColumns,
+  getUserOrganization,
+} from '@/lib/domain/bootstrap/signupBootstrap';
 import { createClient } from '@/lib/db/supabase/server';
 import { isAuthDisabled } from '@/lib/env/authBypass';
 
@@ -24,9 +27,14 @@ export async function getAppContext(): Promise<AppContext> {
 
     return {
       organizationId: dev.organizationId,
-      userId: (
-        await dev.client.from('profiles').select('id').eq('email', 'dev-bypass@opsboard.local').single()
-      ).data?.id ?? null,
+      userId:
+        (
+          await dev.client
+            .from('profiles')
+            .select('id')
+            .eq('email', 'dev-bypass@opsboard.local')
+            .single()
+        ).data?.id ?? null,
       role: dev.role,
       displayName: dev.displayName,
       columnCount: columns.length,

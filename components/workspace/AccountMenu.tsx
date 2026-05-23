@@ -62,17 +62,16 @@ export function AccountMenu({
           {initialsFromName(displayName)}
         </span>
         {!collapsed ? (
-          <span className="min-w-0 flex-1 truncate text-xs text-[var(--nav-text)]">{displayName}</span>
+          <span className="min-w-0 flex-1 truncate text-xs text-[var(--nav-text)]">
+            {displayName}
+          </span>
         ) : null}
       </button>
 
       {open ? (
         <div
           role="menu"
-          className={cn(
-            'ops-menu',
-            collapsed ? 'ops-menu--up left-0 right-auto' : 'right-0',
-          )}
+          className={cn('ops-menu', collapsed ? 'ops-menu--up left-0 right-auto' : 'right-0')}
         >
           <Link
             href="/settings"

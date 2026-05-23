@@ -66,7 +66,9 @@ export async function moveCard(
 
   const fromColumn = Array.isArray(card.columns) ? card.columns[0] : card.columns;
   const fromStateKey = fromColumn?.state_key ?? 'inquiry';
-  const quoteRow = (card.quotes as Array<{ total: number; quote_items?: Array<{ id: string }> }> | null)?.[0];
+  const quoteRow = (
+    card.quotes as Array<{ total: number; quote_items?: Array<{ id: string }> }> | null
+  )?.[0];
   const quoteTotal = quoteRow?.total ?? 0;
   const quoteLineItemCount = quoteRow?.quote_items?.length ?? 0;
   const balanceDue =
@@ -102,7 +104,10 @@ export async function moveCard(
   });
 
   if (!validation.allowed) {
-    throw new MoveCardError(validation.message ?? 'Move not allowed.', validation.code ?? 'VALIDATION_ERROR');
+    throw new MoveCardError(
+      validation.message ?? 'Move not allowed.',
+      validation.code ?? 'VALIDATION_ERROR',
+    );
   }
 
   if (validation.requiresReason && !input.reason?.trim()) {

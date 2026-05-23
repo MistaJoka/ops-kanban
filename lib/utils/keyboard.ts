@@ -4,12 +4,7 @@ export function isEditableTarget(target: EventTarget | null): boolean {
   }
 
   const tag = target.tagName;
-  return (
-    tag === 'INPUT' ||
-    tag === 'TEXTAREA' ||
-    tag === 'SELECT' ||
-    target.isContentEditable
-  );
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable;
 }
 
 export function isShortcutModifier(event: KeyboardEvent): boolean {

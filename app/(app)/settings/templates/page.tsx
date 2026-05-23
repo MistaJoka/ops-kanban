@@ -134,7 +134,9 @@ export default function MessageTemplatesPage() {
                 <span className="ops-badge ml-1 normal-case">{template.channel}</span>
               </p>
               {template.subject ? (
-                <p className="mt-1 text-sm text-[var(--text-secondary)]">Subject: {template.subject}</p>
+                <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                  Subject: {template.subject}
+                </p>
               ) : null}
               <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--text-primary)]">
                 {template.body}

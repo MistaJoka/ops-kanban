@@ -3,10 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { logActivity } from '@/lib/domain/activities/logActivity';
 import { runAutomationsForColumnEnter } from '@/lib/domain/automations/runAutomations';
 import type { OrgRole } from '@/lib/domain/auth/roles';
-import {
-  canMoveCardOnBoard,
-  type CardAuthContext,
-} from '@/lib/domain/cards/authorizeCardMutation';
+import { canMoveCardOnBoard, type CardAuthContext } from '@/lib/domain/cards/authorizeCardMutation';
 import { mapCardRowToBoardView, type BoardCardView } from '@/lib/domain/cards/boardCard';
 import { computeInsertPosition } from '@/lib/domain/cards/cardPosition';
 import { validateMove } from '@/lib/domain/pipeline/validateMove';
@@ -113,7 +110,9 @@ export async function reorderCard(
   let moveValidation: ReturnType<typeof validateMove> | null = null;
 
   if (columnChanged) {
-    const quoteRow = (card.quotes as Array<{ total: number; quote_items?: Array<{ id: string }> }> | null)?.[0];
+    const quoteRow = (
+      card.quotes as Array<{ total: number; quote_items?: Array<{ id: string }> }> | null
+    )?.[0];
     const quoteTotal = quoteRow?.total ?? 0;
     const quoteLineItemCount = quoteRow?.quote_items?.length ?? 0;
     const balanceDue =

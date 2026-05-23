@@ -44,7 +44,9 @@ describe('UNIT-VAL field validators', () => {
 
 describe('UNIT-PIPE compact to full state map', () => {
   it('UNIT-PIPE-007: archived compact card splits by payment state', () => {
-    expect(mapCompactArchivedToFull({ balanceDue: 120, invoicePaid: false })).toBe('payment_pending');
+    expect(mapCompactArchivedToFull({ balanceDue: 120, invoicePaid: false })).toBe(
+      'payment_pending',
+    );
     expect(mapCompactArchivedToFull({ balanceDue: 0, invoicePaid: true })).toBe('paid');
     expect(
       mapCompactArchivedToFull({ balanceDue: 0, invoicePaid: true, needsRetentionFollowUp: true }),

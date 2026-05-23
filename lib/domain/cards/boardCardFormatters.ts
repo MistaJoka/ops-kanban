@@ -37,8 +37,7 @@ export function formatScheduleShortDate(date: Date): string {
 export function formatScheduleLabel(scheduledStart: string, now = new Date()): string {
   const scheduled = new Date(scheduledStart);
   const dayDiff = Math.round(
-    (startOfLocalDay(scheduled).getTime() - startOfLocalDay(now).getTime()) /
-      (1000 * 60 * 60 * 24),
+    (startOfLocalDay(scheduled).getTime() - startOfLocalDay(now).getTime()) / (1000 * 60 * 60 * 24),
   );
 
   if (dayDiff === 0) {

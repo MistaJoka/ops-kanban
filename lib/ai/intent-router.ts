@@ -18,10 +18,7 @@ export function isBlockedPrompt(command: string): boolean {
   return BLOCKED_PATTERNS.some((pattern) => pattern.test(command));
 }
 
-function resolveCardId(
-  context: LoadedAiContext,
-  explicitId?: string,
-): string | undefined {
+function resolveCardId(context: LoadedAiContext, explicitId?: string): string | undefined {
   if (explicitId) return explicitId;
   if (context.page === 'card') {
     return String(context.card.id);
@@ -113,7 +110,9 @@ export function routeCommand(
     return { toolName: 'getBoardState', input: {} };
   }
 
-  const createMatch = trimmed.match(/create(?:\s+a)?\s+(?:job|inquiry|card)\s+["“']?([^"”']+)["”']?/i);
+  const createMatch = trimmed.match(
+    /create(?:\s+a)?\s+(?:job|inquiry|card)\s+["“']?([^"”']+)["”']?/i,
+  );
   if (createMatch) {
     return {
       toolName: 'createCard',
@@ -165,7 +164,9 @@ export function routeCommand(
   if (/archive/.test(lower)) {
     const cardId = resolveCardId(context);
     if (!cardId) {
-      const titleMatch = trimmed.match(/archive(?:\s+(?:the|this))?\s+(?:job\s+)?["“']?([^"”'\n.!?]+?)["”']?(?:\s+job)?/i);
+      const titleMatch = trimmed.match(
+        /archive(?:\s+(?:the|this))?\s+(?:job\s+)?["“']?([^"”'\n.!?]+?)["”']?(?:\s+job)?/i,
+      );
       if (titleMatch?.[1]) {
         return { toolName: 'archiveCard', input: { title: titleMatch[1].trim() } };
       }
@@ -183,7 +184,10 @@ export function routeCommand(
       /(?:delete|remove)(?:\s+(?:the|this|that))?\s+(?:job\s+)?(.+?)\s*$/i,
     );
     if (titleMatch?.[1]) {
-      const title = titleMatch[1].trim().replace(/\s+job\s*$/i, '').trim();
+      const title = titleMatch[1]
+        .trim()
+        .replace(/\s+job\s*$/i, '')
+        .trim();
       return { toolName: 'deleteCard', input: { title } };
     }
     return { message: 'Which job should I delete? Tell me the job title.' };

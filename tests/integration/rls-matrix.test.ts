@@ -1,8 +1,19 @@
 import { describe, expect, it } from 'vitest';
 
-import { createTestUser, createUserClient, deleteTestUser, signInTestUser } from '@/tests/helpers/auth';
+import {
+  createTestUser,
+  createUserClient,
+  deleteTestUser,
+  signInTestUser,
+} from '@/tests/helpers/auth';
 import { hasTestSupabaseEnv } from '@/tests/helpers/env';
-import { hasMigrationsApplied, hasWave1MigrationsApplied, hasWave2MigrationsApplied, hasWave3MigrationsApplied, hasWave4MigrationsApplied } from '@/tests/helpers/migrate';
+import {
+  hasMigrationsApplied,
+  hasWave1MigrationsApplied,
+  hasWave2MigrationsApplied,
+  hasWave3MigrationsApplied,
+  hasWave4MigrationsApplied,
+} from '@/tests/helpers/migrate';
 import {
   ALL_ORG_SCOPED_TABLES,
   BASE_ORG_SCOPED_TABLES,

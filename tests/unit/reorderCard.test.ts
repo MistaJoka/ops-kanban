@@ -30,8 +30,8 @@ describe('computeInsertPosition', () => {
   });
 
   it('sorts cards by position before computing', () => {
-    expect(
-      computeInsertPosition([{ position: 30 }, { position: 10 }, { position: 20 }], 1),
-    ).toBe(15);
+    expect(computeInsertPosition([{ position: 30 }, { position: 10 }, { position: 20 }], 1)).toBe(
+      15,
+    );
   });
 });

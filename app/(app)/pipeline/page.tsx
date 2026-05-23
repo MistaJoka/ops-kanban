@@ -19,7 +19,14 @@ async function PipelineContent() {
   const { client, organizationId } = await getAppDataClient();
   const board = await getPrimaryBoard(client, organizationId);
 
-  return <KanbanBoard initialBoard={board} role={app.role} organizationId={app.organizationId} userId={app.userId} />;
+  return (
+    <KanbanBoard
+      initialBoard={board}
+      role={app.role}
+      organizationId={app.organizationId}
+      userId={app.userId}
+    />
+  );
 }
 
 export default function PipelinePage() {

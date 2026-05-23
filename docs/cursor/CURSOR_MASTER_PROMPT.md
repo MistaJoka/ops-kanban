@@ -6,6 +6,7 @@ Use this prompt inside Cursor.
 You are building an AI-first landscaping / lawn-care Operational Command Center.
 
 **Build protocol (mandatory):** docs/roadmap/AI_BUILD_PROTOCOL.md · Doc map: docs/roadmap/DOC_INDEX.md
+
 - Start: read PROGRESS.md + open PROBLEM_REGISTRY.md + scan BUILD_KNOWLEDGE.md
 - Work: one TASK-Px-xxx from PHASE_TASKS.md per session (roadmap P0–P10; not a second plan)
 - End: DEVELOPMENT_LOG + PROGRESS + PRB/LEARN when troubles or reusable fixes occur
@@ -17,6 +18,7 @@ This is not a multi-board Trello clone. The product uses one Job Pipeline board 
 Use the existing code if present. Do not rewrite working code. Add onto the working system in small production-quality phases.
 
 Core product rules:
+
 1. The Job Pipeline (`/pipeline`) is the main workspace.
 2. Cards are the source of truth.
 3. Columns represent business states.
@@ -32,8 +34,10 @@ Core product rules:
    - Test fixtures live under tests/ only.
    - Wire tool-executor to real domain services (no fake “executed” without DB write).
 10. UI decisions defer to docs/product/UI_MASTER_FORMULA.md + WORKSPACE_DESIGN.md + CARD_DESIGN.md + DESIGN_TOKENS.md.
+11. AI slop: when touching >3 files or anything under components/pipeline/, run the Suspicion Scan in docs/testing/AI_SLOP_DETECTION.md before session end; run npm run check:slop-health on structural changes.
 
 Target stack:
+
 - Next.js
 - TypeScript
 - Tailwind
@@ -45,6 +49,7 @@ Target stack:
 Build the MVP in phases:
 
 Phase 1: Core data model
+
 - organizations
 - profiles
 - members
@@ -55,6 +60,7 @@ Phase 1: Core data model
 - activities
 
 Phase 2: Operations board
+
 - drag/drop Kanban
 - create card
 - update card
@@ -63,6 +69,7 @@ Phase 2: Operations board
 - filter/search
 
 Phase 3: Deep card modal
+
 - overview
 - customer details
 - job scope
@@ -75,11 +82,13 @@ Phase 3: Deep card modal
 - activity timeline
 
 Phase 4: Money drafts (on card — not separate CRM page)
+
 - quotes + line items on card
 - invoices + manual paid
 - archive to `archived` column
 
 Phase 5: AI subsystem
+
 - Gemini client
 - system prompt
 - context loader
@@ -91,11 +100,13 @@ Phase 5: AI subsystem
 - AI frontend components
 
 Phase 6: MVP release + minimal dashboard (optional)
+
 - error/empty/loading states, mobile, rate limits
 - minimal dashboard: today’s jobs, overdue, unpaid total (not full reports)
 - defer: customers page, calendar app, reports — see docs/roadmap/PHASE_TASKS.md P7+
 
 Definition of Done:
+
 - User can manage a full customer-to-cash lifecycle from one Kanban board.
 - User can ask AI to summarize, create, update, and move cards.
 - AI actions use tool functions, not raw DB writes.

@@ -45,7 +45,9 @@ export default async function PortalPage({ params }: { params: Promise<{ token: 
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-10">
-      <p className="text-xs uppercase tracking-wide text-[var(--text-secondary)]">Customer portal</p>
+      <p className="text-xs uppercase tracking-wide text-[var(--text-secondary)]">
+        Customer portal
+      </p>
       <h1 className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">{card.title}</h1>
       <p className="mt-1 text-sm text-[var(--text-secondary)]">
         {card.customer?.address ?? card.customer?.name ?? 'Property details pending'}
@@ -55,7 +57,9 @@ export default async function PortalPage({ params }: { params: Promise<{ token: 
         <section className="mt-8 rounded-xl border border-[var(--topbar-border)] bg-white p-6">
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">Schedule</h2>
           {scheduledLabel ? (
-            <p className="mt-3 text-sm text-[var(--text-primary)]">Scheduled for {scheduledLabel}</p>
+            <p className="mt-3 text-sm text-[var(--text-primary)]">
+              Scheduled for {scheduledLabel}
+            </p>
           ) : (
             <p className="mt-3 text-sm text-[var(--text-secondary)]">
               Your visit is not scheduled yet. We will notify you when a date is confirmed.

@@ -123,7 +123,12 @@ export function CustomerCreateModal({
           ) : null}
 
           <div className="flex justify-end gap-2 pt-2">
-            <button type="button" disabled={pending} onClick={onClose} className="ops-btn-secondary">
+            <button
+              type="button"
+              disabled={pending}
+              onClick={onClose}
+              className="ops-btn-secondary"
+            >
               Cancel
             </button>
             <button type="submit" disabled={!canSubmit || pending} className="ops-btn-primary">

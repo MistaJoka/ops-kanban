@@ -15,17 +15,17 @@ A **single Job Pipeline board** where each **card is a property job** from inqui
 
 ## In scope (Wave 0)
 
-| Area | Deliverable | Spec |
-|------|-------------|------|
-| Auth & tenancy | Signup → org → board → 9 columns | `SIGNUP_BOOTSTRAP.md` |
-| Workspace | Sidebar, support pages, pipeline UI | `WORKSPACE_DESIGN.md` |
-| Pipeline | Compact 9 columns; optional full 19 | `DEFAULT_PIPELINE.md`, `FULL_PIPELINE.md` |
-| Cards | Board card + detail slide-over | `CARD_DESIGN.md` |
-| Money | Quote + invoice drafts; manual paid | `MVP_SCHEMA.md` |
-| Schedule | Card date fields (not full calendar app) | `CARD_DESIGN.md` |
-| AI | Tier 1–3 tools, approval, dock + rail | `AI_UTILIZATION.md` |
-| Security | RLS all MVP tables | `SECURITY_RLS.md` (tests) |
-| QA | Modular test pack + gate G2 | `docs/testing/` |
+| Area           | Deliverable                              | Spec                                      |
+| -------------- | ---------------------------------------- | ----------------------------------------- |
+| Auth & tenancy | Signup → org → board → 9 columns         | `SIGNUP_BOOTSTRAP.md`                     |
+| Workspace      | Sidebar, support pages, pipeline UI      | `WORKSPACE_DESIGN.md`                     |
+| Pipeline       | Compact 9 columns; optional full 19      | `DEFAULT_PIPELINE.md`, `FULL_PIPELINE.md` |
+| Cards          | Board card + detail slide-over           | `CARD_DESIGN.md`                          |
+| Money          | Quote + invoice drafts; manual paid      | `MVP_SCHEMA.md`                           |
+| Schedule       | Card date fields (not full calendar app) | `CARD_DESIGN.md`                          |
+| AI             | Tier 1–3 tools, approval, dock + rail    | `AI_UTILIZATION.md`                       |
+| Security       | RLS all MVP tables                       | `SECURITY_RLS.md` (tests)                 |
+| QA             | Modular test pack + gate G2              | `docs/testing/`                           |
 
 ---
 
@@ -67,12 +67,12 @@ From `PRODUCT_BRIEF.md` — owner can:
 
 ## Reference map
 
-| Topic | Document |
-|-------|----------|
-| Build phases & tasks | `PHASE_TASKS.md` |
-| DoD | `DEFINITION_OF_DONE.md` |
-| Dev log | `DEVELOPMENT_LOG.md` |
-| Master roadmap | `DEVELOPMENT_ROADMAP.md` |
-| Stable architecture | `ARCHITECTURE_PRINCIPLES.md` |
+| Topic                | Document                     |
+| -------------------- | ---------------------------- |
+| Build phases & tasks | `PHASE_TASKS.md`             |
+| DoD                  | `DEFINITION_OF_DONE.md`      |
+| Dev log              | `DEVELOPMENT_LOG.md`         |
+| Master roadmap       | `DEVELOPMENT_ROADMAP.md`     |
+| Stable architecture  | `ARCHITECTURE_PRINCIPLES.md` |
 
 **Change control:** MVP scope changes require update to this file + `MVP_SCOPE.md` + traceability matrix.

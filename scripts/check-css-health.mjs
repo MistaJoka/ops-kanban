@@ -121,9 +121,7 @@ export async function checkCssHealth(options = {}) {
 
 function printResult(result) {
   if (result.ok) {
-    console.log(
-      `OK: CSS health (${result.cssBytes} bytes) — ${result.cssUrl}`,
-    );
+    console.log(`OK: CSS health (${result.cssBytes} bytes) — ${result.cssUrl}`);
     if (result.prodCache) {
       console.warn(
         'WARN: .next/BUILD_ID exists (production build). Stop dev and run npm run dev:clean before the next session.',
@@ -137,7 +135,9 @@ function printResult(result) {
     console.error(result.detail);
   }
   console.error('\nRecovery: npm run dev:clean');
-  console.error('Avoid: npm run build while `next dev` is running; reusing a stale port-3000 process.');
+  console.error(
+    'Avoid: npm run build while `next dev` is running; reusing a stale port-3000 process.',
+  );
 }
 
 async function main() {

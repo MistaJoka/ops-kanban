@@ -33,37 +33,37 @@ Matches `PRODUCT_BRIEF.md` — a landscaping owner can run inquiry → estimate 
 
 ## Out of scope for Wave 0 (planned in later waves)
 
-| Feature | Wave | Doc |
-|---------|------|-----|
-| PayPal / Stripe pay links | 1 | `PLATFORM_CAPABILITIES.md` §4.4 |
-| DocuSign / native e-sign | 1–3 | §4.1 |
-| Calendly / booking page | 2 | §4.2 |
-| SMS/email send (Twilio, Resend) | 2 | §4.3 |
-| Full calendar app | 2 | §4.2 |
-| Customer portal (approve + pay) | 1–4 | §4.5 |
-| QuickBooks sync | 4 | §4.6 |
-| Automations | 4 | Wave 4 |
-| 19-column full pipeline | 0 optional toggle | `FULL_PIPELINE.md` |
-| Customers / Reports pages | 2–4 | Phased build |
-| File storage (live) | 3 | Supabase Storage — MVP: tab hidden or empty only (`NO_MOCK_DATA_POLICY.md`) |
-| Recurring contracts | 4 | Wave 4 |
+| Feature                         | Wave              | Doc                                                                         |
+| ------------------------------- | ----------------- | --------------------------------------------------------------------------- |
+| PayPal / Stripe pay links       | 1                 | `PLATFORM_CAPABILITIES.md` §4.4                                             |
+| DocuSign / native e-sign        | 1–3               | §4.1                                                                        |
+| Calendly / booking page         | 2                 | §4.2                                                                        |
+| SMS/email send (Twilio, Resend) | 2                 | §4.3                                                                        |
+| Full calendar app               | 2                 | §4.2                                                                        |
+| Customer portal (approve + pay) | 1–4               | §4.5                                                                        |
+| QuickBooks sync                 | 4                 | §4.6                                                                        |
+| Automations                     | 4                 | Wave 4                                                                      |
+| 19-column full pipeline         | 0 optional toggle | `FULL_PIPELINE.md`                                                          |
+| Customers / Reports pages       | 2–4               | Phased build                                                                |
+| File storage (live)             | 3                 | Supabase Storage — MVP: tab hidden or empty only (`NO_MOCK_DATA_POLICY.md`) |
+| Recurring contracts             | 4                 | Wave 4                                                                      |
 
 Wave 0 uses **manual paid**, **draft-only comms**, **card schedule fields**—by design, not omission.
 
 ## MVP pages
 
-| Page | MVP |
-|------|-----|
-| Landing | Minimal real page or redirect to login — **no demo board, no sample jobs** |
-| Login / Signup | Yes |
-| Operations board | Yes — primary workspace |
-| Card detail modal | Yes |
-| Dashboard | Minimal: today’s jobs, overdue, unpaid total |
-| Customers | Defer |
-| Calendar | Defer |
-| Reports | Defer |
-| Notifications | Defer (inline approvals on board) |
-| Settings | Minimal: org name, pipeline labels (read-only keys) |
+| Page              | MVP                                                                        |
+| ----------------- | -------------------------------------------------------------------------- |
+| Landing           | Minimal real page or redirect to login — **no demo board, no sample jobs** |
+| Login / Signup    | Yes                                                                        |
+| Operations board  | Yes — primary workspace                                                    |
+| Card detail modal | Yes                                                                        |
+| Dashboard         | Minimal: today’s jobs, overdue, unpaid total                               |
+| Customers         | Defer                                                                      |
+| Calendar          | Defer                                                                      |
+| Reports           | Defer                                                                      |
+| Notifications     | Defer (inline approvals on board)                                          |
+| Settings          | Minimal: org name, pipeline labels (read-only keys)                        |
 
 ## Acceptance scenarios (smoke test)
 

@@ -2,10 +2,7 @@ import { jsonData, jsonError } from '@/lib/api/response';
 import { getHandlerContext, isHandlerContext } from '@/lib/domain/api/handlerContext';
 import { createPortalToken } from '@/lib/domain/integrations/portalTokens';
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 

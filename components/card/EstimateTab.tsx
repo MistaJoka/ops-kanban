@@ -37,7 +37,9 @@ export function EstimateTab({
 }: {
   quote: QuoteView | null;
   canManage: boolean;
-  onSave: (lineItems: Array<{ description: string; quantity: number; unitPrice: number }>) => Promise<void>;
+  onSave: (
+    lineItems: Array<{ description: string; quantity: number; unitPrice: number }>,
+  ) => Promise<void>;
   onMarkSent: () => Promise<void>;
   onExport?: () => void;
   onSend?: () => Promise<void>;
@@ -115,7 +117,10 @@ export function EstimateTab({
 
       <div className="space-y-3">
         {lines.map((line) => (
-          <div key={line.id} className="ops-section-card grid gap-2 p-3 md:grid-cols-[1fr_80px_100px_auto]">
+          <div
+            key={line.id}
+            className="ops-section-card grid gap-2 p-3 md:grid-cols-[1fr_80px_100px_auto]"
+          >
             <input
               value={line.description}
               disabled={!canManage || quote?.status === 'sent'}
@@ -169,11 +174,7 @@ export function EstimateTab({
               {aiDraftLoading ? 'Drafting…' : 'Draft from scope (AI)'}
             </button>
           ) : null}
-          <button
-            type="button"
-            onClick={addLine}
-            className="ops-btn-secondary"
-          >
+          <button type="button" onClick={addLine} className="ops-btn-secondary">
             Add line
           </button>
           <button

@@ -2,13 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  AlertTriangle,
-  ArrowRight,
-  CalendarDays,
-  DollarSign,
-  Kanban,
-} from 'lucide-react';
+import { AlertTriangle, ArrowRight, CalendarDays, DollarSign, Kanban } from 'lucide-react';
 
 import { AiPageCopilot } from '@/components/ai/AiPageCopilot';
 import { CATEGORY_ACCENT, COLUMN_CATEGORY } from '@/lib/domain/pipeline/types';

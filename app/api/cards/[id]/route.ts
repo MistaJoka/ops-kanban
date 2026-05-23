@@ -35,10 +35,7 @@ const updateSchema = z.object({
     .optional(),
 });
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 
@@ -58,8 +55,9 @@ export async function GET(
       return jsonError('Card not found.', 404, 'NOT_FOUND');
     }
 
-    const payment =
-      invoice ? await getLatestPaymentForInvoice(context.client, context.organizationId, invoice.id) : null;
+    const payment = invoice
+      ? await getLatestPaymentForInvoice(context.client, context.organizationId, invoice.id)
+      : null;
 
     const integrations = await getCardIntegrationSummary(
       context.client,
@@ -77,10 +75,7 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 
@@ -106,10 +101,7 @@ export async function DELETE(
   }
 }
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 
@@ -124,7 +116,11 @@ export async function PATCH(
 
   const parsed = updateSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   try {

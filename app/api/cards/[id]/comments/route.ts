@@ -9,10 +9,7 @@ const commentSchema = z.object({
   body: z.string().trim().min(1, 'Comment is required'),
 });
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 
@@ -27,10 +24,7 @@ export async function GET(
   }
 }
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 
@@ -45,7 +39,11 @@ export async function POST(
 
   const parsed = commentSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   try {

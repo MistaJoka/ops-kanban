@@ -14,10 +14,7 @@ const customerSchema = z.object({
   notes: z.string().nullable().optional(),
 });
 
-export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 
@@ -36,7 +33,11 @@ export async function PUT(
 
   const parsed = customerSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   try {

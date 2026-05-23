@@ -20,15 +20,15 @@ UI (app/, components/)
 
 ## 2. Domain modules (add features by module)
 
-| Module | Path | Owns |
-|--------|------|------|
-| `pipeline` | `lib/domain/pipeline/` | Column rules, move validation, `state_key` |
-| `cards` | `lib/domain/cards/` | CRUD, archive, computed badges |
-| `customers` | `lib/domain/customers/` | Property/customer |
-| `money` | `lib/domain/money/` | Quotes, invoices, paid |
-| `activities` | `lib/domain/activities/` | Timeline logging |
-| `ai` | `lib/ai/` | Tools, risk, context (existing starter) |
-| `integrations` | `lib/integrations/{provider}/` | Adapters (Wave 1+) |
+| Module         | Path                           | Owns                                       |
+| -------------- | ------------------------------ | ------------------------------------------ |
+| `pipeline`     | `lib/domain/pipeline/`         | Column rules, move validation, `state_key` |
+| `cards`        | `lib/domain/cards/`            | CRUD, archive, computed badges             |
+| `customers`    | `lib/domain/customers/`        | Property/customer                          |
+| `money`        | `lib/domain/money/`            | Quotes, invoices, paid                     |
+| `activities`   | `lib/domain/activities/`       | Timeline logging                           |
+| `ai`           | `lib/ai/`                      | Tools, risk, context (existing starter)    |
+| `integrations` | `lib/integrations/{provider}/` | Adapters (Wave 1+)                         |
 
 New capability = new module or extend one module; avoid cross-import spaghetti.
 
@@ -38,7 +38,7 @@ New capability = new module or extend one module; avoid cross-import spaghetti.
 
 ```ts
 // lib/integrations/types.ts
-PaymentAdapter | CommsAdapter | SignAdapter
+PaymentAdapter | CommsAdapter | SignAdapter;
 ```
 
 Swap PayPal ↔ Stripe without touching `lib/domain/money/`.

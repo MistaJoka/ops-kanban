@@ -43,7 +43,9 @@ export function buildApprovalPreview(params: {
           input.dueDate ? `Due date → ${String(input.dueDate)}` : '',
           input.scheduledStart ? `Scheduled start → ${String(input.scheduledStart)}` : '',
           input.priority ? `Priority → ${String(input.priority)}` : '',
-          input.revenueValue !== undefined ? `Revenue → $${Number(input.revenueValue).toFixed(2)}` : '',
+          input.revenueValue !== undefined
+            ? `Revenue → $${Number(input.revenueValue).toFixed(2)}`
+            : '',
         ].filter(Boolean),
       };
 
@@ -116,7 +118,9 @@ export function buildApprovalPreview(params: {
     case 'archiveCard':
       return {
         summary: `Archive job “${cardTitle}”`,
-        details: input.reason ? [`Reason: ${String(input.reason)}`] : ['Job will move to Archived.'],
+        details: input.reason
+          ? [`Reason: ${String(input.reason)}`]
+          : ['Job will move to Archived.'],
       };
 
     case 'deleteCard':

@@ -17,10 +17,7 @@ const upsertSchema = z.object({
   taxRate: z.number().min(0).max(1).optional(),
 });
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 
@@ -39,7 +36,11 @@ export async function POST(
 
   const parsed = upsertSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   try {
@@ -64,10 +65,7 @@ export async function POST(
   }
 }
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 

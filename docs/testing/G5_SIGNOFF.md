@@ -10,22 +10,22 @@ See: `RELEASE_GATES.md`, `WEBHOOK_INTEGRATION_TESTS.md`
 
 ## DONE-9 criteria
 
-| # | Criterion | Status | Evidence |
-|---|-----------|--------|----------|
-| 9.1 | Attachments on card | ✅ | Supabase Storage `card-attachments`, Files tab |
-| 9.2 | DocuSign OR native sign complete | ✅ | Native portal approve + signatures row; DocuSign adapter + webhook |
-| 9.3 | Change orders | ✅ | `parent_card_id`, Overview “New change order” |
+| #   | Criterion                        | Status | Evidence                                                           |
+| --- | -------------------------------- | ------ | ------------------------------------------------------------------ |
+| 9.1 | Attachments on card              | ✅     | Supabase Storage `card-attachments`, Files tab                     |
+| 9.2 | DocuSign OR native sign complete | ✅     | Native portal approve + signatures row; DocuSign adapter + webhook |
+| 9.3 | Change orders                    | ✅     | `parent_card_id`, Overview “New change order”                      |
 
 ---
 
 ## Automated verification
 
-| Item | Status | Evidence |
-|------|--------|----------|
-| Typecheck + build | ✅ | `npm run typecheck`, `npm run build` |
-| WH-SIGN P0 | ✅ | `tests/integration/sign-webhook.test.ts` |
-| Change orders | ✅ | INT-DOC in sign-webhook test file |
-| Native signature audit | ✅ | Portal approve records `signatures` with name + IP |
+| Item                   | Status | Evidence                                           |
+| ---------------------- | ------ | -------------------------------------------------- |
+| Typecheck + build      | ✅     | `npm run typecheck`, `npm run build`               |
+| WH-SIGN P0             | ✅     | `tests/integration/sign-webhook.test.ts`           |
+| Change orders          | ✅     | INT-DOC in sign-webhook test file                  |
+| Native signature audit | ✅     | Portal approve records `signatures` with name + IP |
 
 ---
 

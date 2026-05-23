@@ -66,7 +66,9 @@ export function AppShell({
               >
                 <Menu className="size-4" strokeWidth={2.25} aria-hidden />
               </button>
-              <span className="truncate text-sm font-semibold text-[var(--text-primary)]">OpsBoard</span>
+              <span className="truncate text-sm font-semibold text-[var(--text-primary)]">
+                OpsBoard
+              </span>
             </div>
             {children}
           </div>

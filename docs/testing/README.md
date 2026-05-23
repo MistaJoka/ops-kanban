@@ -4,40 +4,41 @@ Modular test documentation for **Wave 0** (MVP core) with hooks for **Waves 1–
 
 ## How to use this pack
 
-| Goal | Run these modules |
-|------|-------------------|
-| Pre-PR smoke | `RELEASE_GATES.md` § PR gate + `UNIT_TESTS.md` § P0 |
-| Wave 0 MVP sign-off | `RELEASE_GATES.md` § MVP + `E2E_REGRESSION.md` + `UAT_SCRIPTS.md` |
-| Security audit | `SECURITY_RLS.md` + `THREAT_MODEL.md` + `RISK_MODEL.md` § security |
-| AI safety | `AI_TEST_PACK.md` + `FMEA.md` § AI |
-| Integration wave | `WEBHOOK_INTEGRATION_TESTS.md` + tagged cases in `REGRESSION_MATRIX.md` |
-| Full regression | **Master run** below |
+| Goal                | Run these modules                                                       |
+| ------------------- | ----------------------------------------------------------------------- |
+| Pre-PR smoke        | `RELEASE_GATES.md` § PR gate + `UNIT_TESTS.md` § P0                     |
+| Wave 0 MVP sign-off | `RELEASE_GATES.md` § MVP + `E2E_REGRESSION.md` + `UAT_SCRIPTS.md`       |
+| Security audit      | `SECURITY_RLS.md` + `THREAT_MODEL.md` + `RISK_MODEL.md` § security      |
+| AI safety           | `AI_TEST_PACK.md` + `FMEA.md` § AI                                      |
+| Integration wave    | `WEBHOOK_INTEGRATION_TESTS.md` + tagged cases in `REGRESSION_MATRIX.md` |
+| Full regression     | **Master run** below                                                    |
 
 ## Module index
 
-| ID | Document | Framework / focus | Tags |
-|----|----------|-------------------|------|
-| T00 | [TEST_STRATEGY.md](./TEST_STRATEGY.md) | ISTQB-aligned plan, scope, entry/exit | all |
-| T01 | [RISK_MODEL.md](./RISK_MODEL.md) | Risk register, RBT prioritization | all |
-| T02 | [FMEA.md](./FMEA.md) | Failure Mode & Effects Analysis | all |
-| T03 | [THREAT_MODEL.md](./THREAT_MODEL.md) | STRIDE + security test coupling | security |
-| T04 | [TEST_PYRAMID.md](./TEST_PYRAMID.md) | Unit / integration / E2E ratio | all |
-| T05 | [UNIT_TESTS.md](./UNIT_TESTS.md) | Pure logic, validators, classifiers | unit, P0 |
-| T06 | [INTEGRATION_TESTS.md](./INTEGRATION_TESTS.md) | API + Supabase + domain | integration |
-| T07 | [API_CONTRACTS.md](./API_CONTRACTS.md) | Route contracts, Zod, errors | api |
-| T08 | [SECURITY_RLS.md](./SECURITY_RLS.md) | RLS matrix, auth, tenancy | security, P0 |
-| T09 | [E2E_REGRESSION.md](./E2E_REGRESSION.md) | Playwright journeys, regression suites | e2e, P0 |
-| T10 | [AI_TEST_PACK.md](./AI_TEST_PACK.md) | Copilot tools, approval, injection | ai, P0 |
-| T11 | [WEBHOOK_INTEGRATION_TESTS.md](./WEBHOOK_INTEGRATION_TESTS.md) | PayPal, Twilio, DocuSign (waves) | wave1+ |
-| T12 | [UAT_SCRIPTS.md](./UAT_SCRIPTS.md) | Landscaping owner scripts | uat |
-| T13 | [PERFORMANCE.md](./PERFORMANCE.md) | Load, realtime, AI latency | perf |
-| T14 | [A11Y_MOBILE.md](./A11Y_MOBILE.md) | WCAG, responsive, field use | a11y |
-| T15 | [DATA_FIXTURES.md](./DATA_FIXTURES.md) | Seeds, factories, teardown | data |
-| T16 | [REGRESSION_MATRIX.md](./REGRESSION_MATRIX.md) | Suite × build × priority | regression |
-| T17 | [TRACEABILITY.md](./TRACEABILITY.md) | Req → risk → test ID | trace |
-| T18 | [EXPLORATORY_CHARTERS.md](./EXPLORATORY_CHARTERS.md) | Session-based exploration | explore |
-| T19 | [BUG_TRIAGE.md](./BUG_TRIAGE.md) | Severity, SLA, regression rules | process |
-| T20 | [RELEASE_GATES.md](./RELEASE_GATES.md) | Go/no-go checklists | gate |
+| ID  | Document                                                       | Framework / focus                      | Tags         |
+| --- | -------------------------------------------------------------- | -------------------------------------- | ------------ |
+| T00 | [TEST_STRATEGY.md](./TEST_STRATEGY.md)                         | ISTQB-aligned plan, scope, entry/exit  | all          |
+| T01 | [RISK_MODEL.md](./RISK_MODEL.md)                               | Risk register, RBT prioritization      | all          |
+| T02 | [FMEA.md](./FMEA.md)                                           | Failure Mode & Effects Analysis        | all          |
+| T03 | [THREAT_MODEL.md](./THREAT_MODEL.md)                           | STRIDE + security test coupling        | security     |
+| T04 | [TEST_PYRAMID.md](./TEST_PYRAMID.md)                           | Unit / integration / E2E ratio         | all          |
+| T05 | [UNIT_TESTS.md](./UNIT_TESTS.md)                               | Pure logic, validators, classifiers    | unit, P0     |
+| T06 | [INTEGRATION_TESTS.md](./INTEGRATION_TESTS.md)                 | API + Supabase + domain                | integration  |
+| T07 | [API_CONTRACTS.md](./API_CONTRACTS.md)                         | Route contracts, Zod, errors           | api          |
+| T08 | [SECURITY_RLS.md](./SECURITY_RLS.md)                           | RLS matrix, auth, tenancy              | security, P0 |
+| T09 | [E2E_REGRESSION.md](./E2E_REGRESSION.md)                       | Playwright journeys, regression suites | e2e, P0      |
+| T10 | [AI_TEST_PACK.md](./AI_TEST_PACK.md)                           | Copilot tools, approval, injection     | ai, P0       |
+| T11 | [WEBHOOK_INTEGRATION_TESTS.md](./WEBHOOK_INTEGRATION_TESTS.md) | PayPal, Twilio, DocuSign (waves)       | wave1+       |
+| T12 | [UAT_SCRIPTS.md](./UAT_SCRIPTS.md)                             | Landscaping owner scripts              | uat          |
+| T13 | [PERFORMANCE.md](./PERFORMANCE.md)                             | Load, realtime, AI latency             | perf         |
+| T14 | [A11Y_MOBILE.md](./A11Y_MOBILE.md)                             | WCAG, responsive, field use            | a11y         |
+| T15 | [DATA_FIXTURES.md](./DATA_FIXTURES.md)                         | Seeds, factories, teardown             | data         |
+| T16 | [REGRESSION_MATRIX.md](./REGRESSION_MATRIX.md)                 | Suite × build × priority               | regression   |
+| T17 | [TRACEABILITY.md](./TRACEABILITY.md)                           | Req → risk → test ID                   | trace        |
+| T18 | [EXPLORATORY_CHARTERS.md](./EXPLORATORY_CHARTERS.md)           | Session-based exploration              | explore      |
+| T19 | [BUG_TRIAGE.md](./BUG_TRIAGE.md)                               | Severity, SLA, regression rules        | process      |
+| T20 | [RELEASE_GATES.md](./RELEASE_GATES.md)                         | Go/no-go checklists                    | gate         |
+| T22 | [AI_SLOP_DETECTION.md](./AI_SLOP_DETECTION.md)                 | Five-layer slop + suspicion scan       | slop, gate   |
 
 ## Master regression run (together)
 
@@ -93,14 +94,14 @@ Mapping: [TRACEABILITY.md](./TRACEABILITY.md).
 
 ## CI mapping (when wired)
 
-| Job | Modules |
-|-----|---------|
-| `ci:unit` | T05 |
-| `ci:integration` | T06, T07, T08 |
-| `ci:e2e` | T09 (smoke on PR, full on main) |
-| `ci:ai` | T10 |
-| `ci:security` | T08, T03 |
-| `ci:release` | T20 gate |
+| Job              | Modules                         |
+| ---------------- | ------------------------------- |
+| `ci:unit`        | T05                             |
+| `ci:integration` | T06, T07, T08                   |
+| `ci:e2e`         | T09 (smoke on PR, full on main) |
+| `ci:ai`          | T10                             |
+| `ci:security`    | T08, T03                        |
+| `ci:release`     | T20 gate                        |
 
 ## CSS / dev cache (T21)
 

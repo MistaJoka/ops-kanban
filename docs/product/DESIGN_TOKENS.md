@@ -44,24 +44,24 @@ Canonical CSS variables for Tailwind / `globals.css`. Source: `CARD_DESIGN.md`, 
 
 ## Typography
 
-| Token | Font stack |
-|-------|------------|
-| `--font-sans` | `'DM Sans', system-ui, sans-serif` |
-| `--font-display` | `'Fraunces', Georgia, serif` |
-| `--font-mono` | `'IBM Plex Mono', monospace` |
+| Token            | Font stack                         |
+| ---------------- | ---------------------------------- |
+| `--font-sans`    | `'DM Sans', system-ui, sans-serif` |
+| `--font-display` | `'Fraunces', Georgia, serif`       |
+| `--font-mono`    | `'IBM Plex Mono', monospace`       |
 
 Load via `next/font/google` in root layout.
 
 ## Spacing & layout
 
-| Token | Value | Use |
-|-------|-------|-----|
-| `--column-width` | 300px | Kanban column |
-| `--sidebar-expanded` | 240px | Nav |
-| `--sidebar-collapsed` | 64px | Nav rail |
-| `--panel-width` | 720px | Card slide-over |
-| `--ai-dock-collapsed` | 48px | |
-| `--ai-dock-expanded` | 220px | |
+| Token                 | Value | Use             |
+| --------------------- | ----- | --------------- |
+| `--column-width`      | 300px | Kanban column   |
+| `--sidebar-expanded`  | 240px | Nav             |
+| `--sidebar-collapsed` | 64px  | Nav rail        |
+| `--panel-width`       | 720px | Card slide-over |
+| `--ai-dock-collapsed` | 48px  |                 |
+| `--ai-dock-expanded`  | 220px |                 |
 
 ## Radii & shadow
 

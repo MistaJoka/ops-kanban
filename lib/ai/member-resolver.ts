@@ -48,10 +48,7 @@ export function searchMembersByQuery(
 export function formatMemberDisambiguation(matches: MemberMatch[]): string {
   const options = matches
     .slice(0, 3)
-    .map(
-      (match, index) =>
-        `${index + 1}. ${match.fullName ?? 'Team member'} (${match.role})`,
-    )
+    .map((match, index) => `${index + 1}. ${match.fullName ?? 'Team member'} (${match.role})`)
     .join('\n');
 
   return `I found multiple team members. Which one?\n${options}`;

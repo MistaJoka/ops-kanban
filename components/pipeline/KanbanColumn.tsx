@@ -62,8 +62,7 @@ export const KanbanColumn = memo(function KanbanColumn({
   const selectableIds = selectableCards.map((card) => card.id);
   const selectedInColumn = selectableIds.filter((id) => selectedCardIds?.has(id) ?? false);
   const showBulkSelect = selectionEnabled && selectedInColumn.length > 0;
-  const allSelected =
-    selectableIds.length > 0 && selectedInColumn.length === selectableIds.length;
+  const allSelected = selectableIds.length > 0 && selectedInColumn.length === selectableIds.length;
   const someSelected = selectedInColumn.length > 0 && !allSelected;
 
   const { setNodeRef, isOver } = useDroppable({
@@ -109,7 +108,7 @@ export const KanbanColumn = memo(function KanbanColumn({
 
       <div
         ref={setNodeRef}
-        className="flex flex-1 flex-col gap-[var(--card-stack-gap)] overflow-y-auto p-2.5"
+        className="flex min-h-0 flex-1 flex-col gap-[var(--card-stack-gap)] overflow-y-auto p-2.5"
       >
         {cards.length === 0 ? (
           <div

@@ -30,7 +30,11 @@ export async function POST(request: Request) {
 
   const parsed = createCardSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   try {

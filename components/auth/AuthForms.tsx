@@ -82,12 +82,7 @@ export function SignUpForm() {
   return (
     <AuthForm action={signUpAction} submitLabel="Create account">
       <Field id="fullName" label="Full name" name="fullName" autoComplete="name" />
-      <Field
-        id="organizationName"
-        label="Business name"
-        name="organizationName"
-        required={false}
-      />
+      <Field id="organizationName" label="Business name" name="organizationName" required={false} />
       <Field id="email" label="Email" name="email" type="email" autoComplete="email" />
       <Field
         id="password"

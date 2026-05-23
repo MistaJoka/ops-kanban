@@ -17,9 +17,7 @@ export function ScopeTab({
       <Field label="Job type">
         <select
           value={card.jobType ?? ''}
-          onChange={(event) =>
-            void onPatch({ jobType: event.target.value || null })
-          }
+          onChange={(event) => void onPatch({ jobType: event.target.value || null })}
           className="field-input"
           disabled={saving}
         >

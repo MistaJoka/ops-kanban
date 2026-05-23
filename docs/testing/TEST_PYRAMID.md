@@ -14,34 +14,34 @@
 
 ## 2. What belongs where
 
-| Level | Includes | Excludes |
-|-------|----------|----------|
-| **Unit** | `classifyToolRisk`, column validation, title helpers, money sum | Network, DB |
-| **Integration** | API routes, Supabase with test DB, webhook processors (mocked provider) | Full browser |
-| **E2E** | Playwright: signup, pipeline, card tabs, AI approval UI | Unit logic duplicates |
-| **UAT** | Human scripts, real staging feel | CI blocking optional |
-| **Exploratory** | Charters T18 | Not automated |
+| Level           | Includes                                                                | Excludes              |
+| --------------- | ----------------------------------------------------------------------- | --------------------- |
+| **Unit**        | `classifyToolRisk`, column validation, title helpers, money sum         | Network, DB           |
+| **Integration** | API routes, Supabase with test DB, webhook processors (mocked provider) | Full browser          |
+| **E2E**         | Playwright: signup, pipeline, card tabs, AI approval UI                 | Unit logic duplicates |
+| **UAT**         | Human scripts, real staging feel                                        | CI blocking optional  |
+| **Exploratory** | Charters T18                                                            | Not automated         |
 
 ## 3. Tooling recommendations
 
-| Level | Tool |
-|-------|------|
-| Unit | Vitest |
-| Integration | Vitest + Supabase local or branch |
-| E2E | Playwright |
-| API contracts | Vitest + Zod assert |
-| Load | k6 (T13, post-MVP gate) |
-| A11y | axe-playwright |
+| Level         | Tool                              |
+| ------------- | --------------------------------- |
+| Unit          | Vitest                            |
+| Integration   | Vitest + Supabase local or branch |
+| E2E           | Playwright                        |
+| API contracts | Vitest + Zod assert               |
+| Load          | k6 (T13, post-MVP gate)           |
+| A11y          | axe-playwright                    |
 
 ## 4. Coverage targets (Wave 0)
 
-| Area | Line/branch target |
-|------|-------------------|
-| `lib/ai/risk-classifier` | 100% |
-| `lib/ai/tool-executor` | 95% |
-| Column move validation | 100% |
-| API routes | 85% |
-| UI components | 60% (critical paths E2E) |
+| Area                     | Line/branch target       |
+| ------------------------ | ------------------------ |
+| `lib/ai/risk-classifier` | 100%                     |
+| `lib/ai/tool-executor`   | 95%                      |
+| Column move validation   | 100%                     |
+| API routes               | 85%                      |
+| UI components            | 60% (critical paths E2E) |
 
 ## 5. Anti-patterns
 

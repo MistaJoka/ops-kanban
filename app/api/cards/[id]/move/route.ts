@@ -9,10 +9,7 @@ const moveSchema = z.object({
   reason: z.string().trim().optional(),
 });
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
 
   if (!isHandlerContext(context)) {
@@ -30,7 +27,11 @@ export async function POST(
 
   const parsed = moveSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   try {

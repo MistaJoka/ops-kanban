@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { assertOrgScope } from '@/lib/ai/command-handler';
 import { buildApprovalPreview } from '@/lib/ai/approval-preview';
-import { searchCardsByQuery, formatDisambiguationMessage, resolveCardProposalInput } from '@/lib/ai/card-resolver';
+import {
+  searchCardsByQuery,
+  formatDisambiguationMessage,
+  resolveCardProposalInput,
+} from '@/lib/ai/card-resolver';
 import { parseAiCommandBody } from '@/lib/ai/command-schema';
 import { buildDailyBrief, formatDailyBrief } from '@/lib/ai/daily-brief';
 import { isBlockedPrompt, routeCommand, validateToolProposal } from '@/lib/ai/intent-router';

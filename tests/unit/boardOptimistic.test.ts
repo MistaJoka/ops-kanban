@@ -74,10 +74,7 @@ describe('boardOptimistic', () => {
 
   it('replaces temp cards and sorts by position', () => {
     const temp = tempCardId();
-    const cards = [
-      sampleCard({ id: temp, position: 2 }),
-      sampleCard({ id: 'real', position: 0 }),
-    ];
+    const cards = [sampleCard({ id: temp, position: 2 }), sampleCard({ id: 'real', position: 0 })];
 
     const withoutTemp = removeBoardCardById(cards, temp);
     const merged = replaceBoardCard(withoutTemp, 'real', sampleCard({ id: 'real', position: 9 }));

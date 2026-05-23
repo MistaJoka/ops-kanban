@@ -10,10 +10,7 @@ export type LogActivityInput = {
   metadata?: Record<string, unknown>;
 };
 
-export async function logActivity(
-  client: SupabaseClient,
-  input: LogActivityInput,
-): Promise<void> {
+export async function logActivity(client: SupabaseClient, input: LogActivityInput): Promise<void> {
   const { error } = await client.from('activities').insert({
     organization_id: input.organizationId,
     actor_id: input.actorId,

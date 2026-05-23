@@ -47,10 +47,7 @@ type CardRow = {
   customer_id: string | null;
   assigned_to: string | null;
   columns: { state_key: string } | { state_key: string }[] | null;
-  profiles:
-    | { full_name: string | null }
-    | { full_name: string | null }[]
-    | null;
+  profiles: { full_name: string | null } | { full_name: string | null }[] | null;
   customers:
     | { name: string; address: string | null }
     | { name: string; address: string | null }[]

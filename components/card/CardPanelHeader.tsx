@@ -49,12 +49,7 @@ export function CardPanelHeader({
       style={{ borderLeft: `4px solid ${CATEGORY_ACCENT[card.columnCategory]}` }}
     >
       <div className="flex items-start gap-3">
-        <button
-          type="button"
-          onClick={onClose}
-          className="ops-icon-btn"
-          aria-label="Close panel"
-        >
+        <button type="button" onClick={onClose} className="ops-icon-btn" aria-label="Close panel">
           <ChevronLeft className="size-4" strokeWidth={2.25} />
         </button>
         <div className="min-w-0 flex-1">
@@ -77,7 +72,10 @@ export function CardPanelHeader({
           {currentColumn ? (
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <span
-                className={cn('ops-panel-category-pill', `ops-panel-category-pill--${card.columnCategory}`)}
+                className={cn(
+                  'ops-panel-category-pill',
+                  `ops-panel-category-pill--${card.columnCategory}`,
+                )}
               >
                 {card.columnCategory}
               </span>

@@ -18,8 +18,7 @@ export async function GET(request: Request) {
   if (!isHandlerContext(context)) return context;
 
   const channel = new URL(request.url).searchParams.get('channel');
-  const parsedChannel =
-    channel === 'sms' || channel === 'email' ? channel : undefined;
+  const parsedChannel = channel === 'sms' || channel === 'email' ? channel : undefined;
 
   try {
     const templates = await listMessageTemplates(
@@ -51,11 +50,19 @@ export async function POST(request: Request) {
 
   const parsed = createSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   try {
-    const template = await createMessageTemplate(context.client, context.organizationId, parsed.data);
+    const template = await createMessageTemplate(
+      context.client,
+      context.organizationId,
+      parsed.data,
+    );
     return jsonData(template);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to create template.';

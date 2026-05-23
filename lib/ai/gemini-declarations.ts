@@ -49,12 +49,14 @@ const ALL_DECLARATIONS: FunctionDeclaration[] = [
   },
   {
     name: 'getDailyBrief',
-    description: 'Morning operations briefing: today’s schedule, overdue, stalled, and top actions.',
+    description:
+      'Morning operations briefing: today’s schedule, overdue, stalled, and top actions.',
     parameters: { type: OBJECT, properties: {} },
   },
   {
     name: 'searchCards',
-    description: 'Find jobs by title, customer name, or address. Use before acting on an ambiguous job reference.',
+    description:
+      'Find jobs by title, customer name, or address. Use before acting on an ambiguous job reference.',
     parameters: {
       type: OBJECT,
       properties: {
@@ -81,7 +83,10 @@ const ALL_DECLARATIONS: FunctionDeclaration[] = [
       properties: {
         title: { type: STRING },
         description: { type: STRING },
-        columnStateKey: { type: STRING, description: 'Pipeline state such as inquiry, qualified, estimating' },
+        columnStateKey: {
+          type: STRING,
+          description: 'Pipeline state such as inquiry, qualified, estimating',
+        },
         revenueValue: { type: NUMBER },
         nextAction: { type: STRING },
       },
@@ -112,7 +117,10 @@ const ALL_DECLARATIONS: FunctionDeclaration[] = [
       type: OBJECT,
       properties: {
         cardId: { type: STRING },
-        columnStateKey: { type: STRING, description: 'Target state such as scheduled, complete, blocked' },
+        columnStateKey: {
+          type: STRING,
+          description: 'Target state such as scheduled, complete, blocked',
+        },
         reason: { type: STRING },
       },
       required: ['cardId', 'columnStateKey'],
@@ -138,7 +146,10 @@ const ALL_DECLARATIONS: FunctionDeclaration[] = [
       type: OBJECT,
       properties: {
         cardId: { type: STRING },
-        scopeNotes: { type: STRING, description: 'Site visit or scope notes to parse into line items' },
+        scopeNotes: {
+          type: STRING,
+          description: 'Site visit or scope notes to parse into line items',
+        },
         lineItems: {
           type: ARRAY,
           description: 'Optional pre-built line items if already structured',

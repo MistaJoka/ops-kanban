@@ -27,10 +27,7 @@ export function pickActiveGroup(
   return best?.key ?? null;
 }
 
-export function nextGroupKey(
-  current: PipelineGroupKey,
-  direction: 1 | -1,
-): PipelineGroupKey {
+export function nextGroupKey(current: PipelineGroupKey, direction: 1 | -1): PipelineGroupKey {
   const index = GROUP_ORDER.indexOf(current);
   const nextIndex = Math.max(0, Math.min(GROUP_ORDER.length - 1, index + direction));
   return GROUP_ORDER[nextIndex] ?? current;

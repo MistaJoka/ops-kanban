@@ -55,7 +55,9 @@ export async function setOrganizationPipelineMode(
   }
 
   const settings =
-    org.settings && typeof org.settings === 'object' ? { ...(org.settings as Record<string, unknown>) } : {};
+    org.settings && typeof org.settings === 'object'
+      ? { ...(org.settings as Record<string, unknown>) }
+      : {};
 
   settings.pipelineMode = pipelineMode;
 

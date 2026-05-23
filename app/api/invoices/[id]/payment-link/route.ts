@@ -4,10 +4,7 @@ import { createInvoicePaymentLink } from '@/lib/domain/integrations/payments';
 import { InvoiceError } from '@/lib/domain/money/invoices';
 import { isStripeConfigured } from '@/lib/integrations/stripe/adapter';
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 
@@ -33,8 +30,7 @@ export async function POST(
     return jsonData(payment);
   } catch (error) {
     if (error instanceof InvoiceError) {
-      const status =
-        error.code === 'NOT_FOUND' ? 404 : error.code === 'FORBIDDEN' ? 403 : 400;
+      const status = error.code === 'NOT_FOUND' ? 404 : error.code === 'FORBIDDEN' ? 403 : 400;
       return jsonError(error.message, status, error.code);
     }
 

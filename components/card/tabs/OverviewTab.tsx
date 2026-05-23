@@ -54,7 +54,9 @@ export function OverviewTab({
     (!quote || quote.total <= 0);
 
   const showInvoiceCta =
-    canManage && ['complete', 'on_site', 'invoice_prep', 'invoice_sent'].includes(card.stateKey) && !invoice;
+    canManage &&
+    ['complete', 'on_site', 'invoice_prep', 'invoice_sent'].includes(card.stateKey) &&
+    !invoice;
 
   return (
     <div className="space-y-4">
@@ -127,9 +129,7 @@ export function OverviewTab({
       <Field label="Assignee">
         <select
           value={card.assignedTo ?? ''}
-          onChange={(event) =>
-            void onPatch({ assignedTo: event.target.value || null })
-          }
+          onChange={(event) => void onPatch({ assignedTo: event.target.value || null })}
           className="field-input"
           disabled={saving}
         >

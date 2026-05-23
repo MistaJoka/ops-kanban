@@ -11,10 +11,8 @@ type IntegrationStatus = {
 
 function needsIntegrationsAttention(status: IntegrationStatus | null): boolean {
   if (!status) return false;
-  const stripeNeeds =
-    status.stripe.configured && status.stripe.status !== 'active';
-  const twilioNeeds =
-    status.twilio.configured && status.twilio.status !== 'active';
+  const stripeNeeds = status.stripe.configured && status.stripe.status !== 'active';
+  const twilioNeeds = status.twilio.configured && status.twilio.status !== 'active';
   return stripeNeeds || twilioNeeds;
 }
 

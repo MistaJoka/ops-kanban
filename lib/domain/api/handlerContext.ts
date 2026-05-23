@@ -45,7 +45,10 @@ export async function getHandlerContext(): Promise<HandlerContext | NextResponse
   const membership = await getUserOrganization(supabase, user.id);
 
   if (!membership) {
-    return NextResponse.json({ error: 'Organization not found', code: 'FORBIDDEN' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Organization not found', code: 'FORBIDDEN' },
+      { status: 403 },
+    );
   }
 
   return {
@@ -56,8 +59,6 @@ export async function getHandlerContext(): Promise<HandlerContext | NextResponse
   };
 }
 
-export function isHandlerContext(
-  value: HandlerContext | NextResponse,
-): value is HandlerContext {
+export function isHandlerContext(value: HandlerContext | NextResponse): value is HandlerContext {
   return !(value instanceof NextResponse);
 }

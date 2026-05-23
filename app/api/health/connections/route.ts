@@ -102,7 +102,9 @@ async function runChecks(): Promise<{ ok: boolean; checks: CheckResult[] }> {
     checks.push({
       name: 'gemini.api',
       ok: text.includes('pong'),
-      detail: text.includes('pong') ? 'Model responded to ping' : `Unexpected response: ${text.slice(0, 80)}`,
+      detail: text.includes('pong')
+        ? 'Model responded to ping'
+        : `Unexpected response: ${text.slice(0, 80)}`,
       error: text.includes('pong') ? undefined : 'Gemini response did not contain pong',
     });
   } catch (error) {

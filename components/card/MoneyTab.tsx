@@ -65,7 +65,10 @@ export function MoneyTab({
               value={`$${invoice.balanceDue.toFixed(2)}`}
               highlight={invoice.balanceDue > 0}
             />
-            <Stat label="Due date" value={invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString() : '—'} />
+            <Stat
+              label="Due date"
+              value={invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString() : '—'}
+            />
           </div>
 
           {payment?.paymentUrl && invoice.status !== 'paid' ? (

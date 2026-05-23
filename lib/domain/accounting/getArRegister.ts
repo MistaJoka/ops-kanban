@@ -28,9 +28,7 @@ export async function getArRegister(
 ): Promise<ArRegisterRow[]> {
   const { data, error } = await client
     .from('invoices')
-    .select(
-      'id, card_id, status, total, balance_due, due_date, cards(title, customers(name))',
-    )
+    .select('id, card_id, status, total, balance_due, due_date, cards(title, customers(name))')
     .eq('organization_id', organizationId)
     .neq('status', 'paid')
     .neq('status', 'void')

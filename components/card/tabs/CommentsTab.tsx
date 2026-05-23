@@ -22,10 +22,7 @@ export function CommentsTab({
           <p className="text-sm text-[var(--text-secondary)]">No comments yet.</p>
         ) : (
           comments.map((comment) => (
-            <div
-              key={comment.id}
-              className="ops-section-card bg-[var(--surface-rail)] p-3"
-            >
+            <div key={comment.id} className="ops-section-card bg-[var(--surface-rail)] p-3">
               <p className="text-sm text-[var(--text-primary)]">{comment.body}</p>
               <p className="mt-2 text-xs text-[var(--text-secondary)]">
                 {comment.authorName ?? 'Team'} · {new Date(comment.createdAt).toLocaleString()}

@@ -77,11 +77,7 @@ export default function SettingsOverviewPage() {
           }
 
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="ops-settings-overview-card group"
-            >
+            <Link key={item.href} href={item.href} className="ops-settings-overview-card group">
               <span className="ops-settings-overview-card__icon">
                 <Icon className="size-5" strokeWidth={2} />
               </span>

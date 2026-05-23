@@ -9,12 +9,12 @@ Nav: visible with “Soon” optional — MVP may ship as **read-only** summary.
 
 ## Widgets (MVP)
 
-| Widget | Query | Empty state |
-|--------|-------|-------------|
-| Scheduled today | cards where `scheduled_start` is today, not archived | “No jobs scheduled today.” |
-| Overdue | `due_date < today` and not archived | “No overdue follow-ups.” |
-| Unpaid balance | sum `invoices.balance_due` for org | “$0 outstanding” (real zero) |
-| Pipeline snapshot | count per column (compact) | Link to Job Pipeline |
+| Widget            | Query                                                | Empty state                  |
+| ----------------- | ---------------------------------------------------- | ---------------------------- |
+| Scheduled today   | cards where `scheduled_start` is today, not archived | “No jobs scheduled today.”   |
+| Overdue           | `due_date < today` and not archived                  | “No overdue follow-ups.”     |
+| Unpaid balance    | sum `invoices.balance_due` for org                   | “$0 outstanding” (real zero) |
+| Pipeline snapshot | count per column (compact)                           | Link to Job Pipeline         |
 
 **No** fake revenue charts or sample percentages.
 

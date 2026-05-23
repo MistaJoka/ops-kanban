@@ -21,7 +21,9 @@ describe('UNIT-PIPE full pipeline mode', () => {
     expect(FULL_STATE_ORDER).toContain('scheduling');
     expect(FULL_STATE_ORDER).toContain('paid');
     expect(mapCompactArchivedToFull({ balanceDue: 0, invoicePaid: true })).toBe('paid');
-    expect(mapCompactArchivedToFull({ balanceDue: 250, invoicePaid: false })).toBe('payment_pending');
+    expect(mapCompactArchivedToFull({ balanceDue: 250, invoicePaid: false })).toBe(
+      'payment_pending',
+    );
   });
 
   it('UNIT-PIPE-008: scheduling column requires date in full mode', () => {

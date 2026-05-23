@@ -9,6 +9,8 @@
 
 - [ ] PR smoke tests pass (`REGRESSION_MATRIX.md`)
 - [ ] `npm run check:css-health` pass when testing UI locally (or after `npm run dev:clean`)
+- [ ] `npm run check:slop-health` pass (or full `npm run check:slop` before merge)
+- [ ] Suspicion scan completed per `AI_SLOP_DETECTION.md` (attest in PR description if AI-assisted)
 - [ ] No new S1/S2 introduced
 - [ ] Lint + typecheck pass
 - [ ] Test ID referenced in PR if fixing bug
@@ -74,7 +76,7 @@
 All G2 plus:
 
 - [ ] WH-PAY P0 pass on staging sandbox
-- [ ] FMEA F-W1-* mitigated
+- [ ] FMEA F-W1-\* mitigated
 - [ ] Manual pay still works (fallback)
 - [ ] Finance sign-off on one real $1 test transaction
 

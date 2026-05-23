@@ -70,11 +70,7 @@ export function BoardSyncStatusIndicator({
       </span>
       <span className="ops-sync-status__label">{label}</span>
       {status.phase === 'misaligned' && onRetry ? (
-        <button
-          type="button"
-          className="ops-sync-status__retry"
-          onClick={onRetry}
-        >
+        <button type="button" className="ops-sync-status__retry" onClick={onRetry}>
           Retry
         </button>
       ) : null}

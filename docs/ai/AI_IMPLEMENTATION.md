@@ -43,13 +43,13 @@ Loader must return small packages — see `AI_UTILIZATION.md` §4.
 
 ## Modes
 
-| Mode | Purpose |
-|------|---------|
-| Ask | Answer from context |
-| Analyze | Rank problems, daily brief |
-| Act | Tools that mutate data |
-| Draft | Estimates, notes, checklists |
-| Automate | Post-MVP suggestions |
+| Mode     | Purpose                      |
+| -------- | ---------------------------- |
+| Ask      | Answer from context          |
+| Analyze  | Rank problems, daily brief   |
+| Act      | Tools that mutate data       |
+| Draft    | Estimates, notes, checklists |
+| Automate | Post-MVP suggestions         |
 
 ## Execution pipeline
 
@@ -69,12 +69,12 @@ POST /api/ai/command
 
 Set `"stream": true` on the command body to receive `text/event-stream` instead of JSON.
 
-| Event | Payload |
-|-------|---------|
+| Event    | Payload                                                                                 |
+| -------- | --------------------------------------------------------------------------------------- |
 | `status` | `{ phase: 'context' \| 'thinking' \| 'tool' \| 'executing' \| 'polishing', toolName? }` |
-| `delta` | `{ text: string }` — token/chunk from Gemini or polished tool output |
-| `result` | `{ data: CommandResult }` — same shape as JSON response |
-| `error` | `{ message, code? }` |
+| `delta`  | `{ text: string }` — token/chunk from Gemini or polished tool output                    |
+| `result` | `{ data: CommandResult }` — same shape as JSON response                                 |
+| `error`  | `{ message, code? }`                                                                    |
 
 Client helper: `lib/ai/ai-command-client.ts` (`submitAiCommand`). `AiDock` streams by default.
 
@@ -82,11 +82,11 @@ Client helper: `lib/ai/ai-command-client.ts` (`submitAiCommand`). `AiDock` strea
 
 ## Risk
 
-| Level | Behavior |
-|-------|----------|
-| low | Auto-run |
-| medium | Preview + approve |
-| high | Preview + explicit confirm |
+| Level  | Behavior                   |
+| ------ | -------------------------- |
+| low    | Auto-run                   |
+| medium | Preview + approve          |
+| high   | Preview + explicit confirm |
 
 See `risk-classifier.ts`.
 

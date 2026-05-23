@@ -174,10 +174,7 @@ async function processAiCommand(params: {
       emit: params.emit,
     });
 
-    if (
-      executed.status === 'approval_required' &&
-      agentResult.assistantMessage
-    ) {
+    if (executed.status === 'approval_required' && agentResult.assistantMessage) {
       return { ...executed, message: agentResult.assistantMessage };
     }
 

@@ -63,9 +63,7 @@ export function MovePromptModal({
               disabled={!value.trim()}
               onClick={() =>
                 onConfirm(
-                  type === 'schedule' && value
-                    ? new Date(value).toISOString()
-                    : value.trim(),
+                  type === 'schedule' && value ? new Date(value).toISOString() : value.trim(),
                 )
               }
               className="ops-btn-primary"

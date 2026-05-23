@@ -3,10 +3,7 @@ import { getHandlerContext, isHandlerContext } from '@/lib/domain/api/handlerCon
 import { canManageMoney } from '@/lib/domain/auth/roles';
 import { generateContractCard } from '@/lib/domain/contracts/contracts';
 
-export async function POST(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 

@@ -2,7 +2,12 @@ import 'server-only';
 
 import { FunctionCallingMode } from '@google/generative-ai';
 
-import type { AiMode, BoardAiContext, CardAiContext, LoadedAiContext } from '@/lib/ai/context-loader';
+import type {
+  AiMode,
+  BoardAiContext,
+  CardAiContext,
+  LoadedAiContext,
+} from '@/lib/ai/context-loader';
 import type { ConversationTurn } from '@/lib/ai/conversation';
 import { getGeminiDeclarationsForRole } from '@/lib/ai/gemini-declarations';
 import { getGeminiModel } from '@/lib/ai/gemini-client';
@@ -17,7 +22,8 @@ export type GeminiAgentResult =
 
 const MODE_GUIDANCE: Record<AiMode, string> = {
   ask: 'Answer from context only. Prefer read-only tools when helpful.',
-  analyze: 'Rank problems by urgency and revenue. Use getDailyBrief, getOverdueCards, getStalledCards.',
+  analyze:
+    'Rank problems by urgency and revenue. Use getDailyBrief, getOverdueCards, getStalledCards.',
   act: 'Select one write tool when the user wants to change data. Always resolve cardId first.',
   draft: 'Prepare estimates, notes, or comms drafts for human review.',
   automate: 'Suggest repeatable rules; do not execute automations directly.',

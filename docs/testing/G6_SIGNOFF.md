@@ -10,22 +10,22 @@ See: `RELEASE_GATES.md`, `PLATFORM_CAPABILITIES.md` § Wave 4
 
 ## DONE-10 criteria
 
-| # | Criterion | Status | Evidence |
-|---|-----------|--------|----------|
-| 10.1 | Full portal | ✅ | `/p/[token]` schedule + estimate + invoice/pay sections; portal payment link API |
-| 10.2 | QuickBooks sync | ✅ | QB adapter, `accounting_sync_log`, Money tab sync, Settings toggle |
-| 10.3 | Automations + reports | ✅ | Column automations on move; `/reports` + `/api/reports`; Settings automations |
-| 10.4 | One business end-to-end without external CRM | ✅ | Portal → approve → invoice → pay → archive; contracts → card generation |
+| #    | Criterion                                    | Status | Evidence                                                                         |
+| ---- | -------------------------------------------- | ------ | -------------------------------------------------------------------------------- |
+| 10.1 | Full portal                                  | ✅     | `/p/[token]` schedule + estimate + invoice/pay sections; portal payment link API |
+| 10.2 | QuickBooks sync                              | ✅     | QB adapter, `accounting_sync_log`, Money tab sync, Settings toggle               |
+| 10.3 | Automations + reports                        | ✅     | Column automations on move; `/reports` + `/api/reports`; Settings automations    |
+| 10.4 | One business end-to-end without external CRM | ✅     | Portal → approve → invoice → pay → archive; contracts → card generation          |
 
 ---
 
 ## Automated verification
 
-| Item | Status | Evidence |
-|------|--------|----------|
-| Typecheck + build | ✅ | `npm run typecheck`, `npm run build` |
-| INT-W4 P0 | ✅ | `tests/integration/wave4.test.ts` |
-| RLS Wave 4 tables | ✅ | `tests/integration/rls-matrix.test.ts` (when 013–014 applied) |
+| Item              | Status | Evidence                                                      |
+| ----------------- | ------ | ------------------------------------------------------------- |
+| Typecheck + build | ✅     | `npm run typecheck`, `npm run build`                          |
+| INT-W4 P0         | ✅     | `tests/integration/wave4.test.ts`                             |
+| RLS Wave 4 tables | ✅     | `tests/integration/rls-matrix.test.ts` (when 013–014 applied) |
 
 ---
 

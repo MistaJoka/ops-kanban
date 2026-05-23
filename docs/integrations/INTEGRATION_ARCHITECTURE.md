@@ -71,9 +71,9 @@ Processor runs idempotent: if `external_id` exists and `processed`, skip.
 
 **Replaces QuickBooks sync.** No external accounting API.
 
-| Event | Ledger entry | Hook |
-|-------|--------------|------|
-| Invoice created | `invoice_issued` | `createInvoiceDraft` |
+| Event           | Ledger entry       | Hook                                             |
+| --------------- | ------------------ | ------------------------------------------------ |
+| Invoice created | `invoice_issued`   | `createInvoiceDraft`                             |
 | Payment settled | `payment_received` | `settleInvoicePayment` (manual + Stripe webhook) |
 
 Table: `accounting_transactions` — org-scoped, RLS, CSV export via `/api/accounting/export`.

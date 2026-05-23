@@ -43,7 +43,9 @@ test.describe('Suite R0 — Wave 0 critical path @wave0', () => {
     await createJob(page, title);
     await openJobPanel(page, title);
     await saveProperty(page, { name: 'Rivera', address: '142 Oak Lane' });
-    await expect(page.getByRole('dialog', { name: 'Job detail panel' })).toContainText('142 Oak Lane');
+    await expect(page.getByRole('dialog', { name: 'Job detail panel' })).toContainText(
+      '142 Oak Lane',
+    );
   });
 
   test('E2E-JOB-004 @regression: estimate_sent blocked at $0 then allowed with lines', async ({
@@ -122,7 +124,9 @@ test.describe('Suite R0 — Wave 0 critical path @wave0', () => {
     await advanceToColumn(page, 'Complete');
 
     await createInvoiceDraft(page);
-    await expect(page.getByRole('dialog', { name: 'Job detail panel' }).getByText('$500.00').first()).toBeVisible();
+    await expect(
+      page.getByRole('dialog', { name: 'Job detail panel' }).getByText('$500.00').first(),
+    ).toBeVisible();
   });
 
   test('E2E-MNY-001 @regression: mark paid archives card and hides from default board', async ({
@@ -150,7 +154,9 @@ test.describe('Suite R0 — Wave 0 critical path @wave0', () => {
     await expect(page.getByRole('article').filter({ hasText: title })).toHaveCount(0);
 
     await page.getByRole('combobox').first().selectOption('archived');
-    await expect(page.getByRole('article').filter({ hasText: title })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('article').filter({ hasText: title })).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test('E2E-JOB-002 @regression: drag move rolls back on API failure', async ({ page }) => {
@@ -159,15 +165,29 @@ test.describe('Suite R0 — Wave 0 critical path @wave0', () => {
     await createJob(page, title);
 
     await page.route('**/api/cards/*/move', (route) =>
-      route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'Injected failure' }) }),
+      route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Injected failure' }),
+      }),
     );
 
     const card = page.getByRole('article').filter({ hasText: title });
-    const targetColumn = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Site visit', exact: true }) });
+    const targetColumn = page
+      .locator('section')
+      .filter({ has: page.getByRole('heading', { name: 'Site visit', exact: true }) });
 
     await card.dragTo(targetColumn);
-    await expect(page.getByText(/Injected failure|Failed to move/i)).toBeVisible({ timeout: 10_000 });
-    await expect(page.locator('section').filter({ has: page.getByRole('heading', { name: 'New inquiry', exact: true }) }).getByRole('article').filter({ hasText: title })).toBeVisible();
+    await expect(page.getByText(/Injected failure|Failed to move/i)).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(
+      page
+        .locator('section')
+        .filter({ has: page.getByRole('heading', { name: 'New inquiry', exact: true }) })
+        .getByRole('article')
+        .filter({ hasText: title }),
+    ).toBeVisible();
   });
 
   test('E2E-SUP-001 @regression: help page loads inside shell', async ({ page }) => {
@@ -214,7 +234,9 @@ test.describe('Suite R0 — AI flows (Phase 5) @wave0', () => {
     await createJob(page, title);
     await openJobPanel(page, title);
 
-    await page.getByPlaceholder('Ask, analyze, or act on your pipeline…').fill('move to site_visit');
+    await page
+      .getByPlaceholder('Ask, analyze, or act on your pipeline…')
+      .fill('move to site_visit');
     await page.getByRole('button', { name: 'Run' }).click();
 
     await expect(page.getByRole('heading', { name: 'Approve AI action' })).toBeVisible({

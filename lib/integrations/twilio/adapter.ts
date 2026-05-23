@@ -15,8 +15,8 @@ function getTwilioAuthToken(): string {
 export function isTwilioConfigured(): boolean {
   return Boolean(
     process.env.TWILIO_ACCOUNT_SID &&
-      process.env.TWILIO_AUTH_TOKEN &&
-      (process.env.TWILIO_MESSAGING_SERVICE_SID || process.env.TWILIO_PHONE_NUMBER),
+    process.env.TWILIO_AUTH_TOKEN &&
+    (process.env.TWILIO_MESSAGING_SERVICE_SID || process.env.TWILIO_PHONE_NUMBER),
   );
 }
 
@@ -32,7 +32,11 @@ function getFromNumberOrService(): { from?: string; messagingServiceSid?: string
   throw new Error('Set TWILIO_MESSAGING_SERVICE_SID or TWILIO_PHONE_NUMBER.');
 }
 
-function validateTwilioSignature(url: string, params: Record<string, string>, signature: string): boolean {
+function validateTwilioSignature(
+  url: string,
+  params: Record<string, string>,
+  signature: string,
+): boolean {
   const sorted = Object.keys(params)
     .sort()
     .reduce((acc, key) => acc + key + params[key], url);

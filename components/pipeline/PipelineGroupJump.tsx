@@ -19,7 +19,10 @@ export function PipelineGroupJump({
           key={key}
           type="button"
           onClick={() => onJump(key)}
-          className={cn('ops-group-jump__chip', activeGroup === key && 'ops-group-jump__chip--active')}
+          className={cn(
+            'ops-group-jump__chip',
+            activeGroup === key && 'ops-group-jump__chip--active',
+          )}
           aria-current={activeGroup === key ? 'true' : undefined}
         >
           {PIPELINE_GROUP_LABELS[key]}

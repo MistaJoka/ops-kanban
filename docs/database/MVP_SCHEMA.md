@@ -73,13 +73,13 @@ customers (organization_id, name)
 
 ## Activity log contract
 
-| `action` | When |
-|----------|------|
-| `card.created` | New card |
-| `card.moved` | Column change; metadata: `from_state_key`, `to_state_key` |
-| `card.updated` | Title, dates, assignment |
-| `customer.updated` | Property/customer fields |
-| `quote.drafted` | Estimate created/updated |
-| `invoice.drafted` | Invoice created |
-| `invoice.paid` | Marked paid |
-| `ai.tool_executed` | Approved tool ran |
+| `action`           | When                                                      |
+| ------------------ | --------------------------------------------------------- |
+| `card.created`     | New card                                                  |
+| `card.moved`       | Column change; metadata: `from_state_key`, `to_state_key` |
+| `card.updated`     | Title, dates, assignment                                  |
+| `customer.updated` | Property/customer fields                                  |
+| `quote.drafted`    | Estimate created/updated                                  |
+| `invoice.drafted`  | Invoice created                                           |
+| `invoice.paid`     | Marked paid                                               |
+| `ai.tool_executed` | Approved tool ran                                         |

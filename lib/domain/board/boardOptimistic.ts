@@ -6,9 +6,7 @@ import type { CardDetailView } from '@/lib/domain/cards/cardDetail';
 import { COLUMN_CATEGORY } from '@/lib/domain/pipeline/types';
 
 export function computeIsOverdue(dueDate: string | null, stateKey: string): boolean {
-  return Boolean(
-    dueDate && new Date(dueDate).getTime() < Date.now() && stateKey !== 'archived',
-  );
+  return Boolean(dueDate && new Date(dueDate).getTime() < Date.now() && stateKey !== 'archived');
 }
 
 export function computeDaysInColumn(columnEnteredAt: string): number {
@@ -195,9 +193,8 @@ export function detailStubFromBoardCard(card: BoardCardView): CardDetailView {
     assigneeName: card.assigneeName,
     revenueValue: 0,
     checklist: [],
-    customer:
-      card.customerName ?
-        {
+    customer: card.customerName
+      ? {
           id: 'stub-customer',
           name: card.customerName,
           phone: null,

@@ -88,8 +88,8 @@ export default function TeamSettingsPage() {
       <section className="ops-empty-state mt-6">
         <p className="font-medium text-[var(--text-primary)]">Invite teammates</p>
         <p className="mt-2">
-          Email invites and role management are on the roadmap. For now, new users sign up and
-          join via your organization bootstrap flow.
+          Email invites and role management are on the roadmap. For now, new users sign up and join
+          via your organization bootstrap flow.
         </p>
       </section>
     </div>

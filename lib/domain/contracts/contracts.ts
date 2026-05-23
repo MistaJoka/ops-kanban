@@ -172,7 +172,10 @@ export async function generateContractCard(
     throw new Error(cardError?.message ?? 'Failed to create contract job.');
   }
 
-  const nextRunAt = addFrequency(new Date(contract.next_run_at as string), contract.frequency as ContractFrequency);
+  const nextRunAt = addFrequency(
+    new Date(contract.next_run_at as string),
+    contract.frequency as ContractFrequency,
+  );
 
   const { data: updated, error: updateError } = await client
     .from('contracts')

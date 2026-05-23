@@ -22,9 +22,7 @@ export type AdvancedFilterKey =
   | 'scheduled_this_week'
   | 'job_type';
 
-export type AdvancedFilter =
-  | AdvancedFilterKey
-  | { key: 'job_type'; jobType: string };
+export type AdvancedFilter = AdvancedFilterKey | { key: 'job_type'; jobType: string };
 
 export const ADVANCED_FILTER_LABELS: Record<AdvancedFilterKey, string> = {
   all: 'All jobs',

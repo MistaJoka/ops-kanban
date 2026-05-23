@@ -45,7 +45,9 @@ export default function CalendarPage() {
 
   useEffect(() => {
     setLoading(true);
-    void fetch(`/api/calendar?start=${encodeURIComponent(range.start)}&end=${encodeURIComponent(range.end)}`)
+    void fetch(
+      `/api/calendar?start=${encodeURIComponent(range.start)}&end=${encodeURIComponent(range.end)}`,
+    )
       .then((response) => response.json())
       .then((payload) => {
         if (payload.data) {
@@ -97,7 +99,11 @@ export default function CalendarPage() {
             >
               <ChevronLeft className="size-4" />
             </button>
-            <button type="button" onClick={() => setWeekStart(startOfWeek(new Date()))} className="ops-btn-secondary">
+            <button
+              type="button"
+              onClick={() => setWeekStart(startOfWeek(new Date()))}
+              className="ops-btn-secondary"
+            >
               Today
             </button>
             <button
@@ -134,7 +140,11 @@ export default function CalendarPage() {
                 <h2
                   className={`text-xs font-semibold tracking-tight ${isToday ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'}`}
                 >
-                  {day.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                  {day.toLocaleDateString(undefined, {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
                 </h2>
                 <div className="mt-2 flex-1 space-y-1.5">
                   {dayCards.length === 0 ? (

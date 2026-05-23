@@ -21,8 +21,7 @@ export default defineConfig({
   webServer: {
     command: `node scripts/playwright-dev-server.mjs ${port}`,
     url: baseURL,
-    reuseExistingServer:
-      !process.env.CI && process.env.PLAYWRIGHT_FRESH_SERVER !== '1',
+    reuseExistingServer: !process.env.CI && process.env.PLAYWRIGHT_FRESH_SERVER !== '1',
     timeout: 120_000,
   },
 });

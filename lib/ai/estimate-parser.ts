@@ -23,7 +23,10 @@ export async function parseEstimateLineItems(params: {
 }): Promise<{ lineItems: EstimateLineItem[]; assumptions: string[] }> {
   const notes = params.scopeNotes.trim();
   if (!notes) {
-    return { lineItems: [FALLBACK_LINE_ITEM], assumptions: ['No scope notes provided — using placeholder line.'] };
+    return {
+      lineItems: [FALLBACK_LINE_ITEM],
+      assumptions: ['No scope notes provided — using placeholder line.'],
+    };
   }
 
   try {

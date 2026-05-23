@@ -17,7 +17,10 @@ function tokenize(value: string): string[] {
     .filter((token) => token.length > 1);
 }
 
-function scoreMatch(queryTokens: string[], card: { title: string; customerAddress?: string | null }): number {
+function scoreMatch(
+  queryTokens: string[],
+  card: { title: string; customerAddress?: string | null },
+): number {
   const haystack = [card.title, card.customerAddress].filter(Boolean).join(' ').toLowerCase();
   let score = 0;
 
@@ -49,7 +52,7 @@ export function searchCardsByQuery(
       id: card.id,
       title: card.title,
       stateKey: card.stateKey,
-      customerAddress: 'customerAddress' in card ? card.customerAddress ?? undefined : undefined,
+      customerAddress: 'customerAddress' in card ? (card.customerAddress ?? undefined) : undefined,
       score: scoreMatch(queryTokens, {
         title: card.title,
         customerAddress: 'customerAddress' in card ? card.customerAddress : undefined,
@@ -63,7 +66,10 @@ export function searchCardsByQuery(
 export function formatDisambiguationMessage(matches: CardMatch[]): string {
   const options = matches
     .slice(0, 3)
-    .map((match, index) => `${index + 1}. ${match.title}${match.customerAddress ? ` — ${match.customerAddress}` : ''}`)
+    .map(
+      (match, index) =>
+        `${index + 1}. ${match.title}${match.customerAddress ? ` — ${match.customerAddress}` : ''}`,
+    )
     .join('\n');
 
   return `I found multiple jobs. Which one did you mean?\n${options}\n\nReply with the number or full job title.`;
@@ -109,7 +115,10 @@ export function extractCardQueryFromCommand(command: string, toolName?: string):
       /(?:delete|remove)(?:\s+(?:the|this|that))?\s+(?:job\s+)?(.+?)\s*$/i,
     );
     if (deleteMatch?.[1]) {
-      return deleteMatch[1].trim().replace(/\s+job\s*$/i, '').trim();
+      return deleteMatch[1]
+        .trim()
+        .replace(/\s+job\s*$/i, '')
+        .trim();
     }
   }
 
@@ -119,10 +128,7 @@ export function extractCardQueryFromCommand(command: string, toolName?: string):
   return cardRefMatch?.[1]?.trim() ?? null;
 }
 
-function buildCardLookupQuery(
-  proposal: CardToolProposal,
-  command: string,
-): string | null {
+function buildCardLookupQuery(proposal: CardToolProposal, command: string): string | null {
   if (typeof proposal.input.query === 'string' && proposal.input.query.trim()) {
     return proposal.input.query.trim();
   }

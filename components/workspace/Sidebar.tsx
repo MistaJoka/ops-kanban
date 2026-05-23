@@ -150,21 +150,11 @@ export function Sidebar({
 }) {
   return (
     <aside
-      className={cn(
-        'ops-sidebar',
-        collapsed ? 'w-16' : 'w-60',
-        mobileOpen && 'ops-sidebar--open',
-      )}
+      className={cn('ops-sidebar', collapsed ? 'w-16' : 'w-60', mobileOpen && 'ops-sidebar--open')}
     >
       <div className="flex items-center gap-3 border-b border-white/10 px-4 py-4">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[var(--nav-active)] shadow-[0_2px_8px_rgba(0,0,0,0.25)]">
-          <Image
-            src="/brand/mark.svg"
-            alt=""
-            width={22}
-            height={22}
-            className="size-[22px]"
-          />
+          <Image src="/brand/mark.svg" alt="" width={22} height={22} className="size-[22px]" />
         </div>
         {!collapsed ? (
           <div className="min-w-0">
@@ -174,7 +164,7 @@ export function Sidebar({
         ) : null}
       </div>
 
-      <nav className="flex-1 space-y-5 overflow-y-auto px-2 py-4">
+      <nav className="min-h-0 flex-1 space-y-5 overflow-y-auto px-2 py-4">
         <div>
           {!collapsed ? (
             <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--nav-text-muted)]">
@@ -213,17 +203,13 @@ export function Sidebar({
         </div>
       </nav>
 
-      <div className="space-y-2 border-t border-white/10 p-3">
+      <div className="shrink-0 space-y-2 border-t border-white/10 p-3">
         <NavLink
           collapsed={collapsed}
           onNavigate={onMobileClose}
           item={{ href: '/settings', label: 'Settings', icon: Settings }}
         />
-        <AccountMenu
-          displayName={displayName}
-          collapsed={collapsed}
-          authDisabled={authDisabled}
-        />
+        <AccountMenu displayName={displayName} collapsed={collapsed} authDisabled={authDisabled} />
         <ThemeToggle collapsed={collapsed} />
         <button
           type="button"

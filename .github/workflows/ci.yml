@@ -29,6 +29,10 @@ jobs:
 
       - run: npm run check:no-mock
 
+      - run: npm run check:slop-health
+
+      - run: npm run format:check
+
       - run: npm run test:unit
 
       - run: npm run test:ai

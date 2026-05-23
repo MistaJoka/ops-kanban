@@ -39,7 +39,9 @@ function ContractsSettingsContent() {
   const [error, setError] = useState<string | null>(null);
   const [customerId, setCustomerId] = useState('');
   const [title, setTitle] = useState('');
-  const [frequency, setFrequency] = useState<'weekly' | 'biweekly' | 'monthly' | 'seasonal'>('monthly');
+  const [frequency, setFrequency] = useState<'weekly' | 'biweekly' | 'monthly' | 'seasonal'>(
+    'monthly',
+  );
   const [nextRunAt, setNextRunAt] = useState('');
   const [amount, setAmount] = useState('');
   const [saving, setSaving] = useState(false);

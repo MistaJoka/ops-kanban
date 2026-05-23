@@ -22,49 +22,49 @@ AI is the operational copilot.
 
 ## Development roadmap (start here to build)
 
-| Doc | Purpose |
-|-----|---------|
-| [AGENTS.md](AGENTS.md) | **AI/agent entry** — session loop |
-| [AI_BUILD_PROTOCOL.md](docs/roadmap/AI_BUILD_PROTOCOL.md) | Phases for AI + mandatory progress/trouble/learning updates |
-| [PROGRESS.md](docs/roadmap/PROGRESS.md) | Live build dashboard (read first each session) |
-| [PROBLEM_REGISTRY.md](docs/roadmap/PROBLEM_REGISTRY.md) | Troubles → root cause → fix (problem sourcing) |
-| [BUILD_KNOWLEDGE.md](docs/roadmap/BUILD_KNOWLEDGE.md) | LEARN-* patterns for reinforced learning |
-| [DEVELOPMENT_ROADMAP.md](docs/roadmap/DEVELOPMENT_ROADMAP.md) | Phases, sprints, gates, how to extend safely |
-| [MVP_CAPTURE.md](docs/roadmap/MVP_CAPTURE.md) | Frozen Wave 0 scope |
-| [PHASE_TASKS.md](docs/roadmap/PHASE_TASKS.md) | Task IDs P0–P10 (backlog) |
-| [DEFINITION_OF_DONE.md](docs/roadmap/DEFINITION_OF_DONE.md) | Completion criteria per phase |
-| [DEVELOPMENT_LOG.md](docs/roadmap/DEVELOPMENT_LOG.md) | Chronological build log |
-| [ARCHITECTURE_PRINCIPLES.md](docs/roadmap/ARCHITECTURE_PRINCIPLES.md) | Stable layering for future fixes |
-| [NO_MOCK_DATA_POLICY.md](docs/product/NO_MOCK_DATA_POLICY.md) | **No mock data / fake placeholders in production** |
-| [PRE_BUILD_CONFIRMATION.md](docs/roadmap/PRE_BUILD_CONFIRMATION.md) | Pre-build sign-off checklist |
-| [DOC_INDEX.md](docs/roadmap/DOC_INDEX.md) | **Which doc is canonical** (avoids duplicate plans) |
-| [REPO_COMPLETENESS_AUDIT.md](docs/roadmap/REPO_COMPLETENESS_AUDIT.md) | Repo audit (contradictions resolved) |
-| [API_ROUTES.md](docs/api/API_ROUTES.md) | REST / Server Action catalog |
-| [APPROVAL_FLOW.md](docs/api/APPROVAL_FLOW.md) | AI approval sequence |
-| [DESIGN_TOKENS.md](docs/product/DESIGN_TOKENS.md) | CSS variables & fonts |
+| Doc                                                                   | Purpose                                                     |
+| --------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [AGENTS.md](AGENTS.md)                                                | **AI/agent entry** — session loop                           |
+| [AI_BUILD_PROTOCOL.md](docs/roadmap/AI_BUILD_PROTOCOL.md)             | Phases for AI + mandatory progress/trouble/learning updates |
+| [PROGRESS.md](docs/roadmap/PROGRESS.md)                               | Live build dashboard (read first each session)              |
+| [PROBLEM_REGISTRY.md](docs/roadmap/PROBLEM_REGISTRY.md)               | Troubles → root cause → fix (problem sourcing)              |
+| [BUILD_KNOWLEDGE.md](docs/roadmap/BUILD_KNOWLEDGE.md)                 | LEARN-\* patterns for reinforced learning                   |
+| [DEVELOPMENT_ROADMAP.md](docs/roadmap/DEVELOPMENT_ROADMAP.md)         | Phases, sprints, gates, how to extend safely                |
+| [MVP_CAPTURE.md](docs/roadmap/MVP_CAPTURE.md)                         | Frozen Wave 0 scope                                         |
+| [PHASE_TASKS.md](docs/roadmap/PHASE_TASKS.md)                         | Task IDs P0–P10 (backlog)                                   |
+| [DEFINITION_OF_DONE.md](docs/roadmap/DEFINITION_OF_DONE.md)           | Completion criteria per phase                               |
+| [DEVELOPMENT_LOG.md](docs/roadmap/DEVELOPMENT_LOG.md)                 | Chronological build log                                     |
+| [ARCHITECTURE_PRINCIPLES.md](docs/roadmap/ARCHITECTURE_PRINCIPLES.md) | Stable layering for future fixes                            |
+| [NO_MOCK_DATA_POLICY.md](docs/product/NO_MOCK_DATA_POLICY.md)         | **No mock data / fake placeholders in production**          |
+| [PRE_BUILD_CONFIRMATION.md](docs/roadmap/PRE_BUILD_CONFIRMATION.md)   | Pre-build sign-off checklist                                |
+| [DOC_INDEX.md](docs/roadmap/DOC_INDEX.md)                             | **Which doc is canonical** (avoids duplicate plans)         |
+| [REPO_COMPLETENESS_AUDIT.md](docs/roadmap/REPO_COMPLETENESS_AUDIT.md) | Repo audit (contradictions resolved)                        |
+| [API_ROUTES.md](docs/api/API_ROUTES.md)                               | REST / Server Action catalog                                |
+| [APPROVAL_FLOW.md](docs/api/APPROVAL_FLOW.md)                         | AI approval sequence                                        |
+| [DESIGN_TOKENS.md](docs/product/DESIGN_TOKENS.md)                     | CSS variables & fonts                                       |
 
 ## Doc map (product & technical)
 
-| Doc | Purpose |
-|-----|---------|
-| [MVP_SCOPE.md](docs/product/MVP_SCOPE.md) | In/out of v1 |
-| [DEFAULT_PIPELINE.md](docs/product/DEFAULT_PIPELINE.md) | 9 landscaping columns + `state_key`s |
-| [VERTICAL_LANDSCAPING.md](docs/product/VERTICAL_LANDSCAPING.md) | Terminology, fields, AI examples |
-| [CARD_DESIGN.md](docs/product/CARD_DESIGN.md) | Board card + detail panel: logic, layout, style |
-| [WORKSPACE_DESIGN.md](docs/product/WORKSPACE_DESIGN.md) | App shell, sidebar, Job Pipeline workspace |
-| [FULL_PIPELINE.md](docs/product/FULL_PIPELINE.md) | 19-column full pipeline + groups |
-| [SUPPORT_PAGES.md](docs/product/SUPPORT_PAGES.md) | Help, contact, changelog routes |
-| [AI_UTILIZATION.md](docs/ai/AI_UTILIZATION.md) | How AI is used across the app |
-| [AI_PROMPT_LIBRARY.md](docs/ai/AI_PROMPT_LIBRARY.md) | Example commands by role |
-| [PLATFORM_CAPABILITIES.md](docs/product/PLATFORM_CAPABILITIES.md) | Best-of-SaaS modules (pay, sign, schedule, comms) |
-| [INTEGRATION_ARCHITECTURE.md](docs/integrations/INTEGRATION_ARCHITECTURE.md) | Webhooks, OAuth, reliability |
-| [PROVIDER_MATRIX.md](docs/integrations/PROVIDER_MATRIX.md) | Stripe, PayPal, Twilio, DocuSign, etc. |
-| [docs/testing/README.md](docs/testing/README.md) | **QA pack** — modular tests, FMEA, risk, regression |
-| [PHASED_BUILD_PLAN.md](docs/cursor/PHASED_BUILD_PLAN.md) | Wave → P0–P10 map (redirect; not backlog) |
-| [MVP_SCHEMA.md](docs/database/MVP_SCHEMA.md) | Tables in migration vs deferred |
-| [SIGNUP_BOOTSTRAP.md](docs/database/SIGNUP_BOOTSTRAP.md) | Org + board + column seed on signup |
-| [PRODUCT_BRIEF.md](docs/product/PRODUCT_BRIEF.md) | Success criteria |
-| [CURSOR_MASTER_PROMPT.md](docs/cursor/CURSOR_MASTER_PROMPT.md) | Cursor agent instructions |
+| Doc                                                                          | Purpose                                             |
+| ---------------------------------------------------------------------------- | --------------------------------------------------- |
+| [MVP_SCOPE.md](docs/product/MVP_SCOPE.md)                                    | In/out of v1                                        |
+| [DEFAULT_PIPELINE.md](docs/product/DEFAULT_PIPELINE.md)                      | 9 landscaping columns + `state_key`s                |
+| [VERTICAL_LANDSCAPING.md](docs/product/VERTICAL_LANDSCAPING.md)              | Terminology, fields, AI examples                    |
+| [CARD_DESIGN.md](docs/product/CARD_DESIGN.md)                                | Board card + detail panel: logic, layout, style     |
+| [WORKSPACE_DESIGN.md](docs/product/WORKSPACE_DESIGN.md)                      | App shell, sidebar, Job Pipeline workspace          |
+| [FULL_PIPELINE.md](docs/product/FULL_PIPELINE.md)                            | 19-column full pipeline + groups                    |
+| [SUPPORT_PAGES.md](docs/product/SUPPORT_PAGES.md)                            | Help, contact, changelog routes                     |
+| [AI_UTILIZATION.md](docs/ai/AI_UTILIZATION.md)                               | How AI is used across the app                       |
+| [AI_PROMPT_LIBRARY.md](docs/ai/AI_PROMPT_LIBRARY.md)                         | Example commands by role                            |
+| [PLATFORM_CAPABILITIES.md](docs/product/PLATFORM_CAPABILITIES.md)            | Best-of-SaaS modules (pay, sign, schedule, comms)   |
+| [INTEGRATION_ARCHITECTURE.md](docs/integrations/INTEGRATION_ARCHITECTURE.md) | Webhooks, OAuth, reliability                        |
+| [PROVIDER_MATRIX.md](docs/integrations/PROVIDER_MATRIX.md)                   | Stripe, PayPal, Twilio, DocuSign, etc.              |
+| [docs/testing/README.md](docs/testing/README.md)                             | **QA pack** — modular tests, FMEA, risk, regression |
+| [PHASED_BUILD_PLAN.md](docs/cursor/PHASED_BUILD_PLAN.md)                     | Wave → P0–P10 map (redirect; not backlog)           |
+| [MVP_SCHEMA.md](docs/database/MVP_SCHEMA.md)                                 | Tables in migration vs deferred                     |
+| [SIGNUP_BOOTSTRAP.md](docs/database/SIGNUP_BOOTSTRAP.md)                     | Org + board + column seed on signup                 |
+| [PRODUCT_BRIEF.md](docs/product/PRODUCT_BRIEF.md)                            | Success criteria                                    |
+| [CURSOR_MASTER_PROMPT.md](docs/cursor/CURSOR_MASTER_PROMPT.md)               | Cursor agent instructions                           |
 
 ## What this ZIP contains
 
@@ -94,13 +94,13 @@ AI is the operational copilot.
 
 ### Common commands
 
-| Command | Purpose |
-|---------|---------|
-| `npm run test:unit` | Pipeline, money, AI unit tests |
-| `npm run test:integration` | Supabase integration (requires `.env.local`) |
-| `npm run test:wave4` | Wave 4 scale tests (needs migrations 013–015) |
-| `npm run test:e2e:smoke` | Playwright smoke (`@smoke`) |
-| `npm run build` | Production build check |
+| Command                    | Purpose                                       |
+| -------------------------- | --------------------------------------------- |
+| `npm run test:unit`        | Pipeline, money, AI unit tests                |
+| `npm run test:integration` | Supabase integration (requires `.env.local`)  |
+| `npm run test:wave4`       | Wave 4 scale tests (needs migrations 013–015) |
+| `npm run test:e2e:smoke`   | Playwright smoke (`@smoke`)                   |
+| `npm run build`            | Production build check                        |
 
 Env vars are validated in `lib/env/` and consumed by Supabase clients in `lib/db/supabase/`. Server-only secrets (`SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `CRON_SECRET`) never use the `NEXT_PUBLIC_` prefix.
 

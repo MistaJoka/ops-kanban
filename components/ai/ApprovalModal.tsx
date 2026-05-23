@@ -109,7 +109,15 @@ export function ApprovalModal({
               onChange={(event) => setConfirmed(event.target.checked)}
               className="mt-0.5"
             />
-            <span>I confirm this {toolName === 'markInvoicePaid' ? 'payment' : toolName === 'createPaymentLink' ? 'payment link' : 'archive'} action.</span>
+            <span>
+              I confirm this{' '}
+              {toolName === 'markInvoicePaid'
+                ? 'payment'
+                : toolName === 'createPaymentLink'
+                  ? 'payment link'
+                  : 'archive'}{' '}
+              action.
+            </span>
           </label>
         ) : null}
 
@@ -122,10 +130,20 @@ export function ApprovalModal({
           <button type="button" onClick={onClose} disabled={pending} className="ops-btn-secondary">
             Cancel
           </button>
-          <button type="button" onClick={() => void reject()} disabled={pending} className="ops-btn-secondary">
+          <button
+            type="button"
+            onClick={() => void reject()}
+            disabled={pending}
+            className="ops-btn-secondary"
+          >
             Reject
           </button>
-          <button type="button" onClick={() => void approve()} disabled={pending} className="ops-btn-primary">
+          <button
+            type="button"
+            onClick={() => void approve()}
+            disabled={pending}
+            className="ops-btn-primary"
+          >
             Approve & run
           </button>
         </div>

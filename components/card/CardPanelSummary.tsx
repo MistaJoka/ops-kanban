@@ -38,8 +38,7 @@ export function CardPanelSummary({
   const isOverdue = Boolean(
     card.dueDate && new Date(card.dueDate).getTime() < Date.now() && card.stateKey !== 'archived',
   );
-  const showDue =
-    card.dueDate && (isOverdue || isDueSoon(card.dueDate));
+  const showDue = card.dueDate && (isOverdue || isDueSoon(card.dueDate));
   const hasMoney = moneyBadge !== 'none';
   const hasSchedule = Boolean(card.scheduledStart);
   const hasAssignee = Boolean(initials);
@@ -55,7 +54,11 @@ export function CardPanelSummary({
           <CardMoneySignal badge={moneyBadge} quoteTotal={quoteTotal} balanceDue={balanceDue} />
         ) : card.revenueValue > 0 ? (
           <span className="ops-board-card__signal ops-board-card__signal--money ops-board-card__signal--sales">
-            <CircleDollarSign className="ops-board-card__signal-icon" strokeWidth={2.25} aria-hidden />
+            <CircleDollarSign
+              className="ops-board-card__signal-icon"
+              strokeWidth={2.25}
+              aria-hidden
+            />
             <span className="tabular-nums">{formatMoneyCompact(card.revenueValue)}</span>
           </span>
         ) : null}
@@ -66,7 +69,9 @@ export function CardPanelSummary({
           <CardScheduleSignal scheduledStart={card.scheduledStart} />
         ) : null}
         {!hasMoney && !hasSchedule && !showDue ? (
-          <span className="ops-panel-summary__placeholder">Add schedule or estimate in tabs below</span>
+          <span className="ops-panel-summary__placeholder">
+            Add schedule or estimate in tabs below
+          </span>
         ) : null}
       </div>
       {hasAssignee ? (

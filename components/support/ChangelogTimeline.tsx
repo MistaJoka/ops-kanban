@@ -36,7 +36,9 @@ function ReleaseEntry({ release }: { release: ProductRelease }) {
           </span>
         </div>
         {release.summary ? (
-          <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">{release.summary}</p>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
+            {release.summary}
+          </p>
         ) : null}
       </header>
 

@@ -12,13 +12,13 @@ Product context: `VERTICAL_LANDSCAPING.md`, `CARD_DESIGN.md`, `WORKSPACE_DESIGN.
 
 AI is an **operational copilot**, not a general chatbot.
 
-| Do | Don't |
-|----|-------|
-| Turn messy notes into structured job data | Replace the board as source of truth |
-| Recommend the next best action on a job | Auto-send invoices or texts without approval |
-| Draft estimates from site-visit notes | Invent customers, prices, or payments |
-| Answer “what should we do today?” from live data | Load the entire database into the model |
-| Execute changes through **logged, approved tools** | Write to Postgres directly |
+| Do                                                 | Don't                                        |
+| -------------------------------------------------- | -------------------------------------------- |
+| Turn messy notes into structured job data          | Replace the board as source of truth         |
+| Recommend the next best action on a job            | Auto-send invoices or texts without approval |
+| Draft estimates from site-visit notes              | Invent customers, prices, or payments        |
+| Answer “what should we do today?” from live data   | Load the entire database into the model      |
+| Execute changes through **logged, approved tools** | Write to Postgres directly                   |
 
 **Best utilization** = less time in spreadsheets and sticky notes, more time moving cards and crews—with AI handling synthesis, drafting, and ranking.
 
@@ -28,30 +28,30 @@ AI is an **operational copilot**, not a general chatbot.
 
 ### MVP (ship first)
 
-| Surface | Placement | Primary use |
-|---------|-----------|-------------|
-| **Job Pipeline** | Bottom AI dock (`WORKSPACE_DESIGN.md`) | Board-wide Ask + Analyze + Act |
-| **Card detail** | Right rail copilot | Job-specific Draft + Act + summarize |
-| **Approval queue** | Top bar bell / inline toast | Confirm medium/high-risk tool calls |
+| Surface            | Placement                              | Primary use                          |
+| ------------------ | -------------------------------------- | ------------------------------------ |
+| **Job Pipeline**   | Bottom AI dock (`WORKSPACE_DESIGN.md`) | Board-wide Ask + Analyze + Act       |
+| **Card detail**    | Right rail copilot                     | Job-specific Draft + Act + summarize |
+| **Approval queue** | Top bar bell / inline toast            | Confirm medium/high-risk tool calls  |
 
 ### Post-MVP (same copilot, richer context)
 
-| Surface | Use |
-|---------|-----|
-| Dashboard | Morning briefing, revenue snapshot |
-| Customers | History summary before a callback |
-| Calendar | Conflict check, reschedule drafts |
-| Reports | Explain bottlenecks in plain language |
+| Surface   | Use                                   |
+| --------- | ------------------------------------- |
+| Dashboard | Morning briefing, revenue snapshot    |
+| Customers | History summary before a callback     |
+| Calendar  | Conflict check, reschedule drafts     |
+| Reports   | Explain bottlenecks in plain language |
 
 ### Inline AI (no chat required)
 
-| Trigger | Behavior |
-|---------|----------|
-| Card Overview tab | **AI summary** block (refreshed on open or on demand) |
-| Empty `next_action` | Suggest one line from column + dates + comments |
-| Move to `estimate_sent` | Offer “Draft estimate from scope notes” |
-| Move to `complete` | Offer “Create invoice from estimate” |
-| Board load (owner) | Optional **daily brief** chip in AI dock (3 bullets) |
+| Trigger                 | Behavior                                              |
+| ----------------------- | ----------------------------------------------------- |
+| Card Overview tab       | **AI summary** block (refreshed on open or on demand) |
+| Empty `next_action`     | Suggest one line from column + dates + comments       |
+| Move to `estimate_sent` | Offer “Draft estimate from scope notes”               |
+| Move to `complete`      | Offer “Create invoice from estimate”                  |
+| Board load (owner)      | Optional **daily brief** chip in AI dock (3 bullets)  |
 
 Inline suggestions convert high-intent moments into AI usage without opening a blank chat.
 
@@ -61,13 +61,13 @@ Inline suggestions convert high-intent moments into AI usage without opening a b
 
 User selects mode in the AI dock (chip) or implies it via phrasing.
 
-| Mode | User intent | MVP tools | Output style |
-|------|-------------|-----------|--------------|
-| **Ask** | Understand status | `summarizeCard`, `getBoardState`, read-only queries | Short prose, bullets |
-| **Analyze** | Find problems / priority | `getOverdueCards`, `getStalledCards`, `getPipelineMetrics` | Ranked list + why |
-| **Act** | Change the system | `createCard`, `moveCard`, `updateCard`, `assignCard` | Preview → approve → execute |
-| **Draft** | Prepare artifact | `createQuoteDraft`, `createInternalNote` | Editable draft in tab |
-| **Automate** | Repeatable rules | — (post-MVP) | Suggestion only |
+| Mode         | User intent              | MVP tools                                                  | Output style                |
+| ------------ | ------------------------ | ---------------------------------------------------------- | --------------------------- |
+| **Ask**      | Understand status        | `summarizeCard`, `getBoardState`, read-only queries        | Short prose, bullets        |
+| **Analyze**  | Find problems / priority | `getOverdueCards`, `getStalledCards`, `getPipelineMetrics` | Ranked list + why           |
+| **Act**      | Change the system        | `createCard`, `moveCard`, `updateCard`, `assignCard`       | Preview → approve → execute |
+| **Draft**    | Prepare artifact         | `createQuoteDraft`, `createInternalNote`                   | Editable draft in tab       |
+| **Automate** | Repeatable rules         | — (post-MVP)                                               | Suggestion only             |
 
 **Default mode by page**
 
@@ -128,32 +128,32 @@ If the user names a card (“Miller mulch job”), resolve by title search in vi
 
 ### Tier 1 — read-only (low risk, auto-run)
 
-| Tool | Landscaping value |
-|------|-------------------|
-| `summarizeCard` | Job recap before a call |
-| `getBoardState` | What’s on the board right now |
-| `getOverdueCards` | Follow-ups and late visits |
-| `getStalledCards` | Jobs stuck &gt; N days in a column |
-| `getPipelineMetrics` | Count/$ by column group |
-| `suggestNextAction` | One line for `next_action` |
+| Tool                 | Landscaping value                  |
+| -------------------- | ---------------------------------- |
+| `summarizeCard`      | Job recap before a call            |
+| `getBoardState`      | What’s on the board right now      |
+| `getOverdueCards`    | Follow-ups and late visits         |
+| `getStalledCards`    | Jobs stuck &gt; N days in a column |
+| `getPipelineMetrics` | Count/$ by column group            |
+| `suggestNextAction`  | One line for `next_action`         |
 
 ### Tier 2 — write (medium risk, preview + approve)
 
-| Tool | Landscaping value |
-|------|-------------------|
-| `createCard` | “New inquiry: 88 Pine, weekly mow” |
-| `updateCard` | Set next action, dates, priority |
-| `moveCard` | “Move Rivera to Scheduled Thursday” |
-| `assignCard` | Assign crew lead |
-| `createQuoteDraft` | Line items from site notes |
-| `updateCustomer` | Parse phone/address from pasted text |
+| Tool               | Landscaping value                    |
+| ------------------ | ------------------------------------ |
+| `createCard`       | “New inquiry: 88 Pine, weekly mow”   |
+| `updateCard`       | Set next action, dates, priority     |
+| `moveCard`         | “Move Rivera to Scheduled Thursday”  |
+| `assignCard`       | Assign crew lead                     |
+| `createQuoteDraft` | Line items from site notes           |
+| `updateCustomer`   | Parse phone/address from pasted text |
 
 ### Tier 3 — money & close (high risk, explicit confirm)
 
-| Tool | MVP |
-|------|-----|
-| `markInvoicePaid` | ✓ with approval |
-| `archiveCard` | ✓ with approval |
+| Tool                                    | MVP                         |
+| --------------------------------------- | --------------------------- |
+| `markInvoicePaid`                       | ✓ with approval             |
+| `archiveCard`                           | ✓ with approval             |
 | `sendInvoice` / `sendEmail` / `sendSms` | **Out of MVP** — draft only |
 
 ### Post-MVP tools
@@ -166,30 +166,30 @@ Calendar, bulk board updates, automation rules, customer history summary, PDF ex
 
 ### Owner / manager (office)
 
-| Moment | Example command | Mode |
-|--------|-----------------|------|
-| Start of day | “What should we tackle first today?” | Analyze |
-| Pipeline review | “What’s stuck in estimating over 5 days?” | Analyze |
-| New lead call | “Create inquiry for Chen, 220 Maple, spring cleanup” | Act |
-| After site visit | “Draft estimate from these notes: …” | Draft |
-| Closing books | “Which jobs are complete but not invoiced?” | Analyze |
-| End of week | “Summarize unpaid jobs over $500” | Ask |
+| Moment           | Example command                                      | Mode    |
+| ---------------- | ---------------------------------------------------- | ------- |
+| Start of day     | “What should we tackle first today?”                 | Analyze |
+| Pipeline review  | “What’s stuck in estimating over 5 days?”            | Analyze |
+| New lead call    | “Create inquiry for Chen, 220 Maple, spring cleanup” | Act     |
+| After site visit | “Draft estimate from these notes: …”                 | Draft   |
+| Closing books    | “Which jobs are complete but not invoiced?”          | Analyze |
+| End of week      | “Summarize unpaid jobs over $500”                    | Ask     |
 
 ### Office staff
 
-| Moment | Command |
-|--------|---------|
-| Follow-up | “Summarize estimate sent jobs with no activity 3+ days” |
+| Moment     | Command                                                         |
+| ---------- | --------------------------------------------------------------- |
+| Follow-up  | “Summarize estimate sent jobs with no activity 3+ days”         |
 | Scheduling | “Move approved jobs without a date to Scheduling and flag them” |
 | Data entry | Paste messy text → “Extract customer info and update this card” |
 
 ### Crew lead / worker (field)
 
-| Moment | Command |
-|--------|---------|
-| On site | “Mark blocked: need gate code” → `updateCard` + `moveCard` to `blocked` |
-| Quick read | “What’s next on this job?” → `summarizeCard` |
-| Limited Act | Only assigned cards; no archive, no mark paid |
+| Moment      | Command                                                                 |
+| ----------- | ----------------------------------------------------------------------- |
+| On site     | “Mark blocked: need gate code” → `updateCard` + `moveCard` to `blocked` |
+| Quick read  | “What’s next on this job?” → `summarizeCard`                            |
+| Limited Act | Only assigned cards; no archive, no mark paid                           |
 
 ### Viewer
 
@@ -277,11 +277,11 @@ AI proposes tool call
 → UI realtime refresh
 ```
 
-| Risk | UI | Who can approve |
-|------|-----|-----------------|
-| Low | Auto-execute; toast “AI updated next action” | — |
-| Medium | Modal preview | Same role that can run tool |
-| High | Modal + checkbox “I confirm” | Owner/manager only |
+| Risk   | UI                                           | Who can approve             |
+| ------ | -------------------------------------------- | --------------------------- |
+| Low    | Auto-execute; toast “AI updated next action” | —                           |
+| Medium | Modal preview                                | Same role that can run tool |
+| High   | Modal + checkbox “I confirm”                 | Owner/manager only          |
 
 **Always show** in timeline: `AI moved card to Scheduled` with link to `ai_tool_calls` payload.
 
@@ -323,12 +323,12 @@ AI proposes tool call
 
 ## 10. Model and API behavior
 
-| Setting | Value |
-|---------|--------|
-| Model | Gemini 2.5 Flash |
+| Setting      | Value                                                                              |
+| ------------ | ---------------------------------------------------------------------------------- |
+| Model        | Gemini 2.5 Flash                                                                   |
 | Tool calling | Native function calling when wired; until then server parses structured JSON block |
-| Temperature | 0.2 for Act/Draft; 0.5 for Ask/Analyze |
-| Rate limit | e.g. 30 commands / user / hour (Phase 7) |
+| Temperature  | 0.2 for Act/Draft; 0.5 for Ask/Analyze                                             |
+| Rate limit   | e.g. 30 commands / user / hour (Phase 7)                                           |
 
 **System prompt additions** (see `system-prompt.ts`):
 
@@ -353,13 +353,13 @@ AI proposes tool call
 
 ## 12. Success metrics
 
-| Signal | Good utilization |
-|--------|------------------|
-| Time to create inquiry | &lt; 30s with voice/text command |
-| Estimate draft time | &gt; 50% reduction vs manual line entry |
-| `next_action` fill rate | AI suggestions accepted &gt; 40% |
-| Approval rate | High-risk rejections &lt; 10% (means previews are accurate) |
-| Daily brief opens | Owners use 3+ mornings/week |
+| Signal                  | Good utilization                                            |
+| ----------------------- | ----------------------------------------------------------- |
+| Time to create inquiry  | &lt; 30s with voice/text command                            |
+| Estimate draft time     | &gt; 50% reduction vs manual line entry                     |
+| `next_action` fill rate | AI suggestions accepted &gt; 40%                            |
+| Approval rate           | High-risk rejections &lt; 10% (means previews are accurate) |
+| Daily brief opens       | Owners use 3+ mornings/week                                 |
 
 ---
 

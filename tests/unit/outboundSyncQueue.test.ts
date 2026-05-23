@@ -184,9 +184,11 @@ describe('OutboundSyncQueue', () => {
 
   it('debounces patch jobs before processing', async () => {
     vi.useFakeTimers();
-    const executor = vi.fn(async (): Promise<import('@/lib/domain/board/outboundSyncQueue').OutboundExecutorResult> => ({
-      ok: true as const,
-    }));
+    const executor = vi.fn(
+      async (): Promise<import('@/lib/domain/board/outboundSyncQueue').OutboundExecutorResult> => ({
+        ok: true as const,
+      }),
+    );
     const queue = new OutboundSyncQueue(executor);
 
     queue.enqueue(patchJob('c1', { title: 'A' }));

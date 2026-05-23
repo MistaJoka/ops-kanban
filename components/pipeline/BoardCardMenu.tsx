@@ -6,12 +6,7 @@ import { Archive, Calendar, MoreVertical, UserRound } from 'lucide-react';
 
 import type { BoardColumnView } from '@/lib/domain/board/getBoard';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
-import {
-  ADMIN_ROLES,
-  canArchiveCard,
-  canMoveCard,
-  type OrgRole,
-} from '@/lib/domain/auth/roles';
+import { ADMIN_ROLES, canArchiveCard, canMoveCard, type OrgRole } from '@/lib/domain/auth/roles';
 import type { OrgMemberView } from '@/lib/domain/organization/listMembers';
 import { cn } from '@/lib/utils';
 

@@ -1,10 +1,7 @@
 import { z } from 'zod';
 
 import { jsonData, jsonError } from '@/lib/api/response';
-import {
-  buildAvailableSlots,
-  getBookingPageBySlug,
-} from '@/lib/domain/booking/bookingPages';
+import { buildAvailableSlots, getBookingPageBySlug } from '@/lib/domain/booking/bookingPages';
 import { createBooking } from '@/lib/domain/booking/createBooking';
 import { createServiceClient } from '@/lib/db/supabase/service';
 
@@ -20,10 +17,7 @@ const bookingSchema = z.object({
   idempotencyKey: z.string().optional(),
 });
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ slug: string }> },
-) {
+export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const service = createServiceClient();
   const page = await getBookingPageBySlug(service, slug);
@@ -41,10 +35,7 @@ export async function GET(
   });
 }
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ slug: string }> },
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const service = createServiceClient();
   const page = await getBookingPageBySlug(service, slug);
@@ -62,7 +53,11 @@ export async function POST(
 
   const parsed = bookingSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   try {

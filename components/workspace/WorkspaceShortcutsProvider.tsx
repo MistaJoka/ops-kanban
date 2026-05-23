@@ -114,7 +114,11 @@ export function WorkspaceShortcutsProvider({
         return;
       }
 
-      if (onPipeline && (event.key === 'ArrowLeft' || event.key === 'ArrowRight') && !isShortcutModifier(event)) {
+      if (
+        onPipeline &&
+        (event.key === 'ArrowLeft' || event.key === 'ArrowRight') &&
+        !isShortcutModifier(event)
+      ) {
         pipelineHandlersRef.current?.jumpGroup?.(event.key === 'ArrowRight' ? 1 : -1);
       }
     };

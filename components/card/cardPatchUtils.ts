@@ -4,7 +4,10 @@ import type { InvoiceView } from '@/lib/domain/money/invoices';
 import type { PaymentView } from '@/lib/domain/integrations/payments';
 import type { CardPayload } from '@/components/card/useCardDetail';
 
-export function applyDetailPatch(card: CardDetailView, patch: Record<string, unknown>): CardDetailView {
+export function applyDetailPatch(
+  card: CardDetailView,
+  patch: Record<string, unknown>,
+): CardDetailView {
   const next: CardDetailView = {
     ...card,
     updatedAt: new Date().toISOString(),
@@ -58,10 +61,7 @@ export function applyMoneyPatch(
     ...(patch.quote !== undefined ? { quote: patch.quote } : {}),
     ...(patch.invoice !== undefined ? { invoice: patch.invoice } : {}),
     ...(patch.payment !== undefined ? { payment: patch.payment } : {}),
-    card:
-      patch.cardPatch ?
-        applyDetailPatch(payload.card, patch.cardPatch)
-      : payload.card,
+    card: patch.cardPatch ? applyDetailPatch(payload.card, patch.cardPatch) : payload.card,
   };
 }
 

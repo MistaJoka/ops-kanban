@@ -78,7 +78,7 @@ export default function CustomersPage() {
                   <p className="font-semibold tracking-tight text-[var(--text-primary)]">
                     {customer.name}
                   </p>
-                  {customer.address ?? customer.email ?? customer.phone ? (
+                  {(customer.address ?? customer.email ?? customer.phone) ? (
                     <p className="mt-1 truncate text-sm text-[var(--text-secondary)]">
                       {customer.address ?? customer.email ?? customer.phone}
                     </p>

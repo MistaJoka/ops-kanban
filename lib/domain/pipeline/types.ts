@@ -68,11 +68,17 @@ export const CATEGORY_ACCENT: Record<ColumnCategory, string> = {
   aftercare: 'var(--cat-aftercare)',
 };
 
-export function stateKeyIndex(stateKey: string, pipelineMode: 'compact' | 'full' = 'compact'): number {
+export function stateKeyIndex(
+  stateKey: string,
+  pipelineMode: 'compact' | 'full' = 'compact',
+): number {
   const order = pipelineMode === 'full' ? FULL_STATE_ORDER : COMPACT_STATE_ORDER;
   return order.indexOf(stateKey as never);
 }
 
-export function isStateKey(value: string, pipelineMode: 'compact' | 'full' = 'compact'): value is StateKey {
+export function isStateKey(
+  value: string,
+  pipelineMode: 'compact' | 'full' = 'compact',
+): value is StateKey {
   return stateKeyIndex(value, pipelineMode) >= 0;
 }

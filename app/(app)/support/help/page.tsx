@@ -6,8 +6,8 @@ export default function HelpPage() {
         <section>
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">Run your pipeline</h2>
           <p>
-            Drag cards between columns as work progresses, or use the <strong>+</strong> create menu in the
-            toolbar or <strong>+ Add job</strong> on a column.
+            Drag cards between columns as work progresses, or use the <strong>+</strong> create menu
+            in the toolbar or <strong>+ Add job</strong> on a column.
           </p>
         </section>
         <section>
@@ -28,17 +28,17 @@ export default function HelpPage() {
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">Ops copilot dock</h2>
           <p>
             On the pipeline, Ops copilot lives in a bottom dock — click the bar to expand it and ask
-            about today&apos;s jobs, draft estimates, or analyze pipeline health. When a job panel is
-            open, the dock switches to card context automatically.
+            about today&apos;s jobs, draft estimates, or analyze pipeline health. When a job panel
+            is open, the dock switches to card context automatically.
           </p>
         </section>
         <section>
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">Keyboard shortcuts</h2>
           <p>
             Press <strong>?</strong> anywhere in the workspace to open the shortcuts list. On the
-            pipeline: <strong>/</strong> or <strong>⌘K</strong> focuses job search, <strong>N</strong>{' '}
-            opens New job, <strong>`</strong> toggles the sidebar, and arrow keys jump pipeline groups
-            in full (19-column) mode.
+            pipeline: <strong>/</strong> or <strong>⌘K</strong> focuses job search,{' '}
+            <strong>N</strong> opens New job, <strong>`</strong> toggles the sidebar, and arrow keys
+            jump pipeline groups in full (19-column) mode.
           </p>
         </section>
         <section>

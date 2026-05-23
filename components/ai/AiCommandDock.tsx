@@ -54,8 +54,7 @@ export function AiCommandDock({
   );
 
   const barLabel =
-    barHint ??
-    (context.page === 'card' ? 'Ask about this job…' : 'Ask about today’s jobs…');
+    barHint ?? (context.page === 'card' ? 'Ask about this job…' : 'Ask about today’s jobs…');
 
   return (
     <div
@@ -88,7 +87,10 @@ export function AiCommandDock({
             <span className="ops-ai-dock__bar-placeholder font-medium text-[var(--text-primary)]">
               Ops copilot
             </span>
-            <ChevronDown className="size-4 shrink-0 text-[var(--text-tertiary)]" strokeWidth={2.25} />
+            <ChevronDown
+              className="size-4 shrink-0 text-[var(--text-tertiary)]"
+              strokeWidth={2.25}
+            />
           </button>
           <div className="ops-ai-dock__body">
             <AiDock

@@ -55,9 +55,9 @@ type ApprovalPreview = {
   toolCallId: string;
   toolName: string;
   riskLevel: 'medium' | 'high';
-  summary: string;       // human readable
-  before?: unknown;      // e.g. current column
-  after?: unknown;       // e.g. target column name
+  summary: string; // human readable
+  before?: unknown; // e.g. current column
+  after?: unknown; // e.g. target column name
 };
 ```
 

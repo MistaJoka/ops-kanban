@@ -7,14 +7,37 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ---
 
+### LOG-2026-05-23-03 — AI Slop Detection System v2 (P14)
+
+| Field      | Value            |
+| ---------- | ---------------- |
+| **Phase**  | P14              |
+| **Tasks**  | TASK-P14-001–006 |
+| **Author** | agent            |
+| **Type**   | enhancement      |
+
+**Summary:** Operationalized 5-layer AI slop detection: canonical `AI_SLOP_DETECTION.md`, suspicion scan in build protocol, `check:slop-health` + Prettier + CI, baseline audit, Kanban/card mega-file splits.
+
+**Progress:** T22 module; G0 `check:slop`; EXP-VIS-01; PRB-SLOP-001/002 resolved; LEARN-019.
+
+**Troubles:** None.
+
+**Fix:** `KanbanBoard.tsx` 1097→156 lines via `kanban-board/*`; `useCardMutations` + `useCardMoneyMutations`; allowlist shrunk to controller + useBoardState + toolCalls.
+
+**Learning:** LEARN-019.
+
+**Verify:** `npm run check:slop-health`; `npm run format:check`; `npm run test:unit` 114/114; `npm run typecheck`.
+
+---
+
 ### LOG-2026-05-23-02 — Sync Retry button fix
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P13 |
-| **Tasks** | — (hotfix) |
-| **Author** | agent |
-| **Type** | fix |
+| Field      | Value      |
+| ---------- | ---------- |
+| **Phase**  | P13        |
+| **Tasks**  | — (hotfix) |
+| **Author** | agent      |
+| **Type**   | fix        |
 
 **Summary:** Fixed Out of sync Retry: clears `syncIssue` so pill shows Saving…, re-applies optimistic board mutation before re-enqueue, falls back to `refreshBoard()` when no queued failure; visible `ops-sync-status__retry` styling.
 
@@ -30,12 +53,12 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ### LOG-2026-05-23-01 — Optimistic background sync (P13)
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P13 |
-| **Tasks** | TASK-P13-001 |
-| **Author** | agent |
-| **Type** | enhancement |
+| Field      | Value        |
+| ---------- | ------------ |
+| **Phase**  | P13          |
+| **Tasks**  | TASK-P13-001 |
+| **Author** | agent        |
+| **Type**   | enhancement  |
 
 **Summary:** Shipped outbound sync queue: domain `outboundSyncQueue`, `useOutboundSync`, fire-and-forget board create/move/reorder/patch, instant panel stub hydrate, money/panel mutations via queue, sync pill queue depth + Retry, v0.5.0 changelog.
 
@@ -53,12 +76,12 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ### LOG-2026-05-22-25 — UI master formula alignment (P12)
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P12 |
-| **Tasks** | TASK-P12-001 |
-| **Author** | agent |
-| **Type** | enhancement |
+| Field      | Value        |
+| ---------- | ------------ |
+| **Phase**  | P12          |
+| **Tasks**  | TASK-P12-001 |
+| **Author** | agent        |
+| **Type**   | enhancement  |
 
 **Summary:** Shipped UI master formula alignment: canonical `UI_MASTER_FORMULA.md`; pipeline bottom `AiCommandDock` (replaces popover); `PipelineGroupJump` + topo `ops-board-surface`; global `WorkspaceShortcutsProvider` + modal; brand SVGs; sidebar mark; help/changelog updates.
 
@@ -78,12 +101,12 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ### LOG-2026-05-22-24 — Card anatomy pass 3
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P11 |
-| **Tasks** | UX polish |
-| **Author** | agent |
-| **Type** | enhancement |
+| Field      | Value       |
+| ---------- | ----------- |
+| **Phase**  | P11         |
+| **Tasks**  | UX polish   |
+| **Author** | agent       |
+| **Type**   | enhancement |
 
 **Summary:** Pass 3: property line restores `address · job type`, unified footer line per wireframe, always-visible assignee slot, IBM Plex Mono for money, panel category pill + map pin, focus/hover polish.
 
@@ -93,12 +116,12 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ### LOG-2026-05-22-23 — Board card menu z-index / portal
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P11 |
-| **Tasks** | UX fix |
-| **Author** | agent |
-| **Type** | fix |
+| Field      | Value  |
+| ---------- | ------ |
+| **Phase**  | P11    |
+| **Tasks**  | UX fix |
+| **Author** | agent  |
+| **Type**   | fix    |
 
 **Summary:** Card action menu rendered behind pipeline toolbar because `z-30` was trapped inside the board scroll stacking context below toolbar `z-20`. Menu now portals to `document.body` with `position: fixed` and `z-45`.
 
@@ -108,12 +131,12 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ### LOG-2026-05-22-22 — Card anatomy pass 2 (board + panel)
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P11 |
-| **Tasks** | UX polish |
-| **Author** | agent |
-| **Type** | enhancement |
+| Field      | Value       |
+| ---------- | ----------- |
+| **Phase**  | P11         |
+| **Tasks**  | UX polish   |
+| **Author** | agent       |
+| **Type**   | enhancement |
 
 **Summary:** Second card design pass: category wash, status dots, due/schedule short dates (`Thu 5/22`), property pin line, empty meta placeholder, panel summary strip aligned with board signals.
 
@@ -125,12 +148,12 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ### LOG-2026-05-22-21 — Board card anatomy polish
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P11 |
-| **Tasks** | UX polish |
-| **Author** | agent |
-| **Type** | enhancement |
+| Field      | Value       |
+| ---------- | ----------- |
+| **Phase**  | P11         |
+| **Tasks**  | UX polish   |
+| **Author** | agent       |
+| **Type**   | enhancement |
 
 **Summary:** Refined board card layout to match `CARD_DESIGN.md` comfortable density: 128px min height, 4px category accent, property line with job type, meta band row (job/money/schedule/days + assignee), and clearer footer hierarchy.
 
@@ -148,12 +171,12 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ### LOG-2026-05-22-20 — CSS dev cache guardrails
 
-| Field | Value |
-|-------|-------|
-| **Phase** | QA |
-| **Tasks** | CSS guardrails |
-| **Author** | agent |
-| **Type** | fix |
+| Field      | Value          |
+| ---------- | -------------- |
+| **Phase**  | QA             |
+| **Tasks**  | CSS guardrails |
+| **Author** | agent          |
+| **Type**   | fix            |
 
 **Summary:** Confirmed recurring “CSS breaks” is stylesheet 404 from poisoned `.next` (build + dev mix), not globals.css regressions. Added check script, Playwright guards, E2E CSS-001, and docs.
 
@@ -172,12 +195,12 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 ```markdown
 ### LOG-YYYY-MM-DD-NN — Short title
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P0–P10 |
-| **Tasks** | TASK-Px-xxx, … |
-| **Author** | name / agent |
-| **Type** | progress \| complete \| blocked \| decision \| scope \| release \| incident \| fix |
+| Field      | Value                                                                              |
+| ---------- | ---------------------------------------------------------------------------------- |
+| **Phase**  | P0–P10                                                                             |
+| **Tasks**  | TASK-Px-xxx, …                                                                     |
+| **Author** | name / agent                                                                       |
+| **Type**   | progress \| complete \| blocked \| decision \| scope \| release \| incident \| fix |
 
 **Summary:** 1–3 sentences.
 
@@ -190,6 +213,7 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 **Learning:** LEARN-NNN added/updated, or "none new".
 
 **Changes:**
+
 - bullet
 
 **Tests run:** TEST-IDs or "none"
@@ -214,20 +238,20 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ## Phase status dashboard
 
-| Phase | Name | Status | Started | Completed | DoD |
-|-------|------|--------|---------|-----------|-----|
-| P0 | Scaffold | `in_progress` | 2025-05-21 | — | DONE-0 |
-| P1 | Foundation | `complete` | 2025-05-21 | 2025-05-21 | DONE-1 |
-| P2 | Workspace | `complete` | 2025-05-21 | 2025-05-21 | DONE-2 |
-| P3 | Deep card | `complete` | 2025-05-21 | 2025-05-21 | DONE-3 |
-| P4 | Money | `complete` | 2025-05-21 | 2025-05-21 | DONE-4 |
-| P5 | AI | `complete` | 2025-05-21 | 2025-05-21 | DONE-5 |
-| P6 | MVP release | `complete` | 2025-05-21 | 2025-05-21 | DONE-6 |
-| P7 | Wave 1 | `not_started` | — | — | DONE-7 |
-| P8 | Wave 2 | `not_started` | — | — | DONE-8 |
-| P9 | Wave 3 | `not_started` | — | — | DONE-9 |
-| P10 | Wave 4 | `complete` | 2025-05-21 | 2025-05-21 | DONE-10 |
-| P11 | Card hardening | `complete` | 2026-05-22 | 2026-05-22 | DONE-11 |
+| Phase | Name           | Status        | Started    | Completed  | DoD     |
+| ----- | -------------- | ------------- | ---------- | ---------- | ------- |
+| P0    | Scaffold       | `in_progress` | 2025-05-21 | —          | DONE-0  |
+| P1    | Foundation     | `complete`    | 2025-05-21 | 2025-05-21 | DONE-1  |
+| P2    | Workspace      | `complete`    | 2025-05-21 | 2025-05-21 | DONE-2  |
+| P3    | Deep card      | `complete`    | 2025-05-21 | 2025-05-21 | DONE-3  |
+| P4    | Money          | `complete`    | 2025-05-21 | 2025-05-21 | DONE-4  |
+| P5    | AI             | `complete`    | 2025-05-21 | 2025-05-21 | DONE-5  |
+| P6    | MVP release    | `complete`    | 2025-05-21 | 2025-05-21 | DONE-6  |
+| P7    | Wave 1         | `not_started` | —          | —          | DONE-7  |
+| P8    | Wave 2         | `not_started` | —          | —          | DONE-8  |
+| P9    | Wave 3         | `not_started` | —          | —          | DONE-9  |
+| P10   | Wave 4         | `complete`    | 2025-05-21 | 2025-05-21 | DONE-10 |
+| P11   | Card hardening | `complete`    | 2026-05-22 | 2026-05-22 | DONE-11 |
 
 Update this table when a phase starts or completes. Mirror status in [`PROGRESS.md`](./PROGRESS.md).
 
@@ -237,12 +261,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2026-05-22-01 — Card ops complete (v0.3.0)
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P11 |
-| **Tasks** | TASK-P11-001–P11-011 |
-| **Author** | build agent |
-| **Type** | release |
+| Field      | Value                |
+| ---------- | -------------------- |
+| **Phase**  | P11                  |
+| **Tasks**  | TASK-P11-001–P11-011 |
+| **Author** | build agent          |
+| **Type**   | release              |
 
 **Summary:** Shipped v0.3.0 — full CARD_DESIGN board layer with true stage age, scan-rich board cards, modals, @dnd-kit reorder, CardPanel refactor, and advanced filters.
 
@@ -255,6 +279,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** LEARN-012 (stage age), LEARN-013 (board menu + scan signals)
 
 **Changes:**
+
 - `supabase/migrations/017_column_entered_at.sql`
 - `lib/domain/cards/{boardCard,moveCard,reorderCard,authorizeCardMutation}.ts`
 - `components/pipeline/{BoardCard,BoardCardMenu,board-card-primitives,NewJobModal,KanbanBoard}.tsx`
@@ -272,12 +297,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-13 — AI command SSE streaming
 
-| Field | Value |
-|-------|-------|
-| **Phase** | AI-P5 |
-| **Tasks** | TASK-AI-P5-004 |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value          |
+| ---------- | -------------- |
+| **Phase**  | AI-P5          |
+| **Tasks**  | TASK-AI-P5-004 |
+| **Author** | build agent    |
+| **Type**   | complete       |
 
 **Summary:** Added Server-Sent Events streaming to `POST /api/ai/command` with Gemini token streaming, tool execution status phases, and live copilot UI updates.
 
@@ -299,12 +324,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-12 — AI phases P2–P4 build-out
 
-| Field | Value |
-|-------|-------|
-| **Phase** | AI-P2–P5 |
-| **Tasks** | TASK-AI-P2-001–P4-007, TASK-AI-P5-001/003 |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value                                     |
+| ---------- | ----------------------------------------- |
+| **Phase**  | AI-P2–P5                                  |
+| **Tasks**  | TASK-AI-P2-001–P4-007, TASK-AI-P5-001/003 |
+| **Author** | build agent                               |
+| **Type**   | complete                                  |
 
 **Summary:** Defined AI build phases (P0–P5) and implemented Waves A–C: revenue loop, scheduling copilot, customer/money intel, multi-surface dock, voice input, and inline next-action banners.
 
@@ -317,6 +342,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** none new
 
 **Changes:**
+
 - AI phases doc + PHASE_TASKS track
 - Revenue: `createInvoiceDraft`, `createPaymentLink`, assign-by-name
 - Scheduling: calendar context, `getCalendarSchedule`, `findScheduleConflicts`, `rescheduleEvent`
@@ -333,12 +359,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-11 — AI competitive benchmark (master)
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Pilot / product |
-| **Tasks** | Competitive analysis deliverable |
-| **Author** | build agent |
-| **Type** | decision |
+| Field      | Value                            |
+| ---------- | -------------------------------- |
+| **Phase**  | Pilot / product                  |
+| **Tasks**  | Competitive analysis deliverable |
+| **Author** | build agent                      |
+| **Type**   | decision                         |
 
 **Summary:** Published canonical elite-provider AI comparison: capability matrix, JTBD scorecard, dimension weights, gap roadmap Waves A–D, sales messaging guide.
 
@@ -351,6 +377,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** none new
 
 **Changes:**
+
 - Master benchmark doc (Jobber, ServiceTitan, HCP, ServiceM8)
 - Visual canvas for exec review
 
@@ -364,12 +391,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-10 — AI copilot A+ upgrade
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P5 / Pilot |
-| **Tasks** | AI copilot upgrade |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value              |
+| ---------- | ------------------ |
+| **Phase**  | P5 / Pilot         |
+| **Tasks**  | AI copilot upgrade |
+| **Author** | build agent        |
+| **Type**   | complete           |
 
 **Summary:** Upgraded Ops copilot from regex-first MVP to Gemini function-calling agent with LLM estimate parsing, daily brief, card disambiguation, multi-turn UI, and human approval previews.
 
@@ -382,6 +409,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** LEARN-014
 
 **Changes:**
+
 - Native Gemini function calling as primary router
 - LLM scope-notes → estimate line items
 - Multi-turn conversation + mode-aware chips
@@ -397,12 +425,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-09 — Premium settings menu
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Post-P10 polish |
-| **Tasks** | Settings hub UI |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value           |
+| ---------- | --------------- |
+| **Phase**  | Post-P10 polish |
+| **Tasks**  | Settings hub UI |
+| **Author** | build agent     |
+| **Type**   | complete        |
 
 **Summary:** Added a dedicated Settings hub with two-column shell, overview landing, General (org name + pipeline mode), Team roster, and refactored integrations/templates/automations/contracts to the `.ops-*` design system.
 
@@ -415,6 +443,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** LEARN-011
 
 **Changes:**
+
 - `app/(app)/settings/*` layout, overview, general, team
 - `components/settings/*`, `components/workspace/AccountMenu.tsx`
 - `lib/domain/organization/getOrganizationSettings.ts`, `updateOrganizationSettings.ts`
@@ -430,12 +459,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-08 — Board sync status indicator
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Post-P10 polish |
-| **Tasks** | Sync status UI |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value           |
+| ---------- | --------------- |
+| **Phase**  | Post-P10 polish |
+| **Tasks**  | Sync status UI  |
+| **Author** | build agent     |
+| **Type**   | complete        |
 
 **Summary:** Added a small pipeline sync status pill that reflects frontend/backend alignment, in-flight saves, server refresh, and live Supabase connection.
 
@@ -455,12 +484,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-07 — Optimistic board UI
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Post-P10 polish |
-| **Tasks** | Board/card optimistic updates |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value                         |
+| ---------- | ----------------------------- |
+| **Phase**  | Post-P10 polish               |
+| **Tasks**  | Board/card optimistic updates |
+| **Author** | build agent                   |
+| **Type**   | complete                      |
 
 **Summary:** Board and card panel actions now update local state immediately and sync to Supabase in the background, with rollback on failure. Removed full-board refetch after lightweight mutations.
 
@@ -473,6 +502,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** LEARN-010
 
 **Changes:**
+
 - `lib/domain/board/boardOptimistic.ts`
 - `components/pipeline/useBoardState.ts`
 - `components/pipeline/useBoardRealtime.ts`
@@ -489,12 +519,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-06 — Dev board clean slate
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Post-P10 |
-| **Tasks** | Dev reset board + empty pipeline UX |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value                               |
+| ---------- | ----------------------------------- |
+| **Phase**  | Post-P10                            |
+| **Tasks**  | Dev reset board + empty pipeline UX |
+| **Author** | build agent                         |
+| **Type**   | complete                            |
 
 **Summary:** Cards on the board under auth bypass were real Supabase rows in the persistent dev org (`dev-bypass@opsboard.local`), not mock UI. Added dev-only wipe tooling and first-login empty state.
 
@@ -507,6 +537,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** none new
 
 **Changes:**
+
 - `lib/domain/dev/resetDevBoardData.ts`, `resetDevBoard.ts`
 - `scripts/reset-dev-board.ts`, `npm run dev:reset-board`
 - `app/api/dev/reset-board/route.ts`, `DevResetBoardButton` in `AppShell`
@@ -520,12 +551,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-05 — Native integrations refactor
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Post-P10 |
-| **Tasks** | Native accounting ledger; remove QB/DocuSign |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value                                        |
+| ---------- | -------------------------------------------- |
+| **Phase**  | Post-P10                                     |
+| **Tasks**  | Native accounting ledger; remove QB/DocuSign |
+| **Author** | build agent                                  |
+| **Type**   | complete                                     |
 
 **Summary:** Replaced QuickBooks sync and DocuSign with native business primitives. Stripe remains the only external payment pipe.
 
@@ -538,6 +569,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** none new
 
 **Changes:**
+
 - `accounting_transactions` table + RLS; backfill from invoices/payments
 - `lib/domain/accounting/*`; hooks in `createInvoiceDraft` / `settleInvoicePayment`
 - Deleted QB/DocuSign adapters, routes, webhook handlers
@@ -551,12 +583,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-04 — Card panel + dashboard UI polish
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P2/P3 (workspace polish) |
-| **Tasks** | — (design evolution cont.) |
-| **Author** | build agent |
-| **Type** | progress |
+| Field      | Value                      |
+| ---------- | -------------------------- |
+| **Phase**  | P2/P3 (workspace polish)   |
+| **Tasks**  | — (design evolution cont.) |
+| **Author** | build agent                |
+| **Type**   | progress                   |
 
 **Summary:** Extended `.ops-*` design system to card detail panel and dashboard — unified tabs, controls, stat cards, and pipeline snapshot visualization.
 
@@ -569,6 +601,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** none new
 
 **Changes:**
+
 - Panel: backdrop blur overlay, tokenized width/shadow, lucide close/menu, Fraunces title, mono stage key, `.ops-tab` bar
 - Dashboard: stat cards with lucide icons, category-colored pipeline bars, Fraunces title
 - Shared: `.ops-section-card`, `.ops-stat-card`, `.ops-btn-accent-outline`, `.ops-field-label`; fixed missing `--success` token
@@ -581,12 +614,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-03 — Pipeline UI polish (Field ledger evolution)
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P2 (workspace polish) |
-| **Tasks** | — (design evolution) |
-| **Author** | build agent |
-| **Type** | progress |
+| Field      | Value                 |
+| ---------- | --------------------- |
+| **Phase**  | P2 (workspace polish) |
+| **Tasks**  | — (design evolution)  |
+| **Author** | build agent           |
+| **Type**   | progress              |
 
 **Summary:** Evolved existing Field ledger theme toward production-quality pipeline UX — cohesive tokens, tactile drag states, lucide nav icons, and toolbar/card hierarchy without redesigning architecture.
 
@@ -599,6 +632,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** none new
 
 **Changes:**
+
 - Design tokens: `--shadow-drag`, `--shadow-lift`, `--ease-out-expo`, `--border-subtle`, utility classes
 - Board cards: grab cursor, lift/dim during drag, lucide calendar, footer meta rhythm, fixed drag-click race with `useRef`
 - Columns: drop-target gradient, mono state keys, lucide add button, empty-state drop hint
@@ -614,12 +648,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-02 — shadcn theme + QA pack (001–004)
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P0, QA |
-| **Tasks** | TASK-P0-002, TASK-QA-001–004 |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value                        |
+| ---------- | ---------------------------- |
+| **Phase**  | P0, QA                       |
+| **Tasks**  | TASK-P0-002, TASK-QA-001–004 |
+| **Author** | build agent                  |
+| **Type**   | complete                     |
 
 **Summary:** Installed shadcn/ui with Field ledger CSS variable mapping and expanded unit/integration/E2E coverage for validators, RLS matrix, dashboard/customers smoke, and AI command contracts.
 
@@ -637,12 +671,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-22-01 — Pilot deploy readiness
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Pilot |
-| **Tasks** | P0-007, P0-008, P0-010, Vercel cron, CI wave4, unit tests |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value                                                     |
+| ---------- | --------------------------------------------------------- |
+| **Phase**  | Pilot                                                     |
+| **Tasks**  | P0-007, P0-008, P0-010, Vercel cron, CI wave4, unit tests |
+| **Author** | build agent                                               |
+| **Type**   | complete                                                  |
 
 **Summary:** Closed pilot-deploy gaps: Vercel daily cron for contract runner, CI wave4 job, expanded unit tests, updated README and pilot checklist.
 
@@ -662,12 +696,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-19 — Post-Wave 4 polish batch
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Polish |
-| **Tasks** | Dashboard, customers, integration strip, realtime, full pipeline, reports filters, contract runner, automations SMS/review, card UX |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value                                                                                                                               |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase**  | Polish                                                                                                                              |
+| **Tasks**  | Dashboard, customers, integration strip, realtime, full pipeline, reports filters, contract runner, automations SMS/review, card UX |
+| **Author** | build agent                                                                                                                         |
+| **Type**   | complete                                                                                                                            |
 
 **Summary:** Shipped the recommended polish stack: daily ops pages, card integration visibility, realtime board, 19-column pipeline toggle, and deeper Wave 4 automations.
 
@@ -680,6 +714,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** none new
 
 **Changes:**
+
 - Migration `015_polish_automations.sql`
 - Domain: dashboard, customers list, card integration summary, full pipeline sync, run due contracts
 - APIs: dashboard, customers, pipeline-mode, contracts/run-due; reports date query params
@@ -695,12 +730,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-18 — Phase 10 complete: Wave 4 scale
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P10 |
-| **Tasks** | TASK-P10-001, TASK-P10-002, TASK-P10-003, TASK-P10-004, TASK-P10-005 |
-| **Author** | build agent |
-| **Type** | complete |
+| Field      | Value                                                                |
+| ---------- | -------------------------------------------------------------------- |
+| **Phase**  | P10                                                                  |
+| **Tasks**  | TASK-P10-001, TASK-P10-002, TASK-P10-003, TASK-P10-004, TASK-P10-005 |
+| **Author** | build agent                                                          |
+| **Type**   | complete                                                             |
 
 **Summary:** Wave 4 delivers full customer portal, QuickBooks one-way sync, column automations, reports, and recurring contracts — completing the platform blueprint.
 
@@ -713,6 +748,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** none new
 
 **Changes:**
+
 - `013_wave4_scale.sql`, `014_wave4_rls.sql` — automations, accounting_sync_log, contracts
 - Full portal `/p/[token]` + `/api/portal/[token]/payment-link`
 - QuickBooks adapter, sync API, Money tab + Settings
@@ -730,12 +766,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-14 — Phase 6 complete: MVP pilot-ready
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P6 |
-| **Tasks** | TASK-P6-001–P6-011 |
-| **Author** | agent |
-| **Type** | complete |
+| Field      | Value              |
+| ---------- | ------------------ |
+| **Phase**  | P6                 |
+| **Tasks**  | TASK-P6-001–P6-011 |
+| **Author** | agent              |
+| **Type**   | complete           |
 
 **Summary:** Finished MVP release hardening — axe a11y suite, UAT/EXP automated sign-off, bootstrap V1 zero-cards test, error boundary, Vercel deploy config, G2 approved for pilot.
 
@@ -750,6 +786,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Problems:** none
 
 **Changes:**
+
 - `tests/e2e/a11y-uat.spec.ts` — a11y + UAT coverage
 - `app/(app)/error.tsx` — route error recovery
 - CI a11y job; `test:a11y`, `test:release`, `test:regression` scripts
@@ -763,12 +800,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-13 — Phase 6 hardening (automated release track)
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P6 |
-| **Tasks** | TASK-P6-001–004, P6-007–011 |
-| **Author** | agent |
-| **Type** | progress |
+| Field      | Value                       |
+| ---------- | --------------------------- |
+| **Phase**  | P6                          |
+| **Tasks**  | TASK-P6-001–004, P6-007–011 |
+| **Author** | agent                       |
+| **Type**   | progress                    |
 
 **Summary:** MVP release hardening — empty/error states, a11y basics, CI pipeline, no-mock guards, CHANGELOG v0.1.0, and G2 automated sign-off doc. Manual UAT/staging remain before MVP SHIPPED.
 
@@ -783,6 +820,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Problems:** none
 
 **Changes:**
+
 - P6-001 empty/loading/error UX on pipeline + card
 - P6-002 aria labels, live regions, `prefers-reduced-motion`
 - P6-003 CI: lint, typecheck, unit, ai, integration, security, e2e (with secrets)
@@ -797,12 +835,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-12 — Phase 5 complete: AI copilot
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P5 |
-| **Tasks** | TASK-P5-001–P5-010 |
-| **Author** | agent |
-| **Type** | complete |
+| Field      | Value              |
+| ---------- | ------------------ |
+| **Phase**  | P5                 |
+| **Tasks**  | TASK-P5-001–P5-010 |
+| **Author** | agent              |
+| **Type**   | complete           |
 
 **Summary:** Shipped safe AI on board + card — intent routing, domain tool execution with approval flow, dock/rail UI, inline card summary, and estimate draft CTA.
 
@@ -817,6 +855,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Problems:** none
 
 **Changes:**
+
 - AI context loader capped at 40 cards; deterministic intent router + Gemini fallback
 - Medium/high tools persist pending rows; approve route calls `executeApprovedToolCall`
 - Board dock + card rail with prompt chips; Overview auto-summary; Estimate “Draft from scope (AI)”
@@ -831,12 +870,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-11 — Phase 4 complete: money drafts
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P4 |
-| **Tasks** | TASK-P4-001–P4-008 |
-| **Author** | agent |
-| **Type** | complete |
+| Field      | Value              |
+| ---------- | ------------------ |
+| **Phase**  | P4                 |
+| **Tasks**  | TASK-P4-001–P4-008 |
+| **Author** | agent              |
+| **Type**   | complete           |
 
 **Summary:** Shipped estimate + invoice drafts without a payment provider — line-item quotes, invoice from quote, manual mark paid archives job, and archive/balance validation gates.
 
@@ -851,6 +890,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Problems:** none
 
 **Changes:**
+
 - Quote upsert + mark sent; invoice draft + mark paid → archived column
 - `validateMove` balanceDue gate (UNIT-VAL-002)
 - Kanban archived filter + `?includeArchived=true` board API
@@ -864,12 +904,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-10 — Phase 3 complete: deep card panel
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P3 |
-| **Tasks** | TASK-P3-001–P3-011 |
-| **Author** | agent |
-| **Type** | complete |
+| Field      | Value              |
+| ---------- | ------------------ |
+| **Phase**  | P3                 |
+| **Tasks**  | TASK-P3-001–P3-011 |
+| **Author** | agent              |
+| **Type**   | complete           |
 
 **Summary:** Built slide-over job record — card panel with URL routing, editable tabs, activity timeline, move-validation modals, and customer CRUD linked to cards.
 
@@ -884,6 +924,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Problems:** none
 
 **Changes:**
+
 - `components/card/CardPanel.tsx`, `ActivityTimeline.tsx`, `MovePromptModal.tsx`
 - `lib/domain/cards/cardDetail.ts`, comments, customers, activities, members
 - API routes for card detail, patch, customer, comments, members
@@ -898,12 +939,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-09 — Phase 2 complete: workspace + Kanban
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P2 |
-| **Tasks** | TASK-P2-001–P2-011, P2-014 |
-| **Author** | agent |
-| **Type** | complete |
+| Field      | Value                      |
+| ---------- | -------------------------- |
+| **Phase**  | P2                         |
+| **Tasks**  | TASK-P2-001–P2-011, P2-014 |
+| **Author** | agent                      |
+| **Type**   | complete                   |
 
 **Summary:** Built operational Job Pipeline workspace — collapsible sidebar, support pages, Kanban board with create/move/filter/search, domain validation, and REST APIs.
 
@@ -918,6 +959,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Problems:** none
 
 **Changes:**
+
 - App shell + sidebar (`localStorage` collapse)
 - `/support/help`, `/contact`, `/changelog`
 - Pipeline top bar, filters, search, + new job
@@ -931,12 +973,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-08 — Phase 1 complete: migrations applied, tests green
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P1 |
-| **Tasks** | TASK-P1-001 |
-| **Author** | agent |
-| **Type** | complete |
+| Field      | Value       |
+| ---------- | ----------- |
+| **Phase**  | P1          |
+| **Tasks**  | TASK-P1-001 |
+| **Author** | agent       |
+| **Type**   | complete    |
 
 **Summary:** Applied all MVP migrations to remote `ops-kanban` Supabase project; integration and security tests now pass. Phase 1 (DONE-1) complete.
 
@@ -960,12 +1002,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-07 — Phase 1 foundation: auth, bootstrap, tests
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P1 |
-| **Tasks** | TASK-P0-006, TASK-P1-002–P1-010, TASK-P1-005–P1-009 |
-| **Author** | agent |
-| **Type** | progress |
+| Field      | Value                                               |
+| ---------- | --------------------------------------------------- |
+| **Phase**  | P1                                                  |
+| **Tasks**  | TASK-P0-006, TASK-P1-002–P1-010, TASK-P1-005–P1-009 |
+| **Author** | agent                                               |
+| **Type**   | progress                                            |
 
 **Summary:** Built Phase 1 foundation — signup/login, service-role workspace bootstrap (org + board + 9 columns, zero cards), auth middleware, minimal `/pipeline` page, Vitest test harness with unit and integration/security suites.
 
@@ -980,6 +1022,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Problems:** PRB-001
 
 **Changes:**
+
 - Auth: `/login`, `/signup`, middleware guard, `/` → login or pipeline
 - Bootstrap domain service + owner role on signup
 - Vitest config, unit roles tests, integration bootstrap + RLS matrix tests
@@ -993,12 +1036,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-06 — Wire `.env.local` into Next.js + Supabase clients
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P0 |
-| **Tasks** | TASK-P0-001, TASK-P0-003, TASK-P0-004, TASK-P0-009 |
-| **Author** | agent |
-| **Type** | progress |
+| Field      | Value                                              |
+| ---------- | -------------------------------------------------- |
+| **Phase**  | P0                                                 |
+| **Tasks**  | TASK-P0-001, TASK-P0-003, TASK-P0-004, TASK-P0-009 |
+| **Author** | agent                                              |
+| **Type**   | progress                                           |
 
 **Summary:** Scaffolded a runnable Next.js 15 app and connected the user's `.env.local` secrets through validated env modules and Supabase SSR clients.
 
@@ -1011,6 +1054,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** LEARN-004 (env client/server split)
 
 **Changes:**
+
 - Next.js + Tailwind scaffold with `@/` path alias
 - Zod-validated `lib/env/client.ts` and `lib/env/server.ts`
 - Supabase browser, server, and service clients
@@ -1025,12 +1069,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-05 — Doc overlap cleanup + DOC_INDEX
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Planning |
-| **Tasks** | — |
+| Field      | Value            |
+| ---------- | ---------------- |
+| **Phase**  | Planning         |
+| **Tasks**  | —                |
 | **Author** | planning session |
-| **Type** | decision |
+| **Type**   | decision         |
 
 **Summary:** Combed repo for duplicate plans and starter paths; added canonical doc index; slimmed redirect-only files.
 
@@ -1052,12 +1096,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-04 — AI build protocol + reinforced learning loop
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Planning |
-| **Tasks** | — |
+| Field      | Value            |
+| ---------- | ---------------- |
+| **Phase**  | Planning         |
+| **Tasks**  | —                |
 | **Author** | planning session |
-| **Type** | decision |
+| **Type**   | decision         |
 
 **Summary:** Added AI-facing build protocol so agents read/update progress, register troubles (PRB), and capture durable fixes (LEARN) every session.
 
@@ -1070,6 +1114,7 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **Learning:** LEARN-001–003 seeded from pre-build audit decisions.
 
 **Changes:**
+
 - Session loop: read PROGRESS → work one task → LOG + PROGRESS + PRB/LEARN
 - Per-phase AI checklists (P0–P10)
 - Problem sourcing via PROBLEM_REGISTRY search before debug
@@ -1084,12 +1129,12 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-03 — Audit fixes: archived pipeline + missing artifacts
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Planning |
-| **Tasks** | — |
+| Field      | Value            |
+| ---------- | ---------------- |
+| **Phase**  | Planning         |
+| **Tasks**  | —                |
 | **Author** | planning session |
-| **Type** | decision |
+| **Type**   | decision         |
 
 **Summary:** Unified terminal column on `archived`. Fixed doc contradictions. Added migrations 002–006 (auth FK, card extensions, RLS, indexes, triggers), API_ROUTES, APPROVAL_FLOW, DESIGN_TOKENS, MINIMAL_DASHBOARD, AGENTS.md, domain README, check-no-mock script, legal stubs, assignCard tool, createCard medium risk.
 
@@ -1103,16 +1148,17 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-02 — No mock data policy confirmed (pre-build)
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Planning |
-| **Tasks** | — |
+| Field      | Value            |
+| ---------- | ---------------- |
+| **Phase**  | Planning         |
+| **Tasks**  | —                |
 | **Author** | planning session |
-| **Type** | decision |
+| **Type**   | decision         |
 
 **Summary:** Confirmed MVP has no mock production data requirement. Added `NO_MOCK_DATA_POLICY.md`, release gate checks, DoD G8, PRE_BUILD_CONFIRMATION. Starter `tool-executor` now throws until Phase 5 wires domain services.
 
 **Changes:**
+
 - Policy doc + audit of blueprint contradictions
 - MVP_SCOPE, CARD_DESIGN, RELEASE_GATES aligned
 - TASK-P6-011 CI no-mock verification
@@ -1127,16 +1173,17 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-01 — Roadmap and QA pack finalized (pre-build)
 
-| Field | Value |
-|-------|-------|
-| **Phase** | Planning |
-| **Tasks** | — |
+| Field      | Value            |
+| ---------- | ---------------- |
+| **Phase**  | Planning         |
+| **Tasks**  | —                |
 | **Author** | planning session |
-| **Type** | decision |
+| **Type**   | decision         |
 
 **Summary:** MVP captured in `MVP_CAPTURE.md`. Development roadmap, phase tasks (P0–P10), definitions of done, architecture principles, and modular QA pack (`docs/testing/`) are ready before implementation.
 
 **Changes:**
+
 - Added `docs/roadmap/*` (this log, tasks, DoD, principles)
 - Product/design/AI/integration docs aligned to landscaping vertical
 - Testing pack with FMEA, RBT, STRIDE, regression matrix
@@ -1153,16 +1200,17 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-17 — Phase 9 Wave 3: documents, e-sign, change orders
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P9 |
-| **Tasks** | TASK-P9-001–P9-003 |
-| **Author** | build agent |
-| **Type** | feature |
+| Field      | Value              |
+| ---------- | ------------------ |
+| **Phase**  | P9                 |
+| **Tasks**  | TASK-P9-001–P9-003 |
+| **Author** | build agent        |
+| **Type**   | feature            |
 
 **Summary:** Wave 3 documents — Supabase Storage attachments, native portal signatures audit trail, DocuSign envelopes + webhook, change orders via `parent_card_id`.
 
 **Progress:**
+
 - Migrations `011_wave3_documents.sql`, `012_wave3_rls.sql`
 - Attachments: upload/list/delete, Files tab, `card-attachments` bucket
 - Signatures table; portal approve records native sign with name + IP
@@ -1184,16 +1232,17 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-16 — Phase 8 Wave 2: booking, calendar, comms
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P8 |
-| **Tasks** | TASK-P8-001–P8-006 |
-| **Author** | build agent |
-| **Type** | feature |
+| Field      | Value              |
+| ---------- | ------------------ |
+| **Phase**  | P8                 |
+| **Tasks**  | TASK-P8-001–P8-006 |
+| **Author** | build agent        |
+| **Type**   | feature            |
 
 **Summary:** Wave 2 time & conversation — public booking page, crew calendar, Twilio SMS threads, Resend email threads, message templates, AI approved send.
 
 **Progress:**
+
 - Migrations `009_wave2_comms_scheduling.sql`, `010_wave2_rls.sql`
 - Booking: `/book/[slug]`, idempotent `createBooking` → `site_visit` card
 - Calendar: `/calendar` week view from `scheduled_start`
@@ -1219,16 +1268,17 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 
 ### LOG-2025-05-21-15 — Phase 7 Wave 1: payments, portal, integrations
 
-| Field | Value |
-|-------|-------|
-| **Phase** | P7 |
-| **Tasks** | TASK-P7-001–P7-008 |
-| **Author** | build agent |
-| **Type** | feature |
+| Field      | Value              |
+| ---------- | ------------------ |
+| **Phase**  | P7                 |
+| **Tasks**  | TASK-P7-001–P7-008 |
+| **Author** | build agent        |
+| **Type**   | feature            |
 
 **Summary:** Wave 1 money & trust layer — Stripe payment links, webhook idempotency, customer portal, estimate export/send, integrations settings.
 
 **Progress:**
+
 - Migrations `007_wave1_payments.sql`, `008_wave1_rls.sql`
 - Stripe adapter, webhook route, `processPaymentWebhook`, shared `settleInvoicePayment`
 - APIs: payment-link, portal-token, portal approve, integrations, quotes export/send

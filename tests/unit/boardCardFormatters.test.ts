@@ -23,7 +23,9 @@ describe('boardCardFormatters', () => {
     const now = new Date('2026-05-22T15:00:00.000Z');
     expect(formatScheduleLabel('2026-05-22T09:00:00.000Z', now)).toBe('Today');
     expect(formatScheduleLabel('2026-05-23T09:00:00.000Z', now)).toBe('Tomorrow');
-    expect(formatScheduleLabel('2026-05-25T09:00:00.000Z', now)).toMatch(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) \d{1,2}\/\d{1,2}$/);
+    expect(formatScheduleLabel('2026-05-25T09:00:00.000Z', now)).toMatch(
+      /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) \d{1,2}\/\d{1,2}$/,
+    );
   });
 
   it('formats due labels', () => {

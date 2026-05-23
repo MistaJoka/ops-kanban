@@ -102,12 +102,7 @@ export function CardPanel({
   return (
     <>
       <div className="ops-panel-overlay" onClick={onClose} aria-hidden />
-      <aside
-        className="ops-panel"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Job detail panel"
-      >
+      <aside className="ops-panel" role="dialog" aria-modal="true" aria-label="Job detail panel">
         {detail.loading && !detail.payload?.card ? (
           <div
             className="flex flex-1 flex-col items-center justify-center gap-3 p-8 text-sm text-[var(--text-secondary)]"
@@ -122,7 +117,11 @@ export function CardPanel({
               {detail.error}
             </p>
             <div className="flex gap-2">
-              <button type="button" onClick={() => void detail.loadCard()} className="ops-btn-primary">
+              <button
+                type="button"
+                onClick={() => void detail.loadCard()}
+                className="ops-btn-primary"
+              >
                 Try again
               </button>
               <button type="button" onClick={onClose} className="ops-btn-secondary">
@@ -169,9 +168,7 @@ export function CardPanel({
               </div>
             </div>
 
-            {detail.error ? (
-              <p className="ops-alert-error mx-4 mt-3">{detail.error}</p>
-            ) : null}
+            {detail.error ? <p className="ops-alert-error mx-4 mt-3">{detail.error}</p> : null}
 
             <CardPanelBody
               tab={tab}

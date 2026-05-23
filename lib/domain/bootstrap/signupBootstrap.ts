@@ -107,7 +107,10 @@ export async function bootstrapWorkspace(
     .single();
 
   if (organizationError || !organization) {
-    throw new BootstrapError(organizationError?.message ?? 'Organization insert failed', 'organization');
+    throw new BootstrapError(
+      organizationError?.message ?? 'Organization insert failed',
+      'organization',
+    );
   }
 
   const { error: memberError } = await client.from('organization_members').insert({

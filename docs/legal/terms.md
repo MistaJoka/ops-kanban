@@ -17,4 +17,4 @@ Service provided “as is” during pilot. See counsel-reviewed terms before gen
 
 ---
 
-*Replace with counsel-reviewed terms before public launch.*
+_Replace with counsel-reviewed terms before public launch._

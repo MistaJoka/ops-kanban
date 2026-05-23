@@ -25,7 +25,11 @@ export async function POST(request: Request) {
 
   const parsed = parseAiCommandBody(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   if (parsed.data.context.organizationId !== context.organizationId) {

@@ -3,10 +3,7 @@ import { deleteAutomation } from '@/lib/domain/automations/crud';
 import { getHandlerContext, isHandlerContext } from '@/lib/domain/api/handlerContext';
 import { canManageMoney } from '@/lib/domain/auth/roles';
 
-export async function DELETE(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 

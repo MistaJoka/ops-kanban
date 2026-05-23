@@ -1,10 +1,6 @@
 import type { OrgRole } from '@/lib/domain/auth/roles';
 import { canArchiveCard, canMoveCard } from '@/lib/domain/auth/roles';
-import {
-  type StateKey,
-  isStateKey,
-  stateKeyIndex,
-} from '@/lib/domain/pipeline/types';
+import { type StateKey, isStateKey, stateKeyIndex } from '@/lib/domain/pipeline/types';
 
 export type MoveValidationContext = {
   role: OrgRole;
@@ -40,10 +36,7 @@ function isAllowedSkip(from: StateKey, to: StateKey): boolean {
   return OWNER_MANAGER_SKIPS.some(([fromKey, toKey]) => fromKey === from && toKey === to);
 }
 
-function isWorkerAssignedToCard(
-  assignedToId: string | null,
-  actorId: string | null,
-): boolean {
+function isWorkerAssignedToCard(assignedToId: string | null, actorId: string | null): boolean {
   if (!assignedToId) {
     return true;
   }
@@ -92,10 +85,7 @@ export function validateMove(context: MoveValidationContext): MoveValidationResu
     };
   }
 
-  if (
-    context.role === 'worker' &&
-    !isWorkerAssignedToCard(context.assignedToId, context.actorId)
-  ) {
+  if (context.role === 'worker' && !isWorkerAssignedToCard(context.assignedToId, context.actorId)) {
     return {
       allowed: false,
       code: 'FORBIDDEN',
@@ -103,7 +93,10 @@ export function validateMove(context: MoveValidationContext): MoveValidationResu
     };
   }
 
-  if (!isStateKey(context.fromStateKey, pipelineMode) || !isStateKey(context.toStateKey, pipelineMode)) {
+  if (
+    !isStateKey(context.fromStateKey, pipelineMode) ||
+    !isStateKey(context.toStateKey, pipelineMode)
+  ) {
     return {
       allowed: false,
       code: 'INVALID_STATE',

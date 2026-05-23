@@ -2,13 +2,7 @@
 
 import { useState } from 'react';
 
-export function PortalActions({
-  token,
-  canApprove,
-}: {
-  token: string;
-  canApprove: boolean;
-}) {
+export function PortalActions({ token, canApprove }: { token: string; canApprove: boolean }) {
   const [signerName, setSignerName] = useState('');
   const [accepted, setAccepted] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -59,7 +53,11 @@ export function PortalActions({
         className="field-input"
       />
       <label className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
-        <input type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} />
+        <input
+          type="checkbox"
+          checked={accepted}
+          onChange={(event) => setAccepted(event.target.checked)}
+        />
         <span>I approve this estimate and authorize work to proceed at the listed total.</span>
       </label>
       <button

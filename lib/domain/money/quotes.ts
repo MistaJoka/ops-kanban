@@ -56,7 +56,9 @@ export async function getQuoteForCard(
 ): Promise<QuoteView | null> {
   const { data: quote, error } = await client
     .from('quotes')
-    .select('id, card_id, status, subtotal, tax, total, quote_items(id, description, quantity, unit_price, total)')
+    .select(
+      'id, card_id, status, subtotal, tax, total, quote_items(id, description, quantity, unit_price, total)',
+    )
     .eq('organization_id', organizationId)
     .eq('card_id', cardId)
     .order('created_at', { ascending: false })
@@ -123,7 +125,10 @@ export async function upsertQuoteDraft(
   const existing = await getQuoteForCard(client, organizationId, cardId);
 
   if (existing?.status === 'sent') {
-    throw new QuoteError('Sent estimates cannot be edited. Create a revision in a future release.', 'FORBIDDEN');
+    throw new QuoteError(
+      'Sent estimates cannot be edited. Create a revision in a future release.',
+      'FORBIDDEN',
+    );
   }
 
   let quoteId = existing?.id;
@@ -145,7 +150,10 @@ export async function upsertQuoteDraft(
       throw new QuoteError(updateError.message, 'INTERNAL');
     }
 
-    const { error: deleteError } = await client.from('quote_items').delete().eq('quote_id', quoteId);
+    const { error: deleteError } = await client
+      .from('quote_items')
+      .delete()
+      .eq('quote_id', quoteId);
 
     if (deleteError) {
       throw new QuoteError(deleteError.message, 'INTERNAL');

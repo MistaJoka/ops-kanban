@@ -75,10 +75,7 @@ export async function getPrimaryBoard(
 
   const mappedColumns = (columns ?? [])
     .filter((column) => orderIndex.has(column.state_key))
-    .sort(
-      (a, b) =>
-        (orderIndex.get(a.state_key) ?? 999) - (orderIndex.get(b.state_key) ?? 999),
-    )
+    .sort((a, b) => (orderIndex.get(a.state_key) ?? 999) - (orderIndex.get(b.state_key) ?? 999))
     .map((column) => ({
       id: column.id,
       name: column.name,

@@ -2,12 +2,12 @@
 
 Static and light-interaction pages inside the app shell. Routes and copy for implementation.
 
-| Route | Title | MVP content |
-|-------|-------|-------------|
-| `/support/help` | Help & guides | Markdown sections below |
-| `/support/contact` | Contact support | Form → email webhook or `mailto:` |
-| `/support/changelog` | What’s new | Version list from `CHANGELOG.md` |
-| Modal `?` | Keyboard shortcuts | From `WORKSPACE_DESIGN.md` §9 |
+| Route                | Title              | MVP content                       |
+| -------------------- | ------------------ | --------------------------------- |
+| `/support/help`      | Help & guides      | Markdown sections below           |
+| `/support/contact`   | Contact support    | Form → email webhook or `mailto:` |
+| `/support/changelog` | What’s new         | Version list from `CHANGELOG.md`  |
+| Modal `?`            | Keyboard shortcuts | From `WORKSPACE_DESIGN.md` §9     |
 
 Footer on all support pages: Privacy (`/legal/privacy` → `docs/legal/privacy.md`), Terms (`/legal/terms` → `docs/legal/terms.md`).
 

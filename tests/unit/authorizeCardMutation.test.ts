@@ -16,9 +16,9 @@ describe('SEC-ROLE card authorization', () => {
   });
 
   it('worker can edit scope fields on assigned card', () => {
-    expect(
-      canEditCard('worker', { nextAction: 'Call customer' }, assignedCard, 'worker-1'),
-    ).toBe(true);
+    expect(canEditCard('worker', { nextAction: 'Call customer' }, assignedCard, 'worker-1')).toBe(
+      true,
+    );
   });
 
   it('worker cannot edit title on assigned card', () => {
@@ -26,15 +26,15 @@ describe('SEC-ROLE card authorization', () => {
   });
 
   it('worker cannot edit card assigned to someone else', () => {
-    expect(
-      canEditCard('worker', { nextAction: 'Call customer' }, assignedCard, 'worker-2'),
-    ).toBe(false);
+    expect(canEditCard('worker', { nextAction: 'Call customer' }, assignedCard, 'worker-2')).toBe(
+      false,
+    );
   });
 
   it('manager can edit any field', () => {
-    expect(canEditCard('manager', { title: 'Updated', priority: 'urgent' }, assignedCard, 'mgr-1')).toBe(
-      true,
-    );
+    expect(
+      canEditCard('manager', { title: 'Updated', priority: 'urgent' }, assignedCard, 'mgr-1'),
+    ).toBe(true);
   });
 
   it('worker can move assigned or unassigned cards only', () => {

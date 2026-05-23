@@ -43,4 +43,4 @@ Use before promoting MVP to a pilot production environment. Couples to `RELEASE_
 - [ ] Review `ai_tool_calls` rejection rate
 - [ ] Schedule full regression within 7 days of any hotfix
 
-**Owner sign-off:** _______________ **Date:** _______________
+**Owner sign-off:** **\*\***\_\_\_**\*\*** **Date:** **\*\***\_\_\_**\*\***

@@ -121,7 +121,9 @@ export function CardPriorityBadge({ priority }: { priority: string }) {
     <span
       className={cn(
         'ops-board-card__priority',
-        priority === 'urgent' ? 'ops-board-card__priority--urgent' : 'ops-board-card__priority--high',
+        priority === 'urgent'
+          ? 'ops-board-card__priority--urgent'
+          : 'ops-board-card__priority--high',
       )}
     >
       {priority}
@@ -139,13 +141,7 @@ export function CardJobTypeChip({ jobType }: { jobType: string }) {
   );
 }
 
-export function CardAssigneeChip({
-  initials,
-  name,
-}: {
-  initials: string;
-  name?: string | null;
-}) {
+export function CardAssigneeChip({ initials, name }: { initials: string; name?: string | null }) {
   return (
     <span
       className="ops-board-card__chip ops-board-card__chip--assignee"
@@ -195,7 +191,12 @@ export function CardMoneySignal({
   }
 
   return (
-    <span className={cn('ops-board-card__signal ops-board-card__signal--money', MONEY_SIGNAL_CLASS[badge])}>
+    <span
+      className={cn(
+        'ops-board-card__signal ops-board-card__signal--money',
+        MONEY_SIGNAL_CLASS[badge],
+      )}
+    >
       <CircleDollarSign className="ops-board-card__signal-icon" strokeWidth={2.25} aria-hidden />
       {amount ? <span className="tabular-nums">{amount}</span> : null}
       {label ? (
@@ -224,13 +225,7 @@ export function CardScheduleSignal({ scheduledStart }: { scheduledStart: string 
   );
 }
 
-export function CardDueSignal({
-  dueDate,
-  isOverdue,
-}: {
-  dueDate: string;
-  isOverdue: boolean;
-}) {
+export function CardDueSignal({ dueDate, isOverdue }: { dueDate: string; isOverdue: boolean }) {
   const label = formatDueLabel(dueDate);
   const soon = !isOverdue && isDueSoon(dueDate);
 
@@ -266,7 +261,10 @@ export function CardSignalOverflow({ count }: { count: number }) {
   }
 
   return (
-    <span className="ops-board-card__chip ops-board-card__chip--overflow" aria-label={`${count} more signals`}>
+    <span
+      className="ops-board-card__chip ops-board-card__chip--overflow"
+      aria-label={`${count} more signals`}
+    >
       +{count}
     </span>
   );
@@ -400,7 +398,9 @@ export function CardFooter({
           </span>
         ) : null}
         {stageText ? (
-          <span className={cn('ops-board-card__stage', isOverdue && 'ops-board-card__stage--overdue')}>
+          <span
+            className={cn('ops-board-card__stage', isOverdue && 'ops-board-card__stage--overdue')}
+          >
             {stageText}
           </span>
         ) : null}

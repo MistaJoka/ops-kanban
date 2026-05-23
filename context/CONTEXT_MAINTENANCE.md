@@ -20,27 +20,27 @@ It should not become a second `docs/` folder.
 
 ## File size target
 
-| File type | Target size |
-|---|---:|
-| Briefing files | 50–150 lines |
-| Checklists | 50–180 lines |
-| File maps | As short as possible |
+| File type        |           Target size |
+| ---------------- | --------------------: |
+| Briefing files   |          50–150 lines |
+| Checklists       |          50–180 lines |
+| File maps        |  As short as possible |
 | Locked decisions | Only stable decisions |
 
 ## When to update each file
 
-| File | Update when |
-|---|---|
-| `START_HERE.md` | Startup flow changes |
-| `PROJECT_NORTH_STAR.md` | Product identity changes |
-| `CURRENT_STATE.md` | Repo state meaningfully changes |
-| `DECISIONS_LOCKED.md` | A stable decision changes |
-| `BUILD_NEXT.md` | Build-selection process changes |
-| `AI_SESSION_CHECKLIST.md` | Session workflow changes |
-| `QUALITY_GATE.md` | Acceptance standards change |
-| `DO_NOT_BREAK.md` | New critical constraint appears |
-| `FILE_MAP.md` | Important docs/code paths move |
-| `CONTEXT_MAINTENANCE.md` | Context-folder rules change |
+| File                      | Update when                     |
+| ------------------------- | ------------------------------- |
+| `START_HERE.md`           | Startup flow changes            |
+| `PROJECT_NORTH_STAR.md`   | Product identity changes        |
+| `CURRENT_STATE.md`        | Repo state meaningfully changes |
+| `DECISIONS_LOCKED.md`     | A stable decision changes       |
+| `BUILD_NEXT.md`           | Build-selection process changes |
+| `AI_SESSION_CHECKLIST.md` | Session workflow changes        |
+| `QUALITY_GATE.md`         | Acceptance standards change     |
+| `DO_NOT_BREAK.md`         | New critical constraint appears |
+| `FILE_MAP.md`             | Important docs/code paths move  |
+| `CONTEXT_MAINTENANCE.md`  | Context-folder rules change     |
 
 ## Cleanup trigger
 

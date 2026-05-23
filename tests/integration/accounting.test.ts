@@ -8,7 +8,10 @@ import { createInvoiceDraft, markInvoicePaid } from '@/lib/domain/money/invoices
 import { upsertQuoteDraft } from '@/lib/domain/money/quotes';
 import { createTestUser, deleteTestUser } from '@/tests/helpers/auth';
 import { hasTestSupabaseEnv } from '@/tests/helpers/env';
-import { hasMigrationsApplied, hasNativeAccountingMigrationsApplied } from '@/tests/helpers/migrate';
+import {
+  hasMigrationsApplied,
+  hasNativeAccountingMigrationsApplied,
+} from '@/tests/helpers/migrate';
 import { createServiceClient } from '@/tests/helpers/supabase';
 
 const integrationReady = hasTestSupabaseEnv() && (await hasMigrationsApplied());
@@ -142,7 +145,9 @@ describe.skipIf(!accountingReady)('INT-ACC native accounting ledger', () => {
       expect(csv).toContain('=== AR Register ===');
       expect(csv).toContain('Date,Type,Amount,Customer,Job,Description');
 
-      const transactions = await listAccountingTransactions(service, user.organizationId, { limit: 5 });
+      const transactions = await listAccountingTransactions(service, user.organizationId, {
+        limit: 5,
+      });
       expect(Array.isArray(transactions)).toBe(true);
     } finally {
       await deleteTestUser(user);

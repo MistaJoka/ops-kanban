@@ -35,9 +35,7 @@ export async function resetOrganizationBoardData(
   };
 }
 
-export async function findDevOrganizationId(
-  client: SupabaseClient,
-): Promise<string | null> {
+export async function findDevOrganizationId(client: SupabaseClient): Promise<string | null> {
   const { data: profile, error: profileError } = await client
     .from('profiles')
     .select('id')

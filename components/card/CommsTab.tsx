@@ -85,9 +85,7 @@ export function CommsTab({
     <div className="space-y-4">
       <div>
         <h3 className="text-base font-semibold text-[var(--text-primary)]">Communications</h3>
-        <p className="text-sm text-[var(--text-secondary)]">
-          SMS and email thread for this job.
-        </p>
+        <p className="text-sm text-[var(--text-secondary)]">SMS and email thread for this job.</p>
       </div>
 
       {loading ? (
@@ -108,7 +106,8 @@ export function CommsTab({
               }`}
             >
               <p className="text-xs uppercase tracking-wide text-[var(--text-secondary)]">
-                {message.channel} · {message.direction} · {new Date(message.createdAt).toLocaleString()}
+                {message.channel} · {message.direction} ·{' '}
+                {new Date(message.createdAt).toLocaleString()}
               </p>
               {message.subject ? (
                 <p className="mt-1 font-medium text-[var(--text-primary)]">{message.subject}</p>
@@ -126,7 +125,9 @@ export function CommsTab({
               type="button"
               onClick={() => setChannel('sms')}
               className={`rounded-lg px-3 py-1.5 text-sm ${
-                channel === 'sms' ? 'bg-[var(--accent)] text-white' : 'border border-[var(--topbar-border)]'
+                channel === 'sms'
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'border border-[var(--topbar-border)]'
               }`}
             >
               SMS
@@ -135,7 +136,9 @@ export function CommsTab({
               type="button"
               onClick={() => setChannel('email')}
               className={`rounded-lg px-3 py-1.5 text-sm ${
-                channel === 'email' ? 'bg-[var(--accent)] text-white' : 'border border-[var(--topbar-border)]'
+                channel === 'email'
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'border border-[var(--topbar-border)]'
               }`}
             >
               Email
@@ -144,7 +147,8 @@ export function CommsTab({
 
           {!channelEnabled ? (
             <p className="mt-3 text-sm text-[var(--text-secondary)]">
-              {channel === 'sms' ? 'Twilio' : 'Resend'} is not configured. Check Settings → Integrations.
+              {channel === 'sms' ? 'Twilio' : 'Resend'} is not configured. Check Settings →
+              Integrations.
             </p>
           ) : (
             <>

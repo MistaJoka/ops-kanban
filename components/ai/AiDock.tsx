@@ -92,9 +92,7 @@ export function AiDock({
   const threadRef = useRef<HTMLDivElement>(null);
   const commandInputRef = useRef<HTMLInputElement>(null);
 
-  const chips =
-    suggestedChips ??
-    (context.page === 'card' ? CARD_CHIPS[mode] : BOARD_CHIPS[mode]);
+  const chips = suggestedChips ?? (context.page === 'card' ? CARD_CHIPS[mode] : BOARD_CHIPS[mode]);
 
   useEffect(() => {
     setMode(defaultMode(context.page));
@@ -207,7 +205,9 @@ export function AiDock({
       interimResults: boolean;
       maxAlternatives: number;
       onresult:
-        | ((event: { results: { [index: number]: { [index: number]: { transcript: string } } } }) => void)
+        | ((event: {
+            results: { [index: number]: { [index: number]: { transcript: string } } };
+          }) => void)
         | null;
       onerror: (() => void) | null;
       onend: (() => void) | null;
@@ -217,7 +217,8 @@ export function AiDock({
 
     const SpeechRecognitionCtor =
       typeof window !== 'undefined'
-        ? (window as Window & { SpeechRecognition?: new () => VoiceRecognition }).SpeechRecognition ||
+        ? (window as Window & { SpeechRecognition?: new () => VoiceRecognition })
+            .SpeechRecognition ||
           (window as Window & { webkitSpeechRecognition?: new () => VoiceRecognition })
             .webkitSpeechRecognition
         : undefined;
@@ -300,7 +301,8 @@ export function AiDock({
               onClick={() => setMode(item.id)}
               className={cn(
                 'ops-chip',
-                mode === item.id && 'border-[var(--accent)] bg-[var(--accent-muted)] text-[var(--accent)]',
+                mode === item.id &&
+                  'border-[var(--accent)] bg-[var(--accent-muted)] text-[var(--accent)]',
               )}
               aria-pressed={mode === item.id}
             >
@@ -309,7 +311,12 @@ export function AiDock({
           ))}
         </div>
 
-        <div className={cn('flex flex-wrap gap-1.5', variant === 'dock' ? 'mb-1.5 max-h-8 overflow-x-auto' : 'mb-3')}>
+        <div
+          className={cn(
+            'flex flex-wrap gap-1.5',
+            variant === 'dock' ? 'mb-1.5 max-h-8 overflow-x-auto' : 'mb-3',
+          )}
+        >
           {chips.map((chip) => (
             <button
               key={chip}
@@ -399,7 +406,10 @@ export function AiDock({
             type="button"
             disabled={loading || !command.trim()}
             onClick={() => void submit(command)}
-            className={cn('ops-btn-primary', variant === 'dock' ? 'h-8 min-w-[3.5rem] text-xs' : 'min-w-[4.5rem]')}
+            className={cn(
+              'ops-btn-primary',
+              variant === 'dock' ? 'h-8 min-w-[3.5rem] text-xs' : 'min-w-[4.5rem]',
+            )}
           >
             {loading ? '…' : 'Run'}
           </button>
@@ -424,9 +434,6 @@ export function AiDock({
   );
 }
 
-export function AiRail(props: {
-  context: AiClientContext;
-  onRefresh?: () => void;
-}) {
+export function AiRail(props: { context: AiClientContext; onRefresh?: () => void }) {
   return <AiDock {...props} variant="rail" compact />;
 }

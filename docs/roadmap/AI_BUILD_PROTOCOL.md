@@ -4,13 +4,13 @@
 
 Companion files (update every session):
 
-| File | Purpose |
-|------|---------|
-| [`PROGRESS.md`](./PROGRESS.md) | Live status — **read first, update last** |
-| [`DEVELOPMENT_LOG.md`](./DEVELOPMENT_LOG.md) | Chronological session entries |
-| [`PROBLEM_REGISTRY.md`](./PROBLEM_REGISTRY.md) | Troubles → root cause → fix (searchable) |
-| [`BUILD_KNOWLEDGE.md`](./BUILD_KNOWLEDGE.md) | Durable patterns for future agents |
-| [`PHASE_TASKS.md`](./PHASE_TASKS.md) | Task statuses `todo` → `doing` → `done` |
+| File                                           | Purpose                                   |
+| ---------------------------------------------- | ----------------------------------------- |
+| [`PROGRESS.md`](./PROGRESS.md)                 | Live status — **read first, update last** |
+| [`DEVELOPMENT_LOG.md`](./DEVELOPMENT_LOG.md)   | Chronological session entries             |
+| [`PROBLEM_REGISTRY.md`](./PROBLEM_REGISTRY.md) | Troubles → root cause → fix (searchable)  |
+| [`BUILD_KNOWLEDGE.md`](./BUILD_KNOWLEDGE.md)   | Durable patterns for future agents        |
+| [`PHASE_TASKS.md`](./PHASE_TASKS.md)           | Task statuses `todo` → `doing` → `done`   |
 
 ---
 
@@ -36,9 +36,19 @@ END (required — do not skip)
   12. If reusable insight → BUILD_KNOWLEDGE entry
   13. Set task status → done (or doing/blocked) in PHASE_TASKS.md
   14. If phase DoD complete → phase dashboard + LOG type complete
+  15. Run Suspicion Scan (docs/testing/AI_SLOP_DETECTION.md) when code changed
 ```
 
 **Rule:** No silent merges. If code changed, a LOG entry exists.
+
+### 1b. Slop drift review (Layer 5)
+
+Trigger every **10** `DEVELOPMENT_LOG` entries or **monthly**:
+
+1. `npm run check:slop-health`
+2. Re-read [`AI_SLOP_BASELINE_AUDIT.md`](./AI_SLOP_BASELINE_AUDIT.md)
+3. Ask: _Would we build the touched hotspots the same way today?_
+4. If no → PRB-SLOP-\* or split task; shrink allowlist in `scripts/check-slop-health.mjs`
 
 ---
 
@@ -46,12 +56,12 @@ END (required — do not skip)
 
 ### Phase 0 — Scaffold
 
-| Step | Action |
-|------|--------|
-| Read | `ARCHITECTURE_PRINCIPLES.md`, `DESIGN_TOKENS.md` |
+| Step  | Action                                                                  |
+| ----- | ----------------------------------------------------------------------- |
+| Read  | `ARCHITECTURE_PRINCIPLES.md`, `DESIGN_TOKENS.md`                        |
 | Build | Next.js, folders, Vitest, Playwright, CI, copy `src-starter` → `lib/ai` |
-| Log | Tooling versions pinned in LOG |
-| Learn | Document path aliases, env layout in BUILD_KNOWLEDGE § Tooling |
+| Log   | Tooling versions pinned in LOG                                          |
+| Learn | Document path aliases, env layout in BUILD_KNOWLEDGE § Tooling          |
 
 **Exit:** DONE-0 + first LEARN entries for repo layout.
 
@@ -59,13 +69,13 @@ END (required — do not skip)
 
 ### Phase 1 — Foundation
 
-| Step | Action |
-|------|--------|
-| Read | `SIGNUP_BOOTSTRAP.md`, `MVP_SCHEMA.md`, migrations `001`–`006` |
-| Build | Auth, bootstrap (9 columns, **zero cards**), RLS verified |
-| Test | `SEC-RLS-*`, `INT-BOOT-001`, `E2E-BOOT-001` |
-| Log | RLS waiver notes if any policy deferred |
-| Learn | Supabase auth + RLS patterns → BUILD_KNOWLEDGE § Database |
+| Step  | Action                                                         |
+| ----- | -------------------------------------------------------------- |
+| Read  | `SIGNUP_BOOTSTRAP.md`, `MVP_SCHEMA.md`, migrations `001`–`006` |
+| Build | Auth, bootstrap (9 columns, **zero cards**), RLS verified      |
+| Test  | `SEC-RLS-*`, `INT-BOOT-001`, `E2E-BOOT-001`                    |
+| Log   | RLS waiver notes if any policy deferred                        |
+| Learn | Supabase auth + RLS patterns → BUILD_KNOWLEDGE § Database      |
 
 **Exit:** DONE-1. Register any RLS gotchas in PROBLEM_REGISTRY.
 
@@ -73,12 +83,12 @@ END (required — do not skip)
 
 ### Phase 2 — Workspace + pipeline
 
-| Step | Action |
-|------|--------|
-| Read | `WORKSPACE_DESIGN.md`, `CARD_DESIGN.md` (board card only), `DEFAULT_PIPELINE.md` |
-| Build | Shell, `/pipeline`, Kanban, move validation, activity log |
-| Test | `E2E-JOB-*`, `UNIT-PIPE-*` |
-| Learn | DnD + optimistic rollback → BUILD_KNOWLEDGE § Frontend |
+| Step  | Action                                                                           |
+| ----- | -------------------------------------------------------------------------------- |
+| Read  | `WORKSPACE_DESIGN.md`, `CARD_DESIGN.md` (board card only), `DEFAULT_PIPELINE.md` |
+| Build | Shell, `/pipeline`, Kanban, move validation, activity log                        |
+| Test  | `E2E-JOB-*`, `UNIT-PIPE-*`                                                       |
+| Learn | DnD + optimistic rollback → BUILD_KNOWLEDGE § Frontend                           |
 
 **Exit:** DONE-2. Manual path inquiry → archived without AI.
 
@@ -86,12 +96,12 @@ END (required — do not skip)
 
 ### Phase 3 — Deep card
 
-| Step | Action |
-|------|--------|
-| Read | `CARD_DESIGN.md` (panel + tabs) |
+| Step  | Action                                            |
+| ----- | ------------------------------------------------- |
+| Read  | `CARD_DESIGN.md` (panel + tabs)                   |
 | Build | Slide-over, tabs, customer, scope, checklist_json |
-| Test | `E2E-JOB-003`, `MOB-001`, move validation modals |
-| Learn | Panel state URL vs local state |
+| Test  | `E2E-JOB-003`, `MOB-001`, move validation modals  |
+| Learn | Panel state URL vs local state                    |
 
 **Exit:** DONE-3.
 
@@ -99,12 +109,12 @@ END (required — do not skip)
 
 ### Phase 4 — Money
 
-| Step | Action |
-|------|--------|
-| Read | `API_ROUTES.md` money section |
+| Step  | Action                                                            |
+| ----- | ----------------------------------------------------------------- |
+| Read  | `API_ROUTES.md` money section                                     |
 | Build | `lib/domain/money/*`, estimate + invoice + mark paid → `archived` |
-| Test | `UNIT-MNY-*`, `E2E-MNY-*`, FMEA F-04 gates |
-| Learn | Money precision, quote gate |
+| Test  | `UNIT-MNY-*`, `E2E-MNY-*`, FMEA F-04 gates                        |
+| Learn | Money precision, quote gate                                       |
 
 **Exit:** DONE-4.
 
@@ -112,12 +122,12 @@ END (required — do not skip)
 
 ### Phase 5 — AI copilot
 
-| Step | Action |
-|------|--------|
-| Read | `AI_UTILIZATION.md`, `APPROVAL_FLOW.md`, `AI_TEST_PACK.md` |
+| Step  | Action                                                      |
+| ----- | ----------------------------------------------------------- |
+| Read  | `AI_UTILIZATION.md`, `APPROVAL_FLOW.md`, `AI_TEST_PACK.md`  |
 | Build | Context loader, tool loop, approval API, executors → domain |
-| Test | `AI-TOOL-*`, `AI-INJ-*`, `E2E-AI-*` |
-| Learn | Gemini tool calling, approval UX → BUILD_KNOWLEDGE § AI |
+| Test  | `AI-TOOL-*`, `AI-INJ-*`, `E2E-AI-*`                         |
+| Learn | Gemini tool calling, approval UX → BUILD_KNOWLEDGE § AI     |
 
 **Exit:** DONE-5. Remove executor throw stub; wire persistence.
 
@@ -125,12 +135,12 @@ END (required — do not skip)
 
 ### Phase 6 — MVP release
 
-| Step | Action |
-|------|--------|
-| Read | `RELEASE_GATES.md` G2, `NO_MOCK_DATA_POLICY.md` §8 |
-| Run | Full regression + UAT + `npm run check:no-mock` |
-| Log | `release` entry + CHANGELOG v0.1.0 |
-| Learn | Release checklist → BUILD_KNOWLEDGE § Release |
+| Step  | Action                                             |
+| ----- | -------------------------------------------------- |
+| Read  | `RELEASE_GATES.md` G2, `NO_MOCK_DATA_POLICY.md` §8 |
+| Run   | Full regression + UAT + `npm run check:no-mock`    |
+| Log   | `release` entry + CHANGELOG v0.1.0                 |
+| Learn | Release checklist → BUILD_KNOWLEDGE § Release      |
 
 **Exit:** DONE-6 → MVP SHIPPED.
 
@@ -202,12 +212,12 @@ Required fields for `complete` and `fix` types:
 
 ## 7. Reinforcement rules
 
-| Situation | Action |
-|-----------|--------|
-| Same error twice | LEARN + test |
-| Deferred work | LOG `decision` + PROGRESS blocker |
-| Scope change | LOG `scope` + update MVP_CAPTURE |
-| Test flaky | PRB + quarantine tag in REGRESSION_MATRIX |
+| Situation                | Action                                      |
+| ------------------------ | ------------------------------------------- |
+| Same error twice         | LEARN + test                                |
+| Deferred work            | LOG `decision` + PROGRESS blocker           |
+| Scope change             | LOG `scope` + update MVP_CAPTURE            |
+| Test flaky               | PRB + quarantine tag in REGRESSION_MATRIX   |
 | AI repeated bad approach | LEARN in BUILD_KNOWLEDGE § Agent discipline |
 
 ---
@@ -227,9 +237,9 @@ Do not skip post-session updates.
 
 ## 9. Phase ↔ file checklist
 
-| Phase done | Update |
-|------------|--------|
-| Any task | PHASE_TASKS, PROGRESS, LOG |
-| Trouble | PRB |
-| Reusable fix | LEARN |
+| Phase done     | Update                                    |
+| -------------- | ----------------------------------------- |
+| Any task       | PHASE_TASKS, PROGRESS, LOG                |
+| Trouble        | PRB                                       |
+| Reusable fix   | LEARN                                     |
 | Phase complete | Phase dashboard in LOG + PROGRESS phase % |

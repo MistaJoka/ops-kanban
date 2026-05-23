@@ -2,10 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 import type { LoadedAiContext } from '@/lib/ai/context-loader';
 import { findScheduleConflicts } from '@/lib/ai/scheduling-utils';
-import {
-  formatMemberDisambiguation,
-  searchMembersByQuery,
-} from '@/lib/ai/member-resolver';
+import { formatMemberDisambiguation, searchMembersByQuery } from '@/lib/ai/member-resolver';
 import { getPrimaryBoard } from '@/lib/domain/board/getBoard';
 import { createCard } from '@/lib/domain/cards/createCard';
 import { getCardDetail, updateCard } from '@/lib/domain/cards/cardDetail';
@@ -19,7 +16,11 @@ import {
 } from '@/lib/domain/customers/customerHistory';
 import { listCustomers } from '@/lib/domain/customers/listCustomers';
 import { createInvoicePaymentLink } from '@/lib/domain/integrations/payments';
-import { createInvoiceDraft, getInvoiceForCard, markInvoicePaid } from '@/lib/domain/money/invoices';
+import {
+  createInvoiceDraft,
+  getInvoiceForCard,
+  markInvoicePaid,
+} from '@/lib/domain/money/invoices';
 import { getQuoteForCard, upsertQuoteDraft } from '@/lib/domain/money/quotes';
 import { listOrgMembers } from '@/lib/domain/organization/listMembers';
 import { getReportsSummary } from '@/lib/domain/reports/getReports';
@@ -30,10 +31,7 @@ import { summarizeCardWithGemini } from '@/lib/ai/gemini-agent';
 import { searchCardsByQuery, formatDisambiguationMessage } from '@/lib/ai/card-resolver';
 import { sendCardEmail } from '@/lib/domain/comms/sendEmail';
 import { sendCardSms } from '@/lib/domain/comms/sendSms';
-import {
-  buildTemplateVars,
-  renderTemplate,
-} from '@/lib/domain/comms/messageTemplates';
+import { buildTemplateVars, renderTemplate } from '@/lib/domain/comms/messageTemplates';
 import { logActivity } from '@/lib/domain/activities/logActivity';
 
 export type ToolRunContext = {
@@ -400,9 +398,7 @@ export async function runTool(
         }));
       } else {
         const scopeNotes =
-          (input.scopeNotes ? String(input.scopeNotes) : '') ||
-          detail.description ||
-          detail.title;
+          (input.scopeNotes ? String(input.scopeNotes) : '') || detail.description || detail.title;
 
         const parsed = await parseEstimateLineItems({
           scopeNotes,
@@ -594,13 +590,7 @@ export async function runTool(
     case 'createInvoiceDraft': {
       const cardId = String(input.cardId);
       const quote = await getQuoteForCard(client, organizationId, cardId);
-      const invoice = await createInvoiceDraft(
-        client,
-        organizationId,
-        cardId,
-        userId,
-        quote?.id,
-      );
+      const invoice = await createInvoiceDraft(client, organizationId, cardId, userId, quote?.id);
 
       return {
         message: `Invoice draft created ($${invoice.total.toFixed(2)}).`,
@@ -617,16 +607,10 @@ export async function runTool(
       }
 
       const origin = appOrigin();
-      const payment = await createInvoicePaymentLink(
-        client,
-        organizationId,
-        invoice.id,
-        userId,
-        {
-          successUrl: `${origin}/pipeline?payment=success`,
-          cancelUrl: `${origin}/pipeline?payment=cancelled`,
-        },
-      );
+      const payment = await createInvoicePaymentLink(client, organizationId, invoice.id, userId, {
+        successUrl: `${origin}/pipeline?payment=success`,
+        cancelUrl: `${origin}/pipeline?payment=cancelled`,
+      });
 
       return {
         message: payment.paymentUrl

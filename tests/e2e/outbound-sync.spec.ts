@@ -12,7 +12,9 @@ import {
 } from './helpers/pipeline';
 
 test.describe('Outbound sync @smoke', () => {
-  test('E2E-SYNC-001 @smoke: rapid drags land in target columns before sync clears', async ({ page }) => {
+  test('E2E-SYNC-001 @smoke: rapid drags land in target columns before sync clears', async ({
+    page,
+  }) => {
     const titles = [
       uniqueJobTitle('sync-drag-a'),
       uniqueJobTitle('sync-drag-b'),

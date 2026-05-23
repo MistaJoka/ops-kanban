@@ -27,7 +27,7 @@ Copy-ready examples for QA, demos, and suggested chips in the UI. Pair with mode
 ## Board — Act
 
 - Create a new inquiry for Patel, 19 Birch Ln, irrigation repair.
-- Move all cards in negotiation with no activity in 7 days to follow-up list. *(requires approval if bulk)*
+- Move all cards in negotiation with no activity in 7 days to follow-up list. _(requires approval if bulk)_
 - Add inquiry: HOA Oak Hills, monthly mow, $420/month.
 
 ---
@@ -37,7 +37,7 @@ Copy-ready examples for QA, demos, and suggested chips in the UI. Pair with mode
 - Summarize this job for a quick call.
 - What’s missing before we can schedule?
 - Has the customer approved the estimate?
-- What did we do last season at this property? *(post-MVP with history)*
+- What did we do last season at this property? _(post-MVP with history)_
 
 ---
 
@@ -61,8 +61,8 @@ Copy-ready examples for QA, demos, and suggested chips in the UI. Pair with mode
 
 ## Office — money (high risk when wired)
 
-- Create invoice draft from the approved estimate. *(medium)*
-- Mark invoice paid — check #4421. *(high — approval)*
+- Create invoice draft from the approved estimate. _(medium)_
+- Mark invoice paid — check #4421. _(high — approval)_
 
 ---
 

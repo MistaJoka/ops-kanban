@@ -10,13 +10,13 @@ Related: `MVP_SCOPE.md` (lean v1), `docs/roadmap/DEVELOPMENT_ROADMAP.md`, `AI_UT
 
 ## 1. Philosophy
 
-| Top SaaS pattern | OpsBoard scaled approach |
-|------------------|---------------------------|
-| Best-in-class point solution | **Good-enough module** on the job card |
-| Enterprise configuration | **Sensible defaults** + 5–10 settings per module |
-| Unlimited integrations | **Curated providers** with manual fallback |
-| AI everywhere | AI **drafts and routes**; human approves external sends and money |
-| Multiple sources of truth | **Card + pipeline** remain canonical |
+| Top SaaS pattern             | OpsBoard scaled approach                                          |
+| ---------------------------- | ----------------------------------------------------------------- |
+| Best-in-class point solution | **Good-enough module** on the job card                            |
+| Enterprise configuration     | **Sensible defaults** + 5–10 settings per module                  |
+| Unlimited integrations       | **Curated providers** with manual fallback                        |
+| AI everywhere                | AI **drafts and routes**; human approves external sends and money |
+| Multiple sources of truth    | **Card + pipeline** remain canonical                              |
 
 **Reliability over breadth:** A feature ships when it has webhook reconciliation, clear failure UI, and works offline-from-integration (manual override).
 
@@ -38,21 +38,21 @@ Related: `MVP_SCOPE.md` (lean v1), `docs/roadmap/DEVELOPMENT_ROADMAP.md`, `AI_UT
 
 ### Module reference
 
-| Module | Inspired by | Scaled OpsBoard feature | Primary anchor |
-|--------|-------------|-------------------------|----------------|
-| **Pipeline & CRM** | Salesforce, HubSpot, Pipedrive | Kanban job pipeline, customer/property, activity timeline | Card + customer |
-| **Scheduling** | Calendly, Acuity | Booking links, crew calendar, conflict detection | Card dates + events |
-| **Communications** | Intercom, Front, Twilio | SMS/email threads, templates, missed-call log | Card timeline |
-| **E-sign & PDF** | DocuSign, PandaDoc | Estimate/contract sign, PDF export, audit trail | Quote on card |
-| **Payments** | Stripe, PayPal, Square | Pay link, partial pay, mark paid, receipts | Invoice on card |
-| **Documents** | Dropbox, Google Drive | Photos, plans, signed PDFs per job | Card attachments |
-| **Accounting** | QuickBooks, Xero | Native AR ledger, income transactions, CSV export | Invoice + customer |
-| **Automations** | Zapier, Make | When card enters X → send Y (approval optional) | Card + column |
-| **Analytics** | Mixpanel, Looker | Pipeline velocity, $ funnel, crew utilization | Board aggregates |
-| **Customer portal** | Stripe Billing Portal, Jobber client hub | Approve estimate, pay invoice, view schedule | Magic link per card |
-| **Reviews & retention** | Birdeye, NiceJob | Request review after `paid` | Card → retention |
-| **Team & access** | Rippling-lite, Notion permissions | Roles, assignees, audit | Org + RLS |
-| **AI copilot** | Cursor for ops | Draft, analyze, act via tools | Board + card |
+| Module                  | Inspired by                              | Scaled OpsBoard feature                                   | Primary anchor      |
+| ----------------------- | ---------------------------------------- | --------------------------------------------------------- | ------------------- |
+| **Pipeline & CRM**      | Salesforce, HubSpot, Pipedrive           | Kanban job pipeline, customer/property, activity timeline | Card + customer     |
+| **Scheduling**          | Calendly, Acuity                         | Booking links, crew calendar, conflict detection          | Card dates + events |
+| **Communications**      | Intercom, Front, Twilio                  | SMS/email threads, templates, missed-call log             | Card timeline       |
+| **E-sign & PDF**        | DocuSign, PandaDoc                       | Estimate/contract sign, PDF export, audit trail           | Quote on card       |
+| **Payments**            | Stripe, PayPal, Square                   | Pay link, partial pay, mark paid, receipts                | Invoice on card     |
+| **Documents**           | Dropbox, Google Drive                    | Photos, plans, signed PDFs per job                        | Card attachments    |
+| **Accounting**          | QuickBooks, Xero                         | Native AR ledger, income transactions, CSV export         | Invoice + customer  |
+| **Automations**         | Zapier, Make                             | When card enters X → send Y (approval optional)           | Card + column       |
+| **Analytics**           | Mixpanel, Looker                         | Pipeline velocity, $ funnel, crew utilization             | Board aggregates    |
+| **Customer portal**     | Stripe Billing Portal, Jobber client hub | Approve estimate, pay invoice, view schedule              | Magic link per card |
+| **Reviews & retention** | Birdeye, NiceJob                         | Request review after `paid`                               | Card → retention    |
+| **Team & access**       | Rippling-lite, Notion permissions        | Roles, assignees, audit                                   | Org + RLS           |
+| **AI copilot**          | Cursor for ops                           | Draft, analyze, act via tools                             | Board + card        |
 
 ---
 
@@ -70,12 +70,12 @@ Already specified in `MVP_SCOPE.md`.
 
 ### Wave 1 — Money & trust (reliability priority)
 
-| Capability | Scaled feature | Provider options |
-|------------|----------------|------------------|
-| **PayPal / card pay** | “Pay this invoice” link on card; webhook → `payment_pending` → `paid` | PayPal Checkout, Stripe Payment Links |
-| **PDF estimates** | Branded estimate PDF + email **draft** | React-PDF / Puppeteer, Resend |
-| **E-sign lite** | Click-to-accept estimate on portal OR embedded sign (name + IP + timestamp) | Native first; DocuSign API optional |
-| **Receipts** | Auto-receipt email on paid webhook | Resend + template |
+| Capability            | Scaled feature                                                              | Provider options                      |
+| --------------------- | --------------------------------------------------------------------------- | ------------------------------------- |
+| **PayPal / card pay** | “Pay this invoice” link on card; webhook → `payment_pending` → `paid`       | PayPal Checkout, Stripe Payment Links |
+| **PDF estimates**     | Branded estimate PDF + email **draft**                                      | React-PDF / Puppeteer, Resend         |
+| **E-sign lite**       | Click-to-accept estimate on portal OR embedded sign (name + IP + timestamp) | Native first; DocuSign API optional   |
+| **Receipts**          | Auto-receipt email on paid webhook                                          | Resend + template                     |
 
 **Card UX:** Money tab shows Pay link status, last webhook event, “Mark paid manually” always visible.
 
@@ -85,13 +85,13 @@ Already specified in `MVP_SCOPE.md`.
 
 ### Wave 2 — Time & conversation
 
-| Capability | Scaled feature | Provider options |
-|------------|----------------|------------------|
+| Capability        | Scaled feature                                                           | Provider options                                 |
+| ----------------- | ------------------------------------------------------------------------ | ------------------------------------------------ |
 | **Calendly-lite** | Org booking page: site visit / consultation slots → creates inquiry card | Native scheduler + optional Calendly embed/OAuth |
-| **Crew calendar** | Day/week view of `scheduled_start` cards; drag reschedule | Full calendar page |
-| **SMS** | Send/receive SMS on card thread; templates (“On our way”) | Twilio |
-| **Email** | Sync send via Resend/Postmark; thread on timeline | Resend, SendGrid |
-| **Click-to-call** | `tel:` + log “called customer” activity | Native |
+| **Crew calendar** | Day/week view of `scheduled_start` cards; drag reschedule                | Full calendar page                               |
+| **SMS**           | Send/receive SMS on card thread; templates (“On our way”)                | Twilio                                           |
+| **Email**         | Sync send via Resend/Postmark; thread on timeline                        | Resend, SendGrid                                 |
+| **Click-to-call** | `tel:` + log “called customer” activity                                  | Native                                           |
 
 **Reliability:** Inbound SMS webhook matches `customer.phone` → attaches to open card or creates inquiry.
 
@@ -99,25 +99,25 @@ Already specified in `MVP_SCOPE.md`.
 
 ### Wave 3 — Documents & compliance
 
-| Capability | Scaled feature | Provider options |
-|------------|----------------|------------------|
+| Capability         | Scaled feature                                       | Provider options                      |
+| ------------------ | ---------------------------------------------------- | ------------------------------------- |
 | **DocuSign-class** | Send estimate/contract for signature; status on card | DocuSign eSignature API, Dropbox Sign |
-| **File vault** | Before/after photos, insurance COI, permits | Supabase Storage |
-| **Versioned PDFs** | Estimate v1/v2 with sign on v2 only | Internal |
-| **Change orders** | Amendment card linked to parent job | `parent_card_id` |
+| **File vault**     | Before/after photos, insurance COI, permits          | Supabase Storage                      |
+| **Versioned PDFs** | Estimate v1/v2 with sign on v2 only                  | Internal                              |
+| **Change orders**  | Amendment card linked to parent job                  | `parent_card_id`                      |
 
 ---
 
 ### Wave 4 — Scale & ops intelligence
 
-| Capability | Scaled feature | Provider options |
-|------------|----------------|------------------|
-| **QuickBooks sync** | Native accounting ledger | In-app AR + income transactions |
-| **Automations** | Column triggers + delays + conditions | Internal `automations` table |
-| **Customer portal** | Homeowner: approve estimate, pay, see schedule | Magic link JWT |
-| **Reports** | Conversion, cycle time, revenue by job type | Internal |
-| **Review requests** | SMS after paid → Google review link | Twilio + template |
-| **Recurring routes** | Maintenance contract → recurring card instances | `contracts` table |
+| Capability           | Scaled feature                                  | Provider options                |
+| -------------------- | ----------------------------------------------- | ------------------------------- |
+| **QuickBooks sync**  | Native accounting ledger                        | In-app AR + income transactions |
+| **Automations**      | Column triggers + delays + conditions           | Internal `automations` table    |
+| **Customer portal**  | Homeowner: approve estimate, pay, see schedule  | Magic link JWT                  |
+| **Reports**          | Conversion, cycle time, revenue by job type     | Internal                        |
+| **Review requests**  | SMS after paid → Google review link             | Twilio + template               |
+| **Recurring routes** | Maintenance contract → recurring card instances | `contracts` table               |
 
 ---
 
@@ -145,11 +145,11 @@ Stored: `signatures` table (`card_id`, `quote_id`, `signer_name`, `signed_at`, `
 
 **OpsBoard scaled:**
 
-| Type | Behavior |
-|------|----------|
-| **Visit book** | Public `/book/{org}` — pick service type → pick slot → creates `inquiry` card + `site_visit` |
-| **Crew schedule** | Internal calendar filters `scheduled` / `on_site`; assignee, drive buffer (post-MVP) |
-| **Reschedule** | Customer link or office drag → updates `scheduled_start` + activity |
+| Type              | Behavior                                                                                     |
+| ----------------- | -------------------------------------------------------------------------------------------- |
+| **Visit book**    | Public `/book/{org}` — pick service type → pick slot → creates `inquiry` card + `site_visit` |
+| **Crew schedule** | Internal calendar filters `scheduled` / `on_site`; assignee, drive buffer (post-MVP)         |
+| **Reschedule**    | Customer link or office drag → updates `scheduled_start` + activity                          |
 
 **Reliability:** Idempotent booking token; double-book warning per crew per day.
 
@@ -178,12 +178,12 @@ Stored: `signatures` table (`card_id`, `quote_id`, `signer_name`, `signed_at`, `
 
 **OpsBoard scaled:**
 
-| Step | Behavior |
-|------|----------|
-| Invoice issued | Generate **payment link** (`payments` row: `card_id`, `invoice_id`, `provider`, `external_id`) |
-| Customer pays | Webhook `payment.completed` → `invoice.balance_due = 0`, card → `archived` (compact) or `paid` (full) |
-| Partial pay | Support deposit on approve (hardscape); balance tracked |
-| Failure | Webhook `failed` → activity + notify office; manual retry link |
+| Step           | Behavior                                                                                              |
+| -------------- | ----------------------------------------------------------------------------------------------------- |
+| Invoice issued | Generate **payment link** (`payments` row: `card_id`, `invoice_id`, `provider`, `external_id`)        |
+| Customer pays  | Webhook `payment.completed` → `invoice.balance_due = 0`, card → `archived` (compact) or `paid` (full) |
+| Partial pay    | Support deposit on approve (hardscape); balance tracked                                               |
+| Failure        | Webhook `failed` → activity + notify office; manual retry link                                        |
 
 **PayPal:** Checkout Orders API or Payment Links.  
 **Stripe:** Payment Links + Connect (if multi-tenant payouts later).
@@ -211,9 +211,9 @@ No full account required for homeowner.
 
 **Wave 4+:** In-app ledger — no QuickBooks API.
 
-| Event | Ledger entry |
-|-------|--------------|
-| Invoice created | `invoice_issued` |
+| Event                              | Ledger entry       |
+| ---------------------------------- | ------------------ |
+| Invoice created                    | `invoice_issued`   |
 | Payment settled (manual or Stripe) | `payment_received` |
 
 Reports: AR register, aging buckets, CSV export. OpsBoard card remains canonical for job status.
@@ -225,11 +225,11 @@ Reports: AR register, aging buckets, CSV export. OpsBoard card remains canonical
 ```txt
 Settings → Integrations
   ├── Payments      [PayPal] [Stripe]     status: connected / error
-  ├── Scheduling    [Calendly] [Native]   
-  ├── E-sign        [Native portal]   
-  ├── Comms         [Twilio] [Resend]     
-  ├── Accounting    [Native ledger]          
-  └── Webhooks      (advanced, post-MVP)  
+  ├── Scheduling    [Calendly] [Native]
+  ├── E-sign        [Native portal]
+  ├── Comms         [Twilio] [Resend]
+  ├── Accounting    [Native ledger]
+  └── Webhooks      (advanced, post-MVP)
 ```
 
 Each tile: connect OAuth, test ping, last sync, disconnect.
@@ -240,14 +240,14 @@ Store credentials in Supabase vault / encrypted `integration_accounts` table.
 
 ## 6. Data model additions (by wave)
 
-| Wave | New tables / fields |
-|------|---------------------|
-| 1 | `payments`, `payment_events`, `document_exports` |
-| 1 | `signatures` (native approve) |
-| 2 | `schedule_events`, `booking_pages`, `messages`, `message_templates` |
-| 2 | `integration_accounts` |
-| 3 | `attachments`, `envelopes` (DocuSign ids), `parent_card_id` |
-| 4 | `automations`, `automation_runs`, `portal_tokens`, `accounting_sync_log` |
+| Wave | New tables / fields                                                      |
+| ---- | ------------------------------------------------------------------------ |
+| 1    | `payments`, `payment_events`, `document_exports`                         |
+| 1    | `signatures` (native approve)                                            |
+| 2    | `schedule_events`, `booking_pages`, `messages`, `message_templates`      |
+| 2    | `integration_accounts`                                                   |
+| 3    | `attachments`, `envelopes` (DocuSign ids), `parent_card_id`              |
+| 4    | `automations`, `automation_runs`, `portal_tokens`, `accounting_sync_log` |
 
 All FK to `cards` or `customers` on cards.
 
@@ -255,14 +255,14 @@ All FK to `cards` or `customers` on cards.
 
 ## 7. AI across modules
 
-| Module | AI helps | AI must not |
-|--------|----------|-------------|
-| Comms | Draft SMS/email | Send without approval |
-| E-sign | Cover letter draft | Sign |
-| Payments | Remind who to bill | Charge cards |
-| Schedule | Suggest slots from crew load | Book without confirm |
-| Accounting | Explain sync errors | Post journals |
-| Automations | Suggest rules from patterns | Enable without approval |
+| Module      | AI helps                     | AI must not             |
+| ----------- | ---------------------------- | ----------------------- |
+| Comms       | Draft SMS/email              | Send without approval   |
+| E-sign      | Cover letter draft           | Sign                    |
+| Payments    | Remind who to bill           | Charge cards            |
+| Schedule    | Suggest slots from crew load | Book without confirm    |
+| Accounting  | Explain sync errors          | Post journals           |
+| Automations | Suggest rules from patterns  | Enable without approval |
 
 Expand tools in `AI_TOOL_REGISTRY.md` per wave—each external action = tool + webhook proof.
 

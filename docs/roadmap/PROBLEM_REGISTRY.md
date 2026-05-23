@@ -11,15 +11,15 @@ Searchable index for **problem sourcing**. Link every entry to `DEVELOPMENT_LOG.
 ```markdown
 ### PRB-NNN — Short title
 
-| Field | Value |
-|-------|-------|
-| **Status** | open |
-| **Phase** | P0–P10 |
-| **Area** | db \| auth \| rls \| ui \| ai \| test \| ci \| integration |
-| **Severity** | S1–S4 (see BUG_TRIAGE.md) |
-| **First seen** | LOG-YYYY-MM-DD-NN |
-| **Resolved** | — |
-| **LEARN** | LEARN-NNN or — |
+| Field          | Value                                                      |
+| -------------- | ---------------------------------------------------------- |
+| **Status**     | open                                                       |
+| **Phase**      | P0–P10                                                     |
+| **Area**       | db \| auth \| rls \| ui \| ai \| test \| ci \| integration |
+| **Severity**   | S1–S4 (see BUG_TRIAGE.md)                                  |
+| **First seen** | LOG-YYYY-MM-DD-NN                                          |
+| **Resolved**   | —                                                          |
+| **LEARN**      | LEARN-NNN or —                                             |
 
 **Symptom:** What the user/agent saw.
 
@@ -40,10 +40,13 @@ When resolved, set **Status** `resolved` and add **Prevention** test or LEARN.
 
 ## Index
 
-| ID | Title | Status | Area | Phase |
-|----|-------|--------|------|-------|
-| PRB-001 | Remote migrations not applied | resolved | db | P1 |
-| — | _No runtime problems yet — pre-build_ | — | — | — |
+| ID           | Title                             | Status   | Area | Phase |
+| ------------ | --------------------------------- | -------- | ---- | ----- |
+| PRB-001      | Remote migrations not applied     | resolved | db   | P1    |
+| PRB-SLOP-001 | KanbanBoard god component         | resolved | ui   | P14   |
+| PRB-SLOP-002 | useCardMutations mega-hook        | resolved | ui   | P14   |
+| PRB-SLOP-003 | useBoardState orchestration bloat | open     | ui   | P14   |
+| PRB-SLOP-004 | toolCalls.ts size                 | open     | ai   | P14   |
 
 ---
 
@@ -51,17 +54,81 @@ When resolved, set **Status** `resolved` and add **Prevention** test or LEARN.
 
 <!-- Append new problems below -->
 
+### PRB-SLOP-001 — KanbanBoard god component
+
+| Field          | Value             |
+| -------------- | ----------------- |
+| **Status**     | resolved          |
+| **Phase**      | P14               |
+| **Area**       | ui                |
+| **Severity**   | S3                |
+| **First seen** | LOG-2026-05-23-02 |
+| **Resolved**   | LOG-2026-05-23-02 |
+| **LEARN**      | LEARN-019         |
+
+**Symptom:** Single 1097-line file mixed DnD, AI chrome, modals, and board state.
+
+**Fix:** Split to `kanban-board/*` + `useKanbanBoardController`; `KanbanBoard.tsx` now ~156 lines.
+
+**Prevention:** `npm run check:slop-health`; suspicion scan in AI_BUILD_PROTOCOL.
+
+### PRB-SLOP-002 — useCardMutations mega-hook
+
+| Field          | Value             |
+| -------------- | ----------------- |
+| **Status**     | resolved          |
+| **Phase**      | P14               |
+| **Area**       | ui                |
+| **Severity**   | S3                |
+| **First seen** | LOG-2026-05-23-02 |
+| **Resolved**   | LOG-2026-05-23-02 |
+| **LEARN**      | LEARN-019         |
+
+**Symptom:** 1079-line hook mixing field, money, and AI flows.
+
+**Fix:** `useCardMoneyMutations.ts` + slim `useCardMutations.ts` composer.
+
+**Prevention:** `check:slop-health` line budget; domain money stays in API/domain.
+
+### PRB-SLOP-003 — useBoardState orchestration bloat
+
+| Field        | Value |
+| ------------ | ----- |
+| **Status**   | open  |
+| **Phase**    | P14   |
+| **Area**     | ui    |
+| **Severity** | S4    |
+| **LEARN**    | —     |
+
+**Symptom:** 740-line hook mirrors domain mutation kinds.
+
+**Prevention:** Allowlisted until sync folder extraction.
+
+### PRB-SLOP-004 — toolCalls.ts size
+
+| Field        | Value |
+| ------------ | ----- |
+| **Status**   | open  |
+| **Phase**    | P14   |
+| **Area**     | ai    |
+| **Severity** | S4    |
+| **LEARN**    | —     |
+
+**Symptom:** 840-line domain module.
+
+**Prevention:** Allowlisted; split by tool category in future task.
+
 ### PRB-001 — Remote Supabase migrations not applied
 
-| Field | Value |
-|-------|-------|
-| **Status** | resolved |
-| **Phase** | P1 |
-| **Area** | db |
-| **Severity** | S2 |
+| Field          | Value             |
+| -------------- | ----------------- |
+| **Status**     | resolved          |
+| **Phase**      | P1                |
+| **Area**       | db                |
+| **Severity**   | S2                |
 | **First seen** | LOG-2025-05-21-07 |
-| **Resolved** | LOG-2025-05-21-08 |
-| **LEARN** | LEARN-005 |
+| **Resolved**   | LOG-2025-05-21-08 |
+| **LEARN**      | LEARN-005         |
 
 **Symptom:** Integration tests fail with `Could not find the table 'public.organization_members' in the schema cache`.
 
@@ -77,15 +144,15 @@ When resolved, set **Status** `resolved` and add **Prevention** test or LEARN.
 
 ### PRB-000 — Template reference (do not delete)
 
-| Field | Value |
-|-------|-------|
-| **Status** | resolved |
-| **Phase** | Planning |
-| **Area** | docs |
-| **Severity** | S4 |
+| Field          | Value             |
+| -------------- | ----------------- |
+| **Status**     | resolved          |
+| **Phase**      | Planning          |
+| **Area**       | docs              |
+| **Severity**   | S4                |
 | **First seen** | LOG-2025-05-21-01 |
-| **Resolved** | LOG-2025-05-21-03 |
-| **LEARN** | LEARN-001 |
+| **Resolved**   | LOG-2025-05-21-03 |
+| **LEARN**      | LEARN-001         |
 
 **Symptom:** Doc contradictions (`closed` vs `archived`, board name).
 

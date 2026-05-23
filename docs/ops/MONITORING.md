@@ -34,11 +34,11 @@ where created_at > now() - interval '7 days';
 
 ## Alert thresholds (pilot)
 
-| Signal | Threshold | Action |
-|--------|-----------|--------|
-| API 5xx rate | > 1% for 5 min | Page on-call |
-| Auth failures | spike 3× baseline | Check Supabase status |
-| AI reject rate | > 40% | Review prompt chips / UX |
+| Signal         | Threshold         | Action                   |
+| -------------- | ----------------- | ------------------------ |
+| API 5xx rate   | > 1% for 5 min    | Page on-call             |
+| Auth failures  | spike 3× baseline | Check Supabase status    |
+| AI reject rate | > 40%             | Review prompt chips / UX |
 
 **Configured:** documented — enable Sentry + Vercel alerts on first prod deploy.
 

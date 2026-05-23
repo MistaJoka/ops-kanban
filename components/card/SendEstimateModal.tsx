@@ -77,7 +77,12 @@ export function SendEstimateModal({
           ) : null}
 
           <div className="flex justify-end gap-2 pt-2">
-            <button type="button" disabled={pending} onClick={onClose} className="ops-btn-secondary">
+            <button
+              type="button"
+              disabled={pending}
+              onClick={onClose}
+              className="ops-btn-secondary"
+            >
               Cancel
             </button>
             <button type="submit" disabled={!canSend || pending} className="ops-btn-primary">

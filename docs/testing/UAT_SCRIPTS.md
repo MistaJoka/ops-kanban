@@ -25,7 +25,7 @@
 
 ## UAT-02 — New inquiry to site visit
 
-1. + New job: `Chen — Weekly mow`, address `10 Elm St`.
+1. - New job: `Chen — Weekly mow`, address `10 Elm St`.
 2. Drag to **Site visit**.
 3. Open card → Property → verify address saved.
 
@@ -119,11 +119,11 @@
 
 ## UAT sign-off form
 
-| Field | Value |
-|-------|-------|
-| Build version | |
-| Tester | |
-| Date | |
-| UAT-01 … 10 | Pass / Fail |
-| Blockers | |
+| Field                   | Value        |
+| ----------------------- | ------------ |
+| Build version           |              |
+| Tester                  |              |
+| Date                    |              |
+| UAT-01 … 10             | Pass / Fail  |
+| Blockers                |              |
 | Accepted residual risks | IDs from T01 |

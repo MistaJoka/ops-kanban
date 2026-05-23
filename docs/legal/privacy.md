@@ -22,4 +22,4 @@ Use in-app **Contact support** or your organization administrator.
 
 ---
 
-*Replace with counsel-reviewed policy before public launch.*
+_Replace with counsel-reviewed policy before public launch._

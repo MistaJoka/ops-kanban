@@ -61,10 +61,7 @@ export function ChecklistTab({
           type="button"
           disabled={!newItem.trim() || saving}
           onClick={() => {
-            persist([
-              ...items,
-              { id: crypto.randomUUID(), text: newItem.trim(), done: false },
-            ]);
+            persist([...items, { id: crypto.randomUUID(), text: newItem.trim(), done: false }]);
             setNewItem('');
           }}
           className="ops-btn-secondary shrink-0"

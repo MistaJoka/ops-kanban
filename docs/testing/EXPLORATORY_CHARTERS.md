@@ -5,16 +5,34 @@
 
 ## Session template
 
-| Field | Content |
-|-------|---------|
-| Charter ID | EXP-NN |
-| Mission | |
-| Scope | In / Out |
-| Time box | |
-| Tester | |
-| Build | |
-| Findings | Bug IDs |
-| Notes | |
+| Field      | Content  |
+| ---------- | -------- |
+| Charter ID | EXP-NN   |
+| Mission    |          |
+| Scope      | In / Out |
+| Time box   |          |
+| Tester     |          |
+| Build      |          |
+| Findings   | Bug IDs  |
+| Notes      |          |
+
+---
+
+## EXP-VIS-01 — Pipeline visual coherence
+
+**Mission:** Verify the Job Pipeline looks like one product, not stitched AI screens.  
+**Time box:** 15 minutes.  
+**In:** `/pipeline` board + card panel + empty column. **Out:** Settings, reports.  
+**Checklist:**
+
+- Spacing matches `DESIGN_TOKENS.md` (no random gaps between cards/columns)
+- One primary action per board card (no button sprawl)
+- Empty states: helpful copy, no placeholder “sample” jobs
+- Typography: title/body/meta hierarchy consistent on card + panel
+- AI dock does not obscure column headers or DnD handles
+
+**Oracles:** Owner could demo to a customer without apologizing for UI.  
+**Maps:** `UI_MASTER_FORMULA.md`, T22 `AI_SLOP_DETECTION.md` Layer 1.
 
 ---
 

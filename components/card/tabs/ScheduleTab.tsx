@@ -38,9 +38,7 @@ export function ScheduleTab({
           defaultValue={toLocalInput(card.scheduledEnd)}
           onBlur={(event) =>
             void onPatch({
-              scheduledEnd: event.target.value
-                ? new Date(event.target.value).toISOString()
-                : null,
+              scheduledEnd: event.target.value ? new Date(event.target.value).toISOString() : null,
             })
           }
           className="field-input"
@@ -49,9 +47,7 @@ export function ScheduleTab({
       <Field label="Crew assignee">
         <select
           value={card.assignedTo ?? ''}
-          onChange={(event) =>
-            void onPatch({ assignedTo: event.target.value || null })
-          }
+          onChange={(event) => void onPatch({ assignedTo: event.target.value || null })}
           className="field-input"
           disabled={saving}
         >

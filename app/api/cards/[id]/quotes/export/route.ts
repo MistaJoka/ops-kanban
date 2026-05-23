@@ -4,10 +4,7 @@ import { getCardDetail } from '@/lib/domain/cards/cardDetail';
 import { buildEstimateHtml } from '@/lib/domain/money/estimateExport';
 import { getQuoteForCard } from '@/lib/domain/money/quotes';
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 

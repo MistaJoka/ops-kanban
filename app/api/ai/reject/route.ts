@@ -22,10 +22,18 @@ export async function POST(request: Request) {
 
   const parsed = bodySchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
-  const toolCall = await getToolCall(context.client, context.organizationId, parsed.data.toolCallId);
+  const toolCall = await getToolCall(
+    context.client,
+    context.organizationId,
+    parsed.data.toolCallId,
+  );
   if (!toolCall) {
     return jsonError('Tool call not found.', 404, 'NOT_FOUND');
   }

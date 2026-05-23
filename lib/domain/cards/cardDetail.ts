@@ -209,7 +209,8 @@ export async function updateCard(
   if (input.patch.jobType !== undefined) payload.job_type = input.patch.jobType;
   if (input.patch.nextAction !== undefined) payload.next_action = input.patch.nextAction;
   if (input.patch.dueDate !== undefined) payload.due_date = input.patch.dueDate;
-  if (input.patch.scheduledStart !== undefined) payload.scheduled_start = input.patch.scheduledStart;
+  if (input.patch.scheduledStart !== undefined)
+    payload.scheduled_start = input.patch.scheduledStart;
   if (input.patch.scheduledEnd !== undefined) payload.scheduled_end = input.patch.scheduledEnd;
   if (input.patch.assignedTo !== undefined) payload.assigned_to = input.patch.assignedTo;
   if (input.patch.checklist !== undefined) payload.checklist_json = input.patch.checklist;

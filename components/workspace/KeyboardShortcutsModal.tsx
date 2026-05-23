@@ -12,13 +12,7 @@ const SHORTCUT_ROWS: Array<{ keys: string[]; label: string }> = [
   { keys: ['←', '→'], label: 'Jump pipeline groups (full mode, pipeline focused)' },
 ];
 
-export function KeyboardShortcutsModal({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
+export function KeyboardShortcutsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

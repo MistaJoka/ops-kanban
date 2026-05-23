@@ -13,13 +13,13 @@ Related: `DEFAULT_PIPELINE.md`, `VERTICAL_LANDSCAPING.md`, `MVP_SCHEMA.md`.
 
 ### What a card represents
 
-| Rule | Detail |
-|------|--------|
-| One card | One job at one property for one sales→production→billing cycle |
-| State | `columns.state_key` only — no separate `cards.status` |
-| Customer | Optional at create; required before `estimate_sent` |
-| Money | 0–1 active estimate (`quotes`), 0–1 active invoice (`invoices`) per card in MVP |
-| Archive | `archived_at` set when moved to `archived` (or explicit archive action) |
+| Rule     | Detail                                                                          |
+| -------- | ------------------------------------------------------------------------------- |
+| One card | One job at one property for one sales→production→billing cycle                  |
+| State    | `columns.state_key` only — no separate `cards.status`                           |
+| Customer | Optional at create; required before `estimate_sent`                             |
+| Money    | 0–1 active estimate (`quotes`), 0–1 active invoice (`invoices`) per card in MVP |
+| Archive  | `archived_at` set when moved to `archived` (or explicit archive action)         |
 
 ### Title convention
 
@@ -50,14 +50,14 @@ alter table cards add column if not exists job_type text
 
 Derived when loading cards for the board or detail:
 
-| Field | Logic |
-|-------|--------|
-| `daysInColumn` | `now - column_entered_at`; reset when `column_id` changes (migration 017) |
-| `isOverdue` | `due_date < today` and not in `archived` column |
-| `isScheduledToday` | `scheduled_start` is today (org timezone) |
-| `moneyBadge` | `none` \| `estimate_draft` \| `estimate_sent` \| `invoice_draft` \| `balance_due` \| `paid` |
-| `scheduleLabel` | e.g. `Thu 5/22 · Crew A` from `scheduled_start` + assignee |
-| `columnCategory` | `sales` \| `production` \| `billing` from `state_key` map below |
+| Field              | Logic                                                                                       |
+| ------------------ | ------------------------------------------------------------------------------------------- |
+| `daysInColumn`     | `now - column_entered_at`; reset when `column_id` changes (migration 017)                   |
+| `isOverdue`        | `due_date < today` and not in `archived` column                                             |
+| `isScheduledToday` | `scheduled_start` is today (org timezone)                                                   |
+| `moneyBadge`       | `none` \| `estimate_draft` \| `estimate_sent` \| `invoice_draft` \| `balance_due` \| `paid` |
+| `scheduleLabel`    | e.g. `Thu 5/22 · Crew A` from `scheduled_start` + assignee                                  |
+| `columnCategory`   | `sales` \| `production` \| `billing` from `state_key` map below                             |
 
 ```ts
 const COLUMN_CATEGORY: Record<StateKey, 'sales' | 'production' | 'billing' | 'aftercare'> = {
@@ -75,16 +75,16 @@ const COLUMN_CATEGORY: Record<StateKey, 'sales' | 'production' | 'billing' | 'af
 
 ### Move validation (domain layer)
 
-| Target `state_key` | Validation | Prompt |
-|--------------------|------------|--------|
-| `site_visit` | — | Suggest `due_date` for visit |
-| `estimating` | Customer or title identifies property | — |
-| `estimate_sent` | Customer + ≥1 quote line or total > 0 | Block if empty estimate |
-| `approved` | — | — |
-| `scheduled` | `scheduled_start` required | Modal if missing |
-| `on_site` | — | Log activity `work.started` |
-| `complete` | — | Prompt: create invoice draft |
-| `archived` | Invoice paid OR user confirms archive without pay | Set `archived_at` |
+| Target `state_key` | Validation                                        | Prompt                       |
+| ------------------ | ------------------------------------------------- | ---------------------------- |
+| `site_visit`       | —                                                 | Suggest `due_date` for visit |
+| `estimating`       | Customer or title identifies property             | —                            |
+| `estimate_sent`    | Customer + ≥1 quote line or total > 0             | Block if empty estimate      |
+| `approved`         | —                                                 | —                            |
+| `scheduled`        | `scheduled_start` required                        | Modal if missing             |
+| `on_site`          | —                                                 | Log activity `work.started`  |
+| `complete`         | —                                                 | Prompt: create invoice draft |
+| `archived`         | Invoice paid OR user confirms archive without pay | Set `archived_at`            |
 
 **Skips** (owner/manager): `inquiry→estimating`, `estimate_sent→approved`, `on_site→complete`, `complete→archived` — require `reason` in activity metadata.
 
@@ -109,11 +109,11 @@ Subscribe per board: `cards` insert/update/delete, `columns` reorder. Merge by `
 
 **Default: comfortable** (readable on laptop and tablet in the truck).
 
-| Token | Value |
-|-------|--------|
-| Min height | 128px |
-| Width | Column width − 16px padding |
-| Max visible lines | Title 2, meta 1, footer 1 |
+| Token             | Value                       |
+| ----------------- | --------------------------- |
+| Min height        | 128px                       |
+| Width             | Column width − 16px padding |
+| Max visible lines | Title 2, meta 1, footer 1   |
 
 Optional compact mode (settings post-MVP): 96px min, single-line title.
 
@@ -139,13 +139,13 @@ Optional compact mode (settings post-MVP): 96px min, single-line title.
 
 ### Interactions (board)
 
-| Action | Behavior |
-|--------|----------|
-| Click card body | Open detail panel |
-| Drag handle / whole card | Move column (role-gated) |
-| `⋮` menu | Assign, set date, move to…, archive |
-| Double-click title | Inline rename (owner/manager/worker) |
-| Hover | Lift shadow + show `⋮` |
+| Action                   | Behavior                             |
+| ------------------------ | ------------------------------------ |
+| Click card body          | Open detail panel                    |
+| Drag handle / whole card | Move column (role-gated)             |
+| `⋮` menu                 | Assign, set date, move to…, archive  |
+| Double-click title       | Inline rename (owner/manager/worker) |
+| Hover                    | Lift shadow + show `⋮`               |
 
 ### Board card — do not show
 
@@ -158,10 +158,10 @@ Optional compact mode (settings post-MVP): 96px min, single-line title.
 
 ### Container
 
-| Viewport | Pattern |
-|----------|---------|
-| Desktop | **Slide-over** from right, 720px wide, board dimmed |
-| Mobile | Full-screen sheet, sticky header + back |
+| Viewport | Pattern                                             |
+| -------- | --------------------------------------------------- |
+| Desktop  | **Slide-over** from right, 720px wide, board dimmed |
+| Mobile   | Full-screen sheet, sticky header + back             |
 
 Not a small centered modal — this is the operational record.
 
@@ -184,18 +184,18 @@ Not a small centered modal — this is the operational record.
 
 **Tabs (MVP)**
 
-| Tab | Contents |
-|-----|----------|
-| **Overview** | Priority, `next_action`, `due_date`, assignee, revenue, AI summary block, quick move buttons |
-| **Property** | Customer CRUD: name, phone, email, address, gate/access notes |
-| **Scope** | `description` rich text (markdown-lite), job type select |
-| **Estimate** | Quote status, line items table, subtotal/tax/total, "Mark sent" |
-| **Schedule** | `scheduled_start/end`, assignee, weather/note field in comments |
-| **Money** | Invoice draft, balance, pay link (Wave 1), mark paid |
-| **Comms** (Wave 2) | SMS/email thread on card |
-| **Integrations strip** (Wave 1+) | PayPal/Stripe, DocuSign, Twilio status — `PLATFORM_CAPABILITIES.md` |
-| **Checklist** | Simple checklist (local state or JSON in description until table exists) |
-| **Comments** | Thread + @mention post-MVP |
+| Tab                              | Contents                                                                                     |
+| -------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Overview**                     | Priority, `next_action`, `due_date`, assignee, revenue, AI summary block, quick move buttons |
+| **Property**                     | Customer CRUD: name, phone, email, address, gate/access notes                                |
+| **Scope**                        | `description` rich text (markdown-lite), job type select                                     |
+| **Estimate**                     | Quote status, line items table, subtotal/tax/total, "Mark sent"                              |
+| **Schedule**                     | `scheduled_start/end`, assignee, weather/note field in comments                              |
+| **Money**                        | Invoice draft, balance, pay link (Wave 1), mark paid                                         |
+| **Comms** (Wave 2)               | SMS/email thread on card                                                                     |
+| **Integrations strip** (Wave 1+) | PayPal/Stripe, DocuSign, Twilio status — `PLATFORM_CAPABILITIES.md`                          |
+| **Checklist**                    | Simple checklist (local state or JSON in description until table exists)                     |
+| **Comments**                     | Thread + @mention post-MVP                                                                   |
 
 **Right rail**
 
@@ -224,7 +224,7 @@ Utilitarian job-ticket clarity for office staff and crew leads — not a generic
 
 ```css
 /* Surfaces */
---surface-board: #f4f1ec;      /* warm stone */
+--surface-board: #f4f1ec; /* warm stone */
 --surface-card: #ffffff;
 --surface-rail: #faf8f5;
 
@@ -252,11 +252,11 @@ Dark mode post-MVP.
 
 ### Typography
 
-| Role | Font | Notes |
-|------|------|--------|
-| UI / body | **DM Sans** | Legible at small sizes |
-| Titles / column headers | **Fraunces** or **Libre Baskerville** | Slight character, “job ticket” |
-| Mono (money, dates) | **IBM Plex Mono** | Align numbers in estimate table |
+| Role                    | Font                                  | Notes                           |
+| ----------------------- | ------------------------------------- | ------------------------------- |
+| UI / body               | **DM Sans**                           | Legible at small sizes          |
+| Titles / column headers | **Fraunces** or **Libre Baskerville** | Slight character, “job ticket”  |
+| Mono (money, dates)     | **IBM Plex Mono**                     | Align numbers in estimate table |
 
 Avoid Inter, Roboto, system-ui-only stacks.
 
@@ -271,14 +271,14 @@ Avoid Inter, Roboto, system-ui-only stacks.
 
 ### Badges
 
-| Badge | When |
-|-------|------|
-| `$1.2k` | `revenue_value > 0` or quote total |
-| `Est. sent` | quote status sent |
-| `Due $400` | invoice `balance_due > 0` |
-| `Paid` | invoice paid |
-| `Today` | scheduled today |
-| `3d` | days in column (sales columns only if > 2d) |
+| Badge       | When                                        |
+| ----------- | ------------------------------------------- |
+| `$1.2k`     | `revenue_value > 0` or quote total          |
+| `Est. sent` | quote status sent                           |
+| `Due $400`  | invoice `balance_due > 0`                   |
+| `Paid`      | invoice paid                                |
+| `Today`     | scheduled today                             |
+| `3d`        | days in column (sales columns only if > 2d) |
 
 ### Detail panel styling
 
@@ -300,35 +300,35 @@ Avoid Inter, Roboto, system-ui-only stacks.
 
 ### Board card
 
-| Capability | MVP | Role |
-|------------|-----|------|
-| Create (quick) | ✓ | owner, manager, worker |
-| Create from AI | ✓ | via tool + approval |
-| Drag move | ✓ | owner, manager, worker* |
-| Menu move | ✓ | all non-viewer |
-| Inline title edit | ✓ | non-viewer (double-click) |
-| Filter/sort column | ✓ | all |
-| Assign from menu | ✓ | owner, manager |
-| Archive from menu | ✓ | owner, manager |
-| Advanced filters | ✓ | assigned, unassigned, balance, job type, week |
+| Capability         | MVP | Role                                          |
+| ------------------ | --- | --------------------------------------------- |
+| Create (quick)     | ✓   | owner, manager, worker                        |
+| Create from AI     | ✓   | via tool + approval                           |
+| Drag move          | ✓   | owner, manager, worker\*                      |
+| Menu move          | ✓   | all non-viewer                                |
+| Inline title edit  | ✓   | non-viewer (double-click)                     |
+| Filter/sort column | ✓   | all                                           |
+| Assign from menu   | ✓   | owner, manager                                |
+| Archive from menu  | ✓   | owner, manager                                |
+| Advanced filters   | ✓   | assigned, unassigned, balance, job type, week |
 
-*Worker: only cards assigned to them or unassigned (configurable).
+\*Worker: only cards assigned to them or unassigned (configurable).
 
 ### Detail panel
 
-| Capability | MVP | Role |
-|------------|-----|------|
-| Edit all card fields | ✓ | non-viewer |
-| Edit customer | ✓ | owner, manager |
-| Customer read | ✓ | all |
-| Estimate CRUD | ✓ | owner, manager |
-| Invoice + mark paid | ✓ | owner, manager |
-| Mark estimate sent | ✓ | owner, manager |
-| Comments | ✓ | non-viewer |
-| Checklist | ✓ simple | non-viewer |
-| Files upload | ✓ | owner, manager (Wave 3) |
-| AI summarize / draft / move | ✓ | per tool registry |
-| Activity timeline | ✓ read | all |
+| Capability                  | MVP      | Role                    |
+| --------------------------- | -------- | ----------------------- |
+| Edit all card fields        | ✓        | non-viewer              |
+| Edit customer               | ✓        | owner, manager          |
+| Customer read               | ✓        | all                     |
+| Estimate CRUD               | ✓        | owner, manager          |
+| Invoice + mark paid         | ✓        | owner, manager          |
+| Mark estimate sent          | ✓        | owner, manager          |
+| Comments                    | ✓        | non-viewer              |
+| Checklist                   | ✓ simple | non-viewer              |
+| Files upload                | ✓        | owner, manager (Wave 3) |
+| AI summarize / draft / move | ✓        | per tool registry       |
+| Activity timeline           | ✓ read   | all                     |
 
 ### Quick create (board `+`)
 
@@ -348,14 +348,14 @@ Opens detail after create if address or customer missing and user moves toward `
 
 MVP board filter bar:
 
-| Filter | Query |
-|--------|--------|
-| Assigned to me | `assigned_to = uid` |
-| Unassigned | `assigned_to is null` |
-| Overdue | `due_date < today` |
+| Filter              | Query                     |
+| ------------------- | ------------------------- |
+| Assigned to me      | `assigned_to = uid`       |
+| Unassigned          | `assigned_to is null`     |
+| Overdue             | `due_date < today`        |
 | Scheduled this week | `scheduled_start` in week |
-| Has balance | invoice `balance_due > 0` |
-| Job type | `job_type = X` |
+| Has balance         | invoice `balance_due > 0` |
+| Job type            | `job_type = X`            |
 
 Search: title, customer name, address (ilike).
 
@@ -367,11 +367,11 @@ See `docs/ai/AI_UTILIZATION.md` for full copilot behavior.
 
 When detail open, AI context includes: card, customer, quote, invoice, last 15 activities, 5 comments, column `state_key`.
 
-| Command | Tool | UI feedback |
-|---------|------|-------------|
-| Summarize | `summarizeCard` | Overview summary block (inline on open) |
-| Draft estimate | `createQuoteDraft` | Estimate tab preview + approve |
-| Move | `moveCard` | Approval modal if medium/high risk |
+| Command           | Tool                | UI feedback                                 |
+| ----------------- | ------------------- | ------------------------------------------- |
+| Summarize         | `summarizeCard`     | Overview summary block (inline on open)     |
+| Draft estimate    | `createQuoteDraft`  | Estimate tab preview + approve              |
+| Move              | `moveCard`          | Approval modal if medium/high risk          |
 | Suggest next step | `suggestNextAction` | Fills `next_action` with approve for medium |
 
 **Inline CTAs:** estimating → “Draft estimate from notes”; complete → “Create invoice draft” (post-MVP tool).
@@ -393,12 +393,12 @@ After AI mutation: append `ai.tool_executed` to timeline; realtime refresh card.
 
 ## 9. Open decisions (pick before build)
 
-| # | Decision | Options |
-|---|----------|---------|
-| A | Board card density | **Comfortable (recommended)** vs Compact |
-| B | Detail pattern | **Slide-over (recommended)** vs Full page route `/jobs/[id]` |
-| C | `job_type` column | **Add in migration 002 (recommended)** vs title prefix only |
-| D | Checklist storage | **JSON on card** for MVP vs wait for table |
-| E | Closed cards on board | **Hidden by default** vs collapsed column |
+| #   | Decision              | Options                                                      |
+| --- | --------------------- | ------------------------------------------------------------ |
+| A   | Board card density    | **Comfortable (recommended)** vs Compact                     |
+| B   | Detail pattern        | **Slide-over (recommended)** vs Full page route `/jobs/[id]` |
+| C   | `job_type` column     | **Add in migration 002 (recommended)** vs title prefix only  |
+| D   | Checklist storage     | **JSON on card** for MVP vs wait for table                   |
+| E   | Closed cards on board | **Hidden by default** vs collapsed column                    |
 
 Default recommendations marked above.

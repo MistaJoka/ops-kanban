@@ -6,17 +6,17 @@ Toggle compact/full in the workspace top bar or Settings (`WORKSPACE_DESIGN.md`)
 
 ## Columns (canonical)
 
-| Position | Display name | `state_key` | Meaning |
-|----------|--------------|-------------|---------|
-| 0 | New inquiry | `inquiry` | Call, form, referral — not yet scoped |
-| 1 | Site visit | `site_visit` | Measure, photos, access notes |
-| 2 | Estimating | `estimating` | Building the estimate |
-| 3 | Estimate sent | `estimate_sent` | Waiting on homeowner approval |
-| 4 | Approved | `approved` | Sold; ready to schedule crew |
-| 5 | Scheduled | `scheduled` | Date/crew on calendar (card dates set) |
-| 6 | On site | `on_site` | Crew working the property |
-| 7 | Complete | `complete` | Work done; ready to invoice |
-| 8 | Archived | `archived` | Paid or written off; job closed |
+| Position | Display name  | `state_key`     | Meaning                                |
+| -------- | ------------- | --------------- | -------------------------------------- |
+| 0        | New inquiry   | `inquiry`       | Call, form, referral — not yet scoped  |
+| 1        | Site visit    | `site_visit`    | Measure, photos, access notes          |
+| 2        | Estimating    | `estimating`    | Building the estimate                  |
+| 3        | Estimate sent | `estimate_sent` | Waiting on homeowner approval          |
+| 4        | Approved      | `approved`      | Sold; ready to schedule crew           |
+| 5        | Scheduled     | `scheduled`     | Date/crew on calendar (card dates set) |
+| 6        | On site       | `on_site`       | Crew working the property              |
+| 7        | Complete      | `complete`      | Work done; ready to invoice            |
+| 8        | Archived      | `archived`      | Paid or written off; job closed        |
 
 ## Column rules
 
@@ -39,16 +39,16 @@ Allowed skips (owner/manager only, logged in activity):
 
 ## Side effects by column (implement in domain layer)
 
-| Move to | Optional prompts / writes |
-|---------|---------------------------|
-| `site_visit` | Set `due_date` for visit |
-| `estimating` | Customer or title identifies property | — |
-| `estimate_sent` | Customer + ≥1 quote line or total > 0 | Block if empty estimate |
-| `approved` | — | — |
-| `scheduled` | `scheduled_start` required | Modal if missing |
-| `on_site` | — | Log activity `work.started` |
-| `complete` | — | Prompt: create invoice draft |
-| `archived` | Set `archived_at`; ensure invoice `paid` or note |
+| Move to         | Optional prompts / writes                        |
+| --------------- | ------------------------------------------------ | ---------------------------- |
+| `site_visit`    | Set `due_date` for visit                         |
+| `estimating`    | Customer or title identifies property            | —                            |
+| `estimate_sent` | Customer + ≥1 quote line or total > 0            | Block if empty estimate      |
+| `approved`      | —                                                | —                            |
+| `scheduled`     | `scheduled_start` required                       | Modal if missing             |
+| `on_site`       | —                                                | Log activity `work.started`  |
+| `complete`      | —                                                | Prompt: create invoice draft |
+| `archived`      | Set `archived_at`; ensure invoice `paid` or note |
 
 ## Seed data
 
@@ -62,12 +62,12 @@ Default columns are inserted on signup. See:
 
 These map to MVP columns or card metadata until added:
 
-| Full lifecycle state | MVP home |
-|---------------------|----------|
-| Negotiation | `estimate_sent` + comments |
-| Blocked | `on_site` + priority urgent + next_action |
-| Quality review | `complete` + checklist |
-| Invoice pending/sent | `complete` + invoice draft |
-| Payment pending | `complete` or `archived` + invoice status |
-| Retention | `archived` + customer notes |
-| Paid (full pipeline only) | Maps to `archived` in compact mode |
+| Full lifecycle state      | MVP home                                  |
+| ------------------------- | ----------------------------------------- |
+| Negotiation               | `estimate_sent` + comments                |
+| Blocked                   | `on_site` + priority urgent + next_action |
+| Quality review            | `complete` + checklist                    |
+| Invoice pending/sent      | `complete` + invoice draft                |
+| Payment pending           | `complete` or `archived` + invoice status |
+| Retention                 | `archived` + customer notes               |
+| Paid (full pipeline only) | Maps to `archived` in compact mode        |

@@ -3,10 +3,7 @@ import { createPortalPaymentLink } from '@/lib/domain/integrations/payments';
 import { verifyPortalToken } from '@/lib/domain/integrations/portalTokens';
 import { createServiceClient } from '@/lib/db/supabase/service';
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ token: string }> },
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const service = createServiceClient();
   const portal = await verifyPortalToken(service, token);

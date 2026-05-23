@@ -6,11 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Plus } from 'lucide-react';
 
 import { CustomerCreateModal } from '@/components/pipeline/CustomerCreateModal';
-import {
-  canCreateCard,
-  canManageMoney,
-  type OrgRole,
-} from '@/lib/domain/auth/roles';
+import { canCreateCard, canManageMoney, type OrgRole } from '@/lib/domain/auth/roles';
 import { cn } from '@/lib/utils';
 
 type CreateMenuItem = {

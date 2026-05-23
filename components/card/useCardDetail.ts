@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react';
 
 import { detailStubFromBoardCard } from '@/lib/domain/board/boardOptimistic';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
-import type { CardActivityView, CardCommentView, CardDetailView } from '@/lib/domain/cards/cardDetail';
+import type {
+  CardActivityView,
+  CardCommentView,
+  CardDetailView,
+} from '@/lib/domain/cards/cardDetail';
 import type { OrgMemberView } from '@/lib/domain/organization/listMembers';
 import type { PaymentView } from '@/lib/domain/integrations/payments';
 import type { InvoiceView } from '@/lib/domain/money/invoices';

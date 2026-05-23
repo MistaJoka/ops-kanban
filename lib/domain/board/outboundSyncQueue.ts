@@ -170,10 +170,9 @@ function mutationCardId(mutation: OutboundMutation): string {
   return mutation.cardId;
 }
 
-function isPatchMutation(mutation: OutboundMutation): mutation is Extract<
-  OutboundMutation,
-  { kind: 'patchCard' | 'patchDetail' }
-> {
+function isPatchMutation(
+  mutation: OutboundMutation,
+): mutation is Extract<OutboundMutation, { kind: 'patchCard' | 'patchDetail' }> {
   return PATCH_KINDS.has(mutation.kind);
 }
 
@@ -262,9 +261,7 @@ export class OutboundSyncQueue {
 
   mapClientIdToReal(clientId: string, realId: string): void {
     this.idMap.set(clientId, realId);
-    this.pending = this.pending.map((job) =>
-      rewriteMutationCardId(job, clientId, realId),
-    );
+    this.pending = this.pending.map((job) => rewriteMutationCardId(job, clientId, realId));
     const buffered = this.patchBuffers.get(clientId);
     if (buffered) {
       this.patchBuffers.delete(clientId);
@@ -330,13 +327,15 @@ export class OutboundSyncQueue {
     return this.getQueuedCount() > 0 || this.inFlightCount > 0;
   }
 
-  private enqueuePatchDebounced(mutation: OutboundMutation & { kind: 'patchCard' | 'patchDetail' }) {
+  private enqueuePatchDebounced(
+    mutation: OutboundMutation & { kind: 'patchCard' | 'patchDetail' },
+  ) {
     const cardId = mutationCardId(mutation);
     const existing = this.patchBuffers.get(cardId);
     const merged =
-      existing && isPatchMutation(existing) && existing.kind === mutation.kind ?
-        mergePatchMutations(existing, mutation)
-      : mutation;
+      existing && isPatchMutation(existing) && existing.kind === mutation.kind
+        ? mergePatchMutations(existing, mutation)
+        : mutation;
 
     this.patchBuffers.set(cardId, merged);
 

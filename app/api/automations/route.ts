@@ -9,7 +9,12 @@ const createSchema = z.object({
   name: z.string().min(1),
   triggerType: z.enum(['column_enter', 'invoice_paid']),
   triggerStateKey: z.string().optional().nullable(),
-  actionType: z.enum(['log_activity', 'set_next_action', 'send_sms_template', 'send_review_request']),
+  actionType: z.enum([
+    'log_activity',
+    'set_next_action',
+    'send_sms_template',
+    'send_review_request',
+  ]),
   actionConfig: z.record(z.unknown()).default({}),
 });
 
@@ -38,7 +43,11 @@ export async function POST(request: Request) {
 
   const parsed = createSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   if (parsed.data.triggerType === 'column_enter' && !parsed.data.triggerStateKey?.trim()) {

@@ -10,24 +10,24 @@ See: `RELEASE_GATES.md`, `WEBHOOK_INTEGRATION_TESTS.md`
 
 ## DONE-8 criteria
 
-| # | Criterion | Status | Evidence |
-|---|-----------|--------|----------|
-| 8.1 | Public booking → card | ✅ | `/book/[slug]`, `createBooking`, idempotency |
-| 8.2 | Crew calendar page | ✅ | `/calendar`, `GET /api/calendar` |
-| 8.3 | SMS thread + inbound webhook | ✅ | Comms tab, Twilio webhook, WH-SMS-* |
-| 8.4 | Email send with approval | ✅ | Comms tab + AI `sendEmail`/`sendSms` (high-risk approval) |
+| #   | Criterion                    | Status | Evidence                                                  |
+| --- | ---------------------------- | ------ | --------------------------------------------------------- |
+| 8.1 | Public booking → card        | ✅     | `/book/[slug]`, `createBooking`, idempotency              |
+| 8.2 | Crew calendar page           | ✅     | `/calendar`, `GET /api/calendar`                          |
+| 8.3 | SMS thread + inbound webhook | ✅     | Comms tab, Twilio webhook, WH-SMS-\*                      |
+| 8.4 | Email send with approval     | ✅     | Comms tab + AI `sendEmail`/`sendSms` (high-risk approval) |
 
 ---
 
 ## Automated verification
 
-| Item | Status | Evidence |
-|------|--------|----------|
-| Typecheck + build | ✅ | `npm run typecheck`, `npm run build` |
-| WH-BOOK | ✅ | `tests/integration/booking.test.ts` |
-| WH-SMS P0 | ✅ | `tests/integration/sms-webhook.test.ts` |
-| Message templates | ✅ | `/settings/templates`, `message_templates` table |
-| AI comms tools | ✅ | `sendSms`, `sendEmail`, `draftSms`, `draftEmail` in tool registry |
+| Item              | Status | Evidence                                                          |
+| ----------------- | ------ | ----------------------------------------------------------------- |
+| Typecheck + build | ✅     | `npm run typecheck`, `npm run build`                              |
+| WH-BOOK           | ✅     | `tests/integration/booking.test.ts`                               |
+| WH-SMS P0         | ✅     | `tests/integration/sms-webhook.test.ts`                           |
+| Message templates | ✅     | `/settings/templates`, `message_templates` table                  |
+| AI comms tools    | ✅     | `sendSms`, `sendEmail`, `draftSms`, `draftEmail` in tool registry |
 
 ---
 

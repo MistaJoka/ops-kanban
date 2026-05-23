@@ -49,12 +49,10 @@ describe('boardFilters', () => {
     });
 
     it('matches archived, overdue, and scheduled filters', () => {
-      expect(
-        matchesAdvancedFilter(sampleCard({ stateKey: 'archived' }), 'archived', USER_ID),
-      ).toBe(true);
-      expect(matchesAdvancedFilter(sampleCard({ isOverdue: true }), 'overdue', USER_ID)).toBe(
+      expect(matchesAdvancedFilter(sampleCard({ stateKey: 'archived' }), 'archived', USER_ID)).toBe(
         true,
       );
+      expect(matchesAdvancedFilter(sampleCard({ isOverdue: true }), 'overdue', USER_ID)).toBe(true);
       expect(
         matchesAdvancedFilter(
           sampleCard({ scheduledStart: '2026-05-10T09:00:00.000Z' }),

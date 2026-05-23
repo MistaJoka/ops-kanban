@@ -13,52 +13,52 @@
 
 For each table: SELECT, INSERT, UPDATE, DELETE as A, A2, B, anon.
 
-| Table | A own org | B other org | anon |
-|-------|-----------|-------------|------|
-| organizations | ✓/—/✓/— | ✗ | ✗ |
-| organization_members | ✓ | ✗ | ✗ |
-| boards | ✓ | ✗ | ✗ |
-| columns | ✓ | ✗ | ✗ |
-| cards | ✓ | ✗ | ✗ |
-| customers | ✓ | ✗ | ✗ |
-| quotes | ✓ | ✗ | ✗ |
-| quote_items | via quote | ✗ | ✗ |
-| invoices | ✓ | ✗ | ✗ |
-| comments | ✓ | ✗ | ✗ |
-| activities | ✓ | ✗ | ✗ |
-| ai_tool_calls | ✓ | ✗ | ✗ |
-| ai_action_approvals | ✓ | ✗ | ✗ |
-| profiles | own | ✗ | ✗ |
+| Table                | A own org | B other org | anon |
+| -------------------- | --------- | ----------- | ---- |
+| organizations        | ✓/—/✓/—   | ✗           | ✗    |
+| organization_members | ✓         | ✗           | ✗    |
+| boards               | ✓         | ✗           | ✗    |
+| columns              | ✓         | ✗           | ✗    |
+| cards                | ✓         | ✗           | ✗    |
+| customers            | ✓         | ✗           | ✗    |
+| quotes               | ✓         | ✗           | ✗    |
+| quote_items          | via quote | ✗           | ✗    |
+| invoices             | ✓         | ✗           | ✗    |
+| comments             | ✓         | ✗           | ✗    |
+| activities           | ✓         | ✗           | ✗    |
+| ai_tool_calls        | ✓         | ✗           | ✗    |
+| ai_action_approvals  | ✓         | ✗           | ✗    |
+| profiles             | own       | ✗           | ✗    |
 
 **Pass:** Beta never reads/writes Alpha rows. Anon never reads.
 
 ## SEC-ROLE — Role matrix
 
-| Action | owner | manager | worker | viewer |
-|--------|-------|---------|--------|--------|
-| createCard | ✓ | ✓ | ✓ | ✗ |
-| moveCard (any) | ✓ | ✓ | policy | ✗ |
-| createQuoteDraft | ✓ | ✓ | ✗ | ✗ |
-| markInvoicePaid | ✓ | ✓ | ✗ | ✗ |
-| archiveCard | ✓ | ✓ | ✗ | ✗ |
-| AI moveCard | ✓ | ✓ | ✓* | ✗ |
+| Action           | owner | manager | worker | viewer |
+| ---------------- | ----- | ------- | ------ | ------ |
+| createCard       | ✓     | ✓       | ✓      | ✗      |
+| moveCard (any)   | ✓     | ✓       | policy | ✗      |
+| createQuoteDraft | ✓     | ✓       | ✗      | ✗      |
+| markInvoicePaid  | ✓     | ✓       | ✗      | ✗      |
+| archiveCard      | ✓     | ✓       | ✗      | ✗      |
+| AI moveCard      | ✓     | ✓       | ✓\*    | ✗      |
 
-*worker assigned-only per product policy
+\*worker assigned-only per product policy
 
 ## SEC-AUTH
 
-| ID | Case | Expected | P |
-|----|------|----------|---|
-| SEC-AUTH-001 | Expired JWT | 401 | P0 |
-| SEC-AUTH-002 | Tampered JWT | 401 | P0 |
-| SEC-AUTH-003 | Missing Authorization header on API | 401 | P0 |
+| ID           | Case                                | Expected | P   |
+| ------------ | ----------------------------------- | -------- | --- |
+| SEC-AUTH-001 | Expired JWT                         | 401      | P0  |
+| SEC-AUTH-002 | Tampered JWT                        | 401      | P0  |
+| SEC-AUTH-003 | Missing Authorization header on API | 401      | P0  |
 
 ## SEC-API
 
-| ID | Case | Expected | P |
-|----|------|----------|---|
-| SEC-API-010 | Service role from browser bundle | not exposed | P0 |
-| SEC-API-011 | GEMINI_API_KEY client-side | not exposed | P0 |
+| ID          | Case                             | Expected    | P   |
+| ----------- | -------------------------------- | ----------- | --- |
+| SEC-API-010 | Service role from browser bundle | not exposed | P0  |
+| SEC-API-011 | GEMINI_API_KEY client-side       | not exposed | P0  |
 
 ## SEC-RLS-030 — Enumeration
 

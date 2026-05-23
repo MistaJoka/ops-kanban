@@ -8,10 +8,7 @@ const markPaidSchema = z.object({
   method: z.string().trim().optional(),
 });
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await getHandlerContext();
   if (!isHandlerContext(context)) return context;
 
@@ -29,7 +26,11 @@ export async function POST(
 
   const parsed = markPaidSchema.safeParse(body);
   if (!parsed.success) {
-    return jsonError(parsed.error.issues[0]?.message ?? 'Invalid request.', 400, 'VALIDATION_ERROR');
+    return jsonError(
+      parsed.error.issues[0]?.message ?? 'Invalid request.',
+      400,
+      'VALIDATION_ERROR',
+    );
   }
 
   try {
@@ -45,8 +46,7 @@ export async function POST(
     return jsonData(invoice);
   } catch (error) {
     if (error instanceof InvoiceError) {
-      const status =
-        error.code === 'NOT_FOUND' ? 404 : error.code === 'FORBIDDEN' ? 403 : 400;
+      const status = error.code === 'NOT_FOUND' ? 404 : error.code === 'FORBIDDEN' ? 403 : 400;
       return jsonError(error.message, status, error.code);
     }
 

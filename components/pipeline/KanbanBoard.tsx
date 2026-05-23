@@ -1,135 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
-import {
-  DndContext,
-  DragOverlay,
-  PointerSensor,
-  closestCorners,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type DragOverEvent,
-  type DragStartEvent,
-} from '@dnd-kit/core';
-import { Sparkles } from 'lucide-react';
-
-import { AiCommandDock } from '@/components/ai/AiCommandDock';
-import { AiCopilotPopover } from '@/components/ai/AiCopilotPopover';
-import { AiInlineBanner } from '@/components/ai/AiInlineBanner';
-import { CardPanel } from '@/components/card/CardPanel';
-import { CreateMenu } from '@/components/workspace/CreateMenu';
-import { useWorkspaceShortcutsOptional } from '@/components/workspace/WorkspaceShortcutsProvider';
-import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { canDeleteCard, type OrgRole } from '@/lib/domain/auth/roles';
 import type { BoardView } from '@/lib/domain/board/getBoard';
-import type { BoardCardView } from '@/lib/domain/cards/boardCard';
-import { getAssigneeInitials } from '@/lib/domain/cards/boardCardFormatters';
-import {
-  ADVANCED_FILTER_LABELS,
-  BOARD_JOB_TYPES,
-  filterBoardCards,
-  getAdvancedFilterLabel,
-  type AdvancedFilterKey,
-} from '@/lib/domain/board/boardFilters';
-import { isTempCardId } from '@/lib/domain/board/boardOptimistic';
-import type { OrgMemberView } from '@/lib/domain/organization/listMembers';
-import { KanbanColumn } from '@/components/pipeline/KanbanColumn';
-import { BoardCardSurface } from '@/components/pipeline/BoardCard';
-import type { BoardCardPatch } from '@/components/pipeline/BoardCardMenu';
-import { NewJobModal, type NewJobFormValues } from '@/components/pipeline/NewJobModal';
-import { BoardSyncStatusIndicator } from '@/components/pipeline/BoardSyncStatusIndicator';
-import { PipelineGroupJump } from '@/components/pipeline/PipelineGroupJump';
-import {
-  PipelineSearchProvider,
-  usePipelineSearch,
-} from '@/components/pipeline/PipelineSearchProvider';
-import { useBoardRealtime } from '@/components/pipeline/useBoardRealtime';
+import { PipelineSearchProvider } from '@/components/pipeline/PipelineSearchProvider';
 import { useBoardState } from '@/components/pipeline/useBoardState';
-import { nextGroupKey, pickActiveGroup } from '@/lib/domain/pipeline/pickActiveGroup';
-import { createClientMutationId } from '@/components/pipeline/useOutboundSync';
-import { PIPELINE_GROUP_LABELS, type PipelineGroupKey } from '@/lib/landscaping-full-pipeline';
-
-const GROUP_KEYS: PipelineGroupKey[] = ['sales', 'production', 'billing', 'aftercare'];
-
-function resolveAdvancedFilter(
-  filterKey: AdvancedFilterKey,
-  jobTypeFilter: string,
-): AdvancedFilterKey | { key: 'job_type'; jobType: string } {
-  if (filterKey === 'job_type' && jobTypeFilter) {
-    return { key: 'job_type', jobType: jobTypeFilter };
-  }
-
-  return filterKey;
-}
-
-function getInsertIndex(columnCards: BoardCardView[], activeId: string, overId: string): number {
-  const ids = columnCards.map((card) => card.id);
-  const activeIndex = ids.indexOf(activeId);
-  const overIndex = ids.indexOf(overId);
-
-  if (overIndex === -1) {
-    return ids.filter((id) => id !== activeId).length;
-  }
-
-  const withoutActive = ids.filter((id) => id !== activeId);
-  const adjustedOverIndex = withoutActive.indexOf(overId);
-
-  if (activeIndex !== -1 && activeIndex < overIndex) {
-    return adjustedOverIndex + 1;
-  }
-
-  return adjustedOverIndex;
-}
-
-function resolveReorderTarget(
-  columns: BoardView['columns'],
-  cardsByColumn: Map<string, BoardCardView[]>,
-  activeId: string,
-  overId: string,
-): { targetColumnId: string; insertIndex: number } | null {
-  if (overId.startsWith('column:')) {
-    const targetColumnId = overId.slice('column:'.length);
-    const columnCards = cardsByColumn.get(targetColumnId) ?? [];
-    return {
-      targetColumnId,
-      insertIndex: columnCards.filter((card) => card.id !== activeId).length,
-    };
-  }
-
-  for (const column of columns) {
-    const columnCards = cardsByColumn.get(column.id) ?? [];
-    if (columnCards.some((card) => card.id === overId)) {
-      return {
-        targetColumnId: column.id,
-        insertIndex: getInsertIndex(columnCards, activeId, overId),
-      };
-    }
-  }
-
-  return null;
-}
-
-function resolveDragOverColumnId(
-  columns: BoardView['columns'],
-  cardsByColumn: Map<string, BoardCardView[]>,
-  overId: string,
-): string | null {
-  if (overId.startsWith('column:')) {
-    return overId.slice('column:'.length);
-  }
-
-  for (const column of columns) {
-    const columnCards = cardsByColumn.get(column.id) ?? [];
-    if (columnCards.some((card) => card.id === overId)) {
-      return column.id;
-    }
-  }
-
-  return null;
-}
+import { KanbanBoardToolbar } from '@/components/pipeline/kanban-board/KanbanBoardToolbar';
+import { KanbanBoardAiChrome } from '@/components/pipeline/kanban-board/KanbanBoardAiChrome';
+import { KanbanBoardModals } from '@/components/pipeline/kanban-board/KanbanBoardModals';
+import { KanbanBoardDndArea } from '@/components/pipeline/kanban-board/KanbanBoardDndArea';
+import { useKanbanBoardController } from '@/components/pipeline/kanban-board/useKanbanBoardController';
 
 export function KanbanBoard(props: {
   initialBoard: BoardView;
@@ -155,943 +34,123 @@ function KanbanBoardContent({
   organizationId: string;
   userId: string | null;
 }) {
-  const {
-    board,
-    error,
-    pipelineModePending,
-    refreshBoard,
-    createCardWithDetails,
-    moveCard,
-    reorderCard,
-    togglePipelineMode,
-    boardSync,
-    hasPendingMutations,
-    syncStatus,
-    setLiveConnected,
-  } = useBoardState(initialBoard);
-
-  const [activeCardId, setActiveCardId] = useState<string | null>(null);
-  const [dragOverColumnId, setDragOverColumnId] = useState<string | null>(null);
-  const [members, setMembers] = useState<OrgMemberView[]>([]);
-  const [search, setSearch] = useState('');
-  const [filterKey, setFilterKey] = useState<AdvancedFilterKey>('all');
-  const [jobTypeFilter, setJobTypeFilter] = useState<string>(BOARD_JOB_TYPES[0]);
-  const [aiDockExpanded, setAiDockExpanded] = useState(false);
-  const [aiCopilotOpen, setAiCopilotOpen] = useState(false);
-  const [activeGroup, setActiveGroup] = useState<PipelineGroupKey | null>(null);
-  const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const pipelineSearch = usePipelineSearch();
-  const workspaceShortcuts = useWorkspaceShortcutsOptional();
-  const [newJobModal, setNewJobModal] = useState<{ defaultColumnId?: string } | null>(null);
-  const [newJobPending, setNewJobPending] = useState(false);
-  const [newJobError, setNewJobError] = useState<string | null>(null);
-  const [inlinePrompt, setInlinePrompt] = useState<{
-    cardId: string;
-    message: string;
-    actionLabel: string;
-    command: string;
-  } | null>(null);
-  const [selectedCardIds, setSelectedCardIds] = useState<Set<string>>(() => new Set());
-  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState<{
-    cardIds: string[];
-  } | null>(null);
-  const [bulkDeletePending, setBulkDeletePending] = useState(false);
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedCardId = searchParams.get('card');
+  const boardState = useBoardState(initialBoard);
+  const { moveCard, syncStatus } = boardState;
+  const ctrl = useKanbanBoardController(boardState, organizationId, userId, role);
   const orgRole = role as OrgRole;
   const selectionEnabled = canDeleteCard(orgRole);
-  const advancedFilter = useMemo(
-    () => resolveAdvancedFilter(filterKey, jobTypeFilter),
-    [filterKey, jobTypeFilter],
-  );
-  const includeArchived = filterKey === 'archived';
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 8 },
-    }),
-  );
-
-  const activeCard = useMemo(
-    () => (activeCardId ? board.cards.find((card) => card.id === activeCardId) ?? null : null),
-    [activeCardId, board.cards],
-  );
-
-  const openCard = useCallback(
-    (cardId: string) => {
-      router.push(`/pipeline?card=${cardId}`, { scroll: false });
-    },
-    [router],
-  );
-
-  const closeCard = useCallback(() => {
-    router.push('/pipeline', { scroll: false });
-  }, [router]);
-
-  useEffect(() => {
-    if (includeArchived) {
-      void refreshBoard(true);
-    }
-  }, [includeArchived, refreshBoard]);
-
-  useEffect(() => {
-    setSelectedCardIds((current) => {
-      const validIds = new Set(board.cards.map((card) => card.id));
-      let changed = false;
-      const next = new Set<string>();
-
-      for (const id of current) {
-        if (validIds.has(id)) {
-          next.add(id);
-        } else {
-          changed = true;
-        }
-      }
-
-      return changed ? next : current;
-    });
-  }, [board.cards]);
-
-  const toggleCardSelection = useCallback((cardId: string) => {
-    setSelectedCardIds((current) => {
-      const next = new Set(current);
-      if (next.has(cardId)) {
-        next.delete(cardId);
-      } else {
-        next.add(cardId);
-      }
-      return next;
-    });
-  }, []);
-
-  const selectAllInColumn = useCallback((_columnId: string, cardIds: string[]) => {
-    setSelectedCardIds((current) => {
-      const next = new Set(current);
-      const allSelected = cardIds.length > 0 && cardIds.every((id) => next.has(id));
-
-      if (allSelected) {
-        for (const id of cardIds) {
-          next.delete(id);
-        }
-      } else {
-        for (const id of cardIds) {
-          next.add(id);
-        }
-      }
-
-      return next;
-    });
-  }, []);
-
-  const requestDeleteSelectedInColumn = useCallback((_columnId: string, cardIds: string[]) => {
-    if (cardIds.length === 0) {
-      return;
-    }
-
-    setBulkDeleteConfirm({ cardIds: [...cardIds] });
-  }, []);
-
-  const confirmBulkDelete = useCallback(async () => {
-    if (!bulkDeleteConfirm || bulkDeleteConfirm.cardIds.length === 0) {
-      return;
-    }
-
-    const cardIds = bulkDeleteConfirm.cardIds;
-    const previousCards = boardSync.getBoardSnapshot();
-    setBulkDeletePending(true);
-
-    for (const cardId of cardIds) {
-      boardSync.removeCard(cardId);
-    }
-
-    setSelectedCardIds((current) => {
-      const next = new Set(current);
-      for (const id of cardIds) {
-        next.delete(id);
-      }
-      return next;
-    });
-
-    try {
-      if (boardSync.queueEnabled) {
-        for (const cardId of cardIds) {
-          boardSync.enqueue({
-            kind: 'deleteCard',
-            clientMutationId: createClientMutationId(),
-            cardId,
-            rollback: { cards: previousCards },
-          });
-        }
-      } else {
-        boardSync.beginOutboundSync();
-
-        for (const cardId of cardIds) {
-          const response = await fetch(`/api/cards/${cardId}`, { method: 'DELETE' });
-          const data = await response.json();
-          if (!response.ok) {
-            throw new Error(data.error ?? 'Failed to delete job.');
-          }
-        }
-
-        boardSync.endOutboundSync(true);
-      }
-
-      setBulkDeleteConfirm(null);
-
-      if (selectedCardId && cardIds.includes(selectedCardId)) {
-        closeCard();
-      }
-    } catch (deleteError) {
-      if (!boardSync.queueEnabled) {
-        await refreshBoard(includeArchived);
-        boardSync.endOutboundSync(
-          false,
-          deleteError instanceof Error ? deleteError.message : 'Failed to delete jobs.',
-        );
-      }
-    } finally {
-      setBulkDeletePending(false);
-    }
-  }, [boardSync, bulkDeleteConfirm, closeCard, includeArchived, refreshBoard, selectedCardId]);
-
-  useEffect(() => {
-    void fetch('/api/members')
-      .then((response) => response.json())
-      .then((payload) => {
-        if (payload.data) {
-          setMembers(payload.data);
-        }
-      });
-  }, []);
-
-  useBoardRealtime(organizationId, () => {
-    void refreshBoard(includeArchived);
-  }, {
-    shouldSkip: hasPendingMutations,
-    onConnectionChange: (status) => {
-      setLiveConnected(status === 'connected');
-    },
-  });
-
-  const visibleColumns = useMemo(
-    () =>
-      includeArchived
-        ? board.columns.filter((column) => column.stateKey === 'archived')
-        : board.columns.filter((column) => column.stateKey !== 'archived'),
-    [board.columns, includeArchived],
-  );
-
-  const filteredCards = useMemo(
-    () => filterBoardCards(board.cards, search, advancedFilter, userId),
-    [board.cards, search, advancedFilter, userId],
-  );
-
-  const cardsByColumn = useMemo(() => {
-    const map = new Map<string, BoardCardView[]>();
-    for (const column of visibleColumns) {
-      map.set(
-        column.id,
-        filteredCards
-          .filter((card) => card.columnId === column.id)
-          .sort((a, b) => a.position - b.position),
-      );
-    }
-    return map;
-  }, [visibleColumns, filteredCards]);
-
-  const columnGroups = useMemo(() => {
-    if (board.pipelineMode !== 'full') {
-      return [{ key: 'all', label: null as string | null, columns: visibleColumns }];
-    }
-
-    const groups = new Map<PipelineGroupKey, typeof visibleColumns>();
-    for (const column of visibleColumns) {
-      const groupKey = (column.groupKey ?? 'sales') as PipelineGroupKey;
-      const bucket = groups.get(groupKey) ?? [];
-      bucket.push(column);
-      groups.set(groupKey, bucket);
-    }
-
-    return [...groups.entries()].map(([key, columns]) => ({
-      key,
-      label: PIPELINE_GROUP_LABELS[key],
-      columns,
-    }));
-  }, [board.pipelineMode, visibleColumns]);
-
-  const openNewJobModal = useCallback((columnId?: string) => {
-    setNewJobError(null);
-    setNewJobModal({ defaultColumnId: columnId });
-  }, []);
-
-  const closeNewJobModal = useCallback(() => {
-    if (newJobPending) return;
-    setNewJobModal(null);
-    setNewJobError(null);
-  }, [newJobPending]);
-
-  useEffect(() => {
-    pipelineSearch?.registerNewJobHandler(openNewJobModal);
-    return () => pipelineSearch?.registerNewJobHandler(null);
-  }, [openNewJobModal, pipelineSearch]);
-
-  const setBoardScrollRef = useCallback(
-    (element: HTMLDivElement | null) => {
-      pipelineSearch?.registerBoardScrollRef(element);
-    },
-    [pipelineSearch],
-  );
-
-  const setGroupRef = useCallback(
-    (key: PipelineGroupKey, element: HTMLDivElement | null) => {
-      pipelineSearch?.registerGroupRef(key, element);
-    },
-    [pipelineSearch],
-  );
-
-  useEffect(() => {
-    if (board.pipelineMode !== 'full' || !pipelineSearch) return;
-
-    const root = document.querySelector('.ops-board-surface');
-    if (!(root instanceof HTMLDivElement)) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const ratios = entries
-          .map((entry) => {
-            const key = entry.target.getAttribute('data-group-key') as PipelineGroupKey | null;
-            if (!key) return null;
-            return { key, ratio: entry.intersectionRatio };
-          })
-          .filter((entry): entry is { key: PipelineGroupKey; ratio: number } => entry !== null);
-
-        const next = pickActiveGroup(ratios);
-        if (next) setActiveGroup(next);
-      },
-      { root, threshold: [0, 0.25, 0.5, 0.75, 1] },
-    );
-
-    for (const key of GROUP_KEYS) {
-      const element = root.querySelector(`[data-group-key="${key}"]`);
-      if (element) observer.observe(element);
-    }
-
-    return () => observer.disconnect();
-  }, [board.pipelineMode, columnGroups, pipelineSearch, visibleColumns.length]);
-
-  useEffect(() => {
-    if (!workspaceShortcuts) return;
-
-    workspaceShortcuts.registerPipelineHandlers({
-      focusSearch: () => pipelineSearch?.focusSearch(),
-      openNewJob: () => openNewJobModal(),
-      jumpGroup: (direction) => {
-        if (board.pipelineMode !== 'full') return;
-        const current = activeGroup ?? GROUP_KEYS[0];
-        const next = nextGroupKey(current, direction);
-        setActiveGroup(next);
-        pipelineSearch?.scrollToGroup(next);
-      },
-      handleEscape: () => {
-        if (aiCopilotOpen) {
-          setAiCopilotOpen(false);
-          return true;
-        }
-        if (aiDockExpanded) {
-          setAiDockExpanded(false);
-          return true;
-        }
-        if (selectedCardId) {
-          closeCard();
-          return true;
-        }
-        if (newJobModal) {
-          closeNewJobModal();
-          return true;
-        }
-        if (search.trim()) {
-          setSearch('');
-          searchInputRef.current?.blur();
-          return true;
-        }
-        return false;
-      },
-    });
-
-    return () => workspaceShortcuts.registerPipelineHandlers(null);
-  }, [
-    activeGroup,
-    aiCopilotOpen,
-    aiDockExpanded,
-    board.pipelineMode,
-    closeCard,
-    closeNewJobModal,
-    newJobModal,
-    openNewJobModal,
-    pipelineSearch,
-    search,
-    selectedCardId,
-    workspaceShortcuts,
-  ]);
-
-  useEffect(() => {
-    if (board.pipelineMode !== 'full' || !pipelineSearch) {
-      return;
-    }
-
-    pipelineSearch.registerGroupJumpHandler((direction) => {
-      const current = activeGroup ?? GROUP_KEYS[0];
-      const next = nextGroupKey(current, direction);
-      setActiveGroup(next);
-      pipelineSearch.scrollToGroup(next);
-    });
-
-    return () => pipelineSearch.registerGroupJumpHandler(null);
-  }, [activeGroup, board.pipelineMode, pipelineSearch]);
-
-  useEffect(() => {
-    if (board.pipelineMode !== 'full') {
-      setActiveGroup(null);
-    }
-  }, [board.pipelineMode]);
-
-  const handleNewJobSubmit = useCallback(
-    async (values: NewJobFormValues, openAfterCreate: boolean) => {
-      setNewJobPending(true);
-      setNewJobError(null);
-
-      const result = await createCardWithDetails({
-        title: values.title,
-        columnId: values.columnId,
-        jobType: values.jobType || undefined,
-        customerName: values.customerName || undefined,
-        customerAddress: values.customerAddress || undefined,
-      });
-
-      setNewJobPending(false);
-
-      if (!result.ok) {
-        setNewJobError(result.message);
-        return;
-      }
-
-      setNewJobModal(null);
-      if (openAfterCreate) {
-        openCard(result.card.id);
-      }
-    },
-    [createCardWithDetails, openCard],
-  );
-
-  const handleMoveCard = useCallback(
-    async (cardId: string, targetColumnId: string) => {
-      const targetColumn = board.columns.find((column) => column.id === targetColumnId);
-      const columnCards = board.cards
-        .filter((card) => card.columnId === targetColumnId && card.id !== cardId)
-        .sort((a, b) => a.position - b.position);
-      const result = await reorderCard(cardId, targetColumnId, columnCards.length);
-      if (result.ok && targetColumn) {
-        if (['estimating', 'site_visit'].includes(targetColumn.stateKey)) {
-          setInlinePrompt({
-            cardId,
-            message: 'Job moved — draft an estimate from scope notes?',
-            actionLabel: 'AI draft estimate',
-            command: 'Draft estimate from scope notes',
-          });
-        } else if (['complete', 'invoice_prep'].includes(targetColumn.stateKey)) {
-          setInlinePrompt({
-            cardId,
-            message: 'Job complete — create an invoice draft?',
-            actionLabel: 'Create invoice',
-            command: 'Create invoice draft for this job',
-          });
-        } else {
-          setInlinePrompt(null);
-        }
-      }
-    },
-    [board.cards, board.columns, reorderCard],
-  );
-
-  const handlePatchCard = useCallback(
-    async (cardId: string, patch: BoardCardPatch) => {
-      const existing = board.cards.find((card) => card.id === cardId);
-      if (!existing || isTempCardId(cardId)) {
-        return;
-      }
-
-      const optimisticPatch: Partial<BoardCardView> = {
-        ...(patch.title !== undefined ? { title: patch.title } : {}),
-        ...(patch.dueDate !== undefined ? { dueDate: patch.dueDate } : {}),
-      };
-      if (patch.assignedTo !== undefined) {
-        const member = members.find((item) => item.userId === patch.assignedTo);
-        optimisticPatch.assignedTo = patch.assignedTo;
-        optimisticPatch.assigneeName = member?.fullName ?? null;
-        optimisticPatch.assigneeInitials = getAssigneeInitials(member?.fullName);
-      }
-
-      boardSync.patchCard(cardId, optimisticPatch);
-
-      const apiPatch: Record<string, unknown> = {};
-      if (patch.title !== undefined) apiPatch.title = patch.title;
-      if (patch.dueDate !== undefined) apiPatch.dueDate = patch.dueDate;
-      if (patch.assignedTo !== undefined) apiPatch.assignedTo = patch.assignedTo;
-
-      if (boardSync.queueEnabled) {
-        boardSync.enqueue({
-          kind: 'patchCard',
-          clientMutationId: createClientMutationId(),
-          cardId,
-          patch: apiPatch,
-          rollback: { cards: board.cards },
-        });
-        return;
-      }
-
-      boardSync.beginOutboundSync();
-
-      try {
-        const response = await fetch(`/api/cards/${cardId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(apiPatch),
-        });
-        const payload = await response.json();
-        if (!response.ok) {
-          throw new Error(payload.error ?? 'Failed to save job.');
-        }
-
-        boardSync.syncFromDetail(payload.data);
-        boardSync.endOutboundSync(true);
-      } catch (patchError) {
-        boardSync.patchCard(cardId, existing);
-        const message =
-          patchError instanceof Error ? patchError.message : 'Failed to save job.';
-        boardSync.endOutboundSync(false, message);
-      }
-    },
-    [board.cards, boardSync, members],
-  );
-
-  const handleDragStart = useCallback((event: DragStartEvent) => {
-    setActiveCardId(String(event.active.id));
-  }, []);
-
-  const handleDragOver = useCallback(
-    (event: DragOverEvent) => {
-      const overId = event.over ? String(event.over.id) : null;
-      if (!overId) {
-        setDragOverColumnId(null);
-        return;
-      }
-
-      setDragOverColumnId(resolveDragOverColumnId(board.columns, cardsByColumn, overId));
-    },
-    [board.columns, cardsByColumn],
-  );
-
-  const handleDragEnd = useCallback(
-    async (event: DragEndEvent) => {
-      const activeId = String(event.active.id);
-      const overId = event.over ? String(event.over.id) : null;
-
-      setActiveCardId(null);
-      setDragOverColumnId(null);
-
-      if (!overId) {
-        return;
-      }
-
-      const target = resolveReorderTarget(board.columns, cardsByColumn, activeId, overId);
-      if (!target) {
-        return;
-      }
-
-      const targetColumn = board.columns.find((column) => column.id === target.targetColumnId);
-      const result = await reorderCard(activeId, target.targetColumnId, target.insertIndex);
-      if (result.ok && targetColumn) {
-        if (['estimating', 'site_visit'].includes(targetColumn.stateKey)) {
-          setInlinePrompt({
-            cardId: activeId,
-            message: 'Job moved — draft an estimate from scope notes?',
-            actionLabel: 'AI draft estimate',
-            command: 'Draft estimate from scope notes',
-          });
-        } else if (['complete', 'invoice_prep'].includes(targetColumn.stateKey)) {
-          setInlinePrompt({
-            cardId: activeId,
-            message: 'Job complete — create an invoice draft?',
-            actionLabel: 'Create invoice',
-            command: 'Create invoice draft for this job',
-          });
-        } else if (
-          targetColumn.stateKey !== board.cards.find((card) => card.id === activeId)?.stateKey
-        ) {
-          setInlinePrompt(null);
-        }
-      }
-    },
-    [board.columns, board.cards, cardsByColumn, reorderCard],
-  );
-
-  const handleDragCancel = useCallback(() => {
-    setActiveCardId(null);
-    setDragOverColumnId(null);
-  }, []);
-
-  const handleArchiveCard = useCallback(
-    async (cardId: string) => {
-      const archivedColumn = board.columns.find((column) => column.stateKey === 'archived');
-      if (!archivedColumn) {
-        return;
-      }
-
-      const columnCards = board.cards
-        .filter((card) => card.columnId === archivedColumn.id && card.id !== cardId)
-        .sort((a, b) => a.position - b.position);
-      await reorderCard(cardId, archivedColumn.id, columnCards.length);
-    },
-    [board.cards, board.columns, reorderCard],
-  );
-
-  const runInlineAi = useCallback(async () => {
-    if (!inlinePrompt || !userId) return;
-
-    const response = await fetch('/api/ai/command', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        command: inlinePrompt.command,
-        context: {
-          page: 'card',
-          organizationId,
-          userId,
-          role,
-          selectedCardId: inlinePrompt.cardId,
-          mode: 'draft',
-        },
-      }),
-    });
-
-    if (response.ok) {
-      const cardId = inlinePrompt.cardId;
-      setInlinePrompt(null);
-      void refreshBoard(includeArchived);
-      openCard(cardId);
-    }
-  }, [inlinePrompt, userId, organizationId, role, refreshBoard, includeArchived, openCard]);
-
-  const aiContext =
-    userId ?
-      {
-        page: (selectedCardId ? 'card' : 'board') as 'board' | 'card',
-        organizationId,
-        userId,
-        role,
-        pipelineMode: board.pipelineMode,
-        ...(selectedCardId ? { selectedCardId } : {}),
-      }
-    : null;
-
-  /** Toolbar copilot uses board scope so actions apply across the pipeline. */
-  const toolbarAiContext =
-    aiContext ?
-      {
-        ...aiContext,
-        page: 'board' as const,
-        selectedCardId: undefined,
-      }
-    : null;
-
-  const activeCardCount = useMemo(
-    () => board.cards.filter((card) => card.stateKey !== 'archived').length,
-    [board.cards],
-  );
-
-  const showNoMatches = filteredCards.length === 0 && activeCardCount > 0;
-  const showEmptyBoard = activeCardCount === 0 && filterKey === 'all' && !search.trim();
-  const filterLabel = getAdvancedFilterLabel(advancedFilter).toLowerCase();
 
   return (
     <div className="ops-pipeline-root">
-      <div className="ops-toolbar">
-        <div className="ops-toolbar-row">
-          <div>
-            <h1 className="ops-page-title">Job Pipeline</h1>
-            <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-              <span className="font-medium tabular-nums text-[var(--text-primary)]">
-                {filteredCards.length}
-              </span>{' '}
-              jobs · {visibleColumns.length} stages
-              {board.pipelineMode === 'full' ? ' · full view' : ' · compact'}
-            </p>
-            <div className="mt-2">
-              <BoardSyncStatusIndicator status={syncStatus} onRetry={boardSync.retryFailedSync} />
-            </div>
-          </div>
-          <div className="ops-toolbar-actions">
-            <button
-              type="button"
-              disabled={pipelineModePending}
-              onClick={() => void togglePipelineMode(includeArchived)}
-              className="ops-btn-secondary"
-            >
-              {board.pipelineMode === 'full' ? 'Compact' : 'Full (19)'}
-            </button>
-            <select
-              value={filterKey}
-              onChange={(event) => setFilterKey(event.target.value as AdvancedFilterKey)}
-              aria-label="Filter jobs"
-              className="ops-control"
-            >
-              {(Object.keys(ADVANCED_FILTER_LABELS) as AdvancedFilterKey[]).map((key) => (
-                <option key={key} value={key}>
-                  {ADVANCED_FILTER_LABELS[key]}
-                </option>
-              ))}
-            </select>
-            {filterKey === 'job_type' ? (
-              <select
-                value={jobTypeFilter}
-                onChange={(event) => setJobTypeFilter(event.target.value)}
-                aria-label="Filter by job type"
-                className="ops-control"
-              >
-                {BOARD_JOB_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            ) : null}
-            <input
-              ref={(element) => {
-                searchInputRef.current = element;
-                pipelineSearch?.registerSearchInput(element);
-              }}
-              type="search"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search jobs…"
-              aria-label="Search jobs"
-              className="ops-control min-w-[200px]"
-            />
-            {aiContext ? (
-              <button
-                type="button"
-                onClick={() => setAiCopilotOpen(true)}
-                className="ops-btn-secondary inline-flex items-center gap-1.5"
-                aria-label="Open AI copilot"
-                aria-haspopup="dialog"
-              >
-                <Sparkles className="size-4 shrink-0" strokeWidth={2.25} aria-hidden />
-                <span>AI</span>
-              </button>
-            ) : null}
-            <CreateMenu
-              role={role as OrgRole}
-              onCreateJob={openNewJobModal}
-              disabled={pipelineModePending}
-            />
-          </div>
-        </div>
-        {error ? (
-          <p role="alert" aria-live="polite" className="ops-alert-error mt-3">
-            {error}
-          </p>
-        ) : null}
-      </div>
+      <KanbanBoardToolbar
+        filteredCount={ctrl.filteredCards.length}
+        visibleColumnCount={ctrl.visibleColumns.length}
+        pipelineMode={ctrl.board.pipelineMode}
+        syncStatus={syncStatus}
+        onRetrySync={ctrl.boardSync.retryFailedSync}
+        pipelineModePending={ctrl.pipelineModePending}
+        onTogglePipelineMode={ctrl.togglePipelineMode}
+        filterKey={ctrl.filterKey}
+        onFilterKeyChange={ctrl.setFilterKey}
+        jobTypeFilter={ctrl.jobTypeFilter}
+        onJobTypeFilterChange={ctrl.setJobTypeFilter}
+        search={ctrl.search}
+        onSearchChange={ctrl.setSearch}
+        searchInputRef={(element) => {
+          ctrl.searchInputRef.current = element;
+          ctrl.pipelineSearch?.registerSearchInput(element);
+        }}
+        showAiButton={Boolean(ctrl.aiContext)}
+        onOpenAiCopilot={() => ctrl.setAiCopilotOpen(true)}
+        role={orgRole}
+        onCreateJob={ctrl.openNewJobModal}
+        error={ctrl.error}
+      />
 
-      {inlinePrompt ? (
-        <div className="px-4 pb-2">
-          <AiInlineBanner
-            message={inlinePrompt.message}
-            actionLabel={inlinePrompt.actionLabel}
-            onAction={() => void runInlineAi()}
-            onDismiss={() => setInlinePrompt(null)}
-          />
-        </div>
-      ) : null}
+      <KanbanBoardAiChrome
+        inlinePrompt={
+          ctrl.inlinePrompt
+            ? { message: ctrl.inlinePrompt.message, actionLabel: ctrl.inlinePrompt.actionLabel }
+            : null
+        }
+        onInlineAction={() => void ctrl.runInlineAi()}
+        onDismissInline={() => ctrl.setInlinePrompt(null)}
+        toolbarAiContext={ctrl.toolbarAiContext}
+        aiCopilotOpen={ctrl.aiCopilotOpen}
+        onCloseCopilot={() => ctrl.setAiCopilotOpen(false)}
+        onRefresh={ctrl.refreshBoard}
+        aiContext={ctrl.aiContext}
+        aiDockExpanded={ctrl.aiDockExpanded}
+        onAiDockExpandedChange={ctrl.setAiDockExpanded}
+      />
 
-      {showNoMatches ? (
+      {ctrl.showNoMatches ? (
         <div role="status" className="ops-empty-state mx-4 mt-2">
-          {filterKey === 'archived'
+          {ctrl.filterKey === 'archived'
             ? 'No archived jobs match your search.'
-            : filterKey !== 'all'
-              ? `No ${filterLabel} jobs match your search.`
+            : ctrl.filterKey !== 'all'
+              ? `No ${ctrl.filterLabel} jobs match your search.`
               : 'No jobs match your search.'}
         </div>
       ) : null}
 
-      <div className="ops-pipeline-body">
-        {board.pipelineMode === 'full' && !includeArchived ? (
-          <PipelineGroupJump
-            activeGroup={activeGroup}
-            onJump={(key) => {
-              setActiveGroup(key);
-              pipelineSearch?.scrollToGroup(key);
-            }}
-          />
-        ) : null}
+      <KanbanBoardDndArea
+        sensors={ctrl.sensors}
+        showGroupJump={ctrl.board.pipelineMode === 'full' && !ctrl.includeArchived}
+        activeGroup={ctrl.activeGroup}
+        onJumpGroup={(key) => {
+          ctrl.setActiveGroup(key);
+          ctrl.pipelineSearch?.scrollToGroup(key);
+        }}
+        onDragStart={ctrl.handleDragStart}
+        onDragOver={ctrl.handleDragOver}
+        onDragEnd={(event) => void ctrl.handleDragEnd(event)}
+        onDragCancel={ctrl.handleDragCancel}
+        setBoardScrollRef={ctrl.setBoardScrollRef}
+        setGroupRef={ctrl.setGroupRef}
+        showEmptyBoard={ctrl.showEmptyBoard}
+        onOpenNewJob={() => ctrl.openNewJobModal()}
+        columnGroups={ctrl.columnGroups}
+        board={ctrl.board}
+        cardsByColumn={ctrl.cardsByColumn}
+        members={ctrl.members}
+        orgRole={orgRole}
+        activeCardId={ctrl.activeCardId}
+        activeCard={ctrl.activeCard}
+        onCreate={ctrl.openNewJobModal}
+        onOpenCard={ctrl.openCard}
+        onPatchCard={ctrl.handlePatchCard}
+        onMoveCard={ctrl.handleMoveCard}
+        onArchiveCard={ctrl.handleArchiveCard}
+        dragOverColumnId={ctrl.dragOverColumnId}
+        selectionEnabled={selectionEnabled}
+        selectedCardIds={ctrl.selectedCardIds}
+        onToggleSelect={ctrl.toggleCardSelection}
+        onSelectAllInColumn={ctrl.selectAllInColumn}
+        onDeleteSelectedInColumn={ctrl.requestDeleteSelectedInColumn}
+      />
 
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCorners}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDragEnd={(event) => void handleDragEnd(event)}
-          onDragCancel={handleDragCancel}
-        >
-          <div ref={setBoardScrollRef} className="ops-board-surface p-3 md:p-4">
-            {showEmptyBoard ? (
-              <div
-                role="status"
-                className="flex h-full min-h-[420px] flex-col items-center justify-center gap-4 px-6 text-center"
-              >
-                <Image
-                  src="/brand/empty-pipeline.svg"
-                  alt=""
-                  width={320}
-                  height={120}
-                  className="opacity-90"
-                />
-                <p className="text-sm text-[var(--text-secondary)]">
-                  Your pipeline is ready.{' '}
-                  <button
-                    type="button"
-                    onClick={() => openNewJobModal()}
-                    className="font-medium text-[var(--accent)] underline-offset-2 hover:underline"
-                  >
-                    Create your first inquiry
-                  </button>
-                  .
-                </p>
-              </div>
-            ) : (
-              <div className="flex h-full min-h-[520px] gap-4 md:gap-5">
-                {columnGroups.map((group) => (
-                  <div
-                    key={group.key}
-                    data-group-key={group.key !== 'all' ? group.key : undefined}
-                    ref={
-                      group.key !== 'all'
-                        ? (element) => setGroupRef(group.key as PipelineGroupKey, element)
-                        : undefined
-                    }
-                    className="flex shrink-0 gap-3 md:gap-4"
-                  >
-                    <div className="flex gap-3 md:gap-4">
-                      {group.columns.map((column) => (
-                        <KanbanColumn
-                          key={column.id}
-                          column={column}
-                          columns={board.columns}
-                          cards={cardsByColumn.get(column.id) ?? []}
-                          members={members}
-                          role={orgRole}
-                          activeCardId={activeCardId}
-                          onCreate={openNewJobModal}
-                          onOpenCard={openCard}
-                          onPatchCard={handlePatchCard}
-                          onMoveCard={handleMoveCard}
-                          onArchiveCard={handleArchiveCard}
-                          isDragTarget={dragOverColumnId === column.id}
-                          selectionEnabled={selectionEnabled}
-                          selectedCardIds={selectedCardIds}
-                          onToggleSelect={toggleCardSelection}
-                          onSelectAllInColumn={selectAllInColumn}
-                          onDeleteSelectedInColumn={requestDeleteSelectedInColumn}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <DragOverlay dropAnimation={null}>
-          {activeCard ? (
-            <BoardCardSurface
-              card={activeCard}
-              columns={board.columns}
-              members={members}
-              role={role as OrgRole}
-              onOpen={() => undefined}
-              onPatch={() => undefined}
-              onMove={() => undefined}
-              onArchive={() => undefined}
-              isOverlay
-            />
-          ) : null}
-        </DragOverlay>
-      </DndContext>
-      </div>
-
-      {toolbarAiContext ? (
-        <AiCopilotPopover
-          open={aiCopilotOpen}
-          onClose={() => setAiCopilotOpen(false)}
-          context={toolbarAiContext}
-          onRefresh={() => void refreshBoard(includeArchived)}
-          suggestedChips={['Daily brief', 'Show overdue jobs', 'Create job from notes']}
-          autoFocus
-        />
-      ) : null}
-
-      {aiContext ? (
-        <AiCommandDock
-          context={aiContext}
-          expanded={aiDockExpanded}
-          onExpandedChange={setAiDockExpanded}
-          onRefresh={() => void refreshBoard(includeArchived)}
-        />
-      ) : null}
-
-      {newJobModal ? (
-        <NewJobModal
-          columns={board.columns}
-          defaultColumnId={newJobModal.defaultColumnId}
-          pending={newJobPending}
-          error={newJobError}
-          onClose={closeNewJobModal}
-          onSubmit={handleNewJobSubmit}
-        />
-      ) : null}
-
-      {bulkDeleteConfirm ? (
-        <ConfirmModal
-          title="Delete jobs"
-          message={`Delete ${bulkDeleteConfirm.cardIds.length} job${
-            bulkDeleteConfirm.cardIds.length === 1 ? '' : 's'
-          } permanently? This removes comments, estimates, and invoices for each job.`}
-          confirmLabel="Delete jobs"
-          confirmVariant="danger"
-          pending={bulkDeletePending}
-          onCancel={() => {
-            if (!bulkDeletePending) {
-              setBulkDeleteConfirm(null);
-            }
-          }}
-          onConfirm={confirmBulkDelete}
-        />
-      ) : null}
-
-      {selectedCardId ? (
-        <CardPanel
-          cardId={selectedCardId}
-          columns={board.columns}
-          role={role}
-          organizationId={organizationId}
-          userId={userId}
-          onClose={closeCard}
-          boardSync={boardSync}
-          onMoveCard={moveCard}
-          initialBoardCard={board.cards.find((card) => card.id === selectedCardId)}
-        />
-      ) : null}
+      <KanbanBoardModals
+        board={ctrl.board}
+        role={role}
+        organizationId={organizationId}
+        userId={userId}
+        boardSync={ctrl.boardSync}
+        onMoveCard={moveCard}
+        selectedCardId={ctrl.selectedCardId}
+        onCloseCard={ctrl.closeCard}
+        newJobModal={ctrl.newJobModal}
+        newJobPending={ctrl.newJobPending}
+        newJobError={ctrl.newJobError}
+        onCloseNewJob={ctrl.closeNewJobModal}
+        onNewJobSubmit={ctrl.handleNewJobSubmit}
+        bulkDeleteConfirm={ctrl.bulkDeleteConfirm}
+        bulkDeletePending={ctrl.bulkDeletePending}
+        onCancelBulkDelete={() => {
+          if (!ctrl.bulkDeletePending) ctrl.setBulkDeleteConfirm(null);
+        }}
+        onConfirmBulkDelete={() => void ctrl.confirmBulkDelete()}
+      />
     </div>
   );
 }

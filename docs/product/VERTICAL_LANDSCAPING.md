@@ -12,15 +12,15 @@ Typical team: 1 owner, 1 office person, 2–8 field workers.
 
 ## Terminology (use in UI and AI copy)
 
-| Generic term | Landscaping term |
-|--------------|------------------|
-| Lead | Inquiry |
-| Discovery | Site visit / measure |
-| Quote | Estimate |
-| Job | Property job |
-| Work order | Crew assignment |
-| Customer | Homeowner / property manager |
-| Pipeline | Job pipeline |
+| Generic term | Landscaping term             |
+| ------------ | ---------------------------- |
+| Lead         | Inquiry                      |
+| Discovery    | Site visit / measure         |
+| Quote        | Estimate                     |
+| Job          | Property job                 |
+| Work order   | Crew assignment              |
+| Customer     | Homeowner / property manager |
+| Pipeline     | Job pipeline                 |
 
 ## Job types (MVP: tags in description or title; post-MVP: structured field)
 
@@ -35,29 +35,29 @@ Typical team: 1 owner, 1 office person, 2–8 field workers.
 
 Use existing schema; no custom columns required for v1.
 
-| Need | Where |
-|------|--------|
-| Property address | `customers.address` |
-| Homeowner name / phone | `customers.name`, `phone`, `email` |
-| Job scope / notes | `cards.description` |
-| Service type | Prefix in `cards.title` or first line of description |
-| Crew lead | `cards.assigned_to` |
-| Job value | `cards.revenue_value` |
-| Crew day / window | `cards.scheduled_start`, `scheduled_end` |
-| Follow-up date | `cards.due_date` |
-| Next step | `cards.next_action` |
+| Need                   | Where                                                |
+| ---------------------- | ---------------------------------------------------- |
+| Property address       | `customers.address`                                  |
+| Homeowner name / phone | `customers.name`, `phone`, `email`                   |
+| Job scope / notes      | `cards.description`                                  |
+| Service type           | Prefix in `cards.title` or first line of description |
+| Crew lead              | `cards.assigned_to`                                  |
+| Job value              | `cards.revenue_value`                                |
+| Crew day / window      | `cards.scheduled_start`, `scheduled_end`             |
+| Follow-up date         | `cards.due_date`                                     |
+| Next step              | `cards.next_action`                                  |
 
 ## Deep card sections (landscaping labels)
 
-| Section | Landscaping focus |
-|---------|-------------------|
-| Overview | Job title, column, priority, next action |
-| Customer | Homeowner, property address, gate codes in notes |
-| Job scope | Turf area, beds, access, photos (files post-MVP) |
-| Estimate | Line items: labor, materials, disposal, equipment |
-| Schedule | Crew date, start/end, weather hold in comments |
-| Financial | Estimate total, invoice, balance due |
-| Checklist | Pre-job: mark utilities, materials loaded, etc. |
+| Section   | Landscaping focus                                 |
+| --------- | ------------------------------------------------- |
+| Overview  | Job title, column, priority, next action          |
+| Customer  | Homeowner, property address, gate codes in notes  |
+| Job scope | Turf area, beds, access, photos (files post-MVP)  |
+| Estimate  | Line items: labor, materials, disposal, equipment |
+| Schedule  | Crew date, start/end, weather hold in comments    |
+| Financial | Estimate total, invoice, balance due              |
+| Checklist | Pre-job: mark utilities, materials loaded, etc.   |
 
 ## AI copilot (landscaping)
 

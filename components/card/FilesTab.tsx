@@ -132,7 +132,8 @@ export function FilesTab({
                   <span className="truncate font-medium">{attachment.filename}</span>
                 )}
                 <p className="text-xs text-[var(--text-secondary)]">
-                  {(attachment.sizeBytes / 1024).toFixed(1)} KB · {new Date(attachment.createdAt).toLocaleString()}
+                  {(attachment.sizeBytes / 1024).toFixed(1)} KB ·{' '}
+                  {new Date(attachment.createdAt).toLocaleString()}
                 </p>
               </div>
               {canManage ? (

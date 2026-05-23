@@ -40,7 +40,14 @@ type BoardCardSurfaceProps = {
   isOverlay?: boolean;
   sortableProps?: Pick<
     React.HTMLAttributes<HTMLElement>,
-    'onPointerDown' | 'onKeyDown' | 'role' | 'tabIndex' | 'aria-describedby' | 'aria-pressed' | 'aria-roledescription' | 'aria-disabled'
+    | 'onPointerDown'
+    | 'onKeyDown'
+    | 'role'
+    | 'tabIndex'
+    | 'aria-describedby'
+    | 'aria-pressed'
+    | 'aria-roledescription'
+    | 'aria-disabled'
   >;
   style?: React.CSSProperties;
   setNodeRef?: (node: HTMLElement | null) => void;
@@ -125,76 +132,76 @@ export const BoardCardSurface = memo(function BoardCardSurface({
 
       <div className="ops-board-card__surface">
         <div className="ops-board-card__inner">
-        <header className="ops-board-card__header">
-          {editingTitle ? (
-            <input
-              value={titleDraft}
-              autoFocus
-              aria-label="Job title"
-              className="ops-board-card__title w-full rounded border border-[var(--border-strong)] bg-[var(--control-bg)] px-1 py-0.5 outline-none"
-              onClick={(event) => event.stopPropagation()}
-              onChange={(event) => setTitleDraft(event.target.value)}
-              onBlur={() => commitTitle()}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  commitTitle();
-                }
-                if (event.key === 'Escape') {
+          <header className="ops-board-card__header">
+            {editingTitle ? (
+              <input
+                value={titleDraft}
+                autoFocus
+                aria-label="Job title"
+                className="ops-board-card__title w-full rounded border border-[var(--border-strong)] bg-[var(--control-bg)] px-1 py-0.5 outline-none"
+                onClick={(event) => event.stopPropagation()}
+                onChange={(event) => setTitleDraft(event.target.value)}
+                onBlur={() => commitTitle()}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    commitTitle();
+                  }
+                  if (event.key === 'Escape') {
+                    setTitleDraft(card.title);
+                    setEditingTitle(false);
+                  }
+                }}
+              />
+            ) : (
+              <h3
+                className="ops-board-card__title"
+                onDoubleClick={(event) => {
+                  if (!canEditTitle || isOverlay) {
+                    return;
+                  }
+                  event.stopPropagation();
                   setTitleDraft(card.title);
-                  setEditingTitle(false);
-                }
-              }}
-            />
-          ) : (
-            <h3
-              className="ops-board-card__title"
-              onDoubleClick={(event) => {
-                if (!canEditTitle || isOverlay) {
-                  return;
-                }
-                event.stopPropagation();
-                setTitleDraft(card.title);
-                setEditingTitle(true);
-              }}
-            >
-              {card.title}
-            </h3>
-          )}
-          <div className="flex shrink-0 items-center gap-1">
-            {selectionEnabled && !isOverlay && onToggleSelect && !isTempCardId(card.id) ? (
-              <BoardCardSelectCheckbox
-                checked={isSelected}
-                onChange={() => onToggleSelect(card.id)}
-                label={isSelected ? `Deselect ${card.title}` : `Select ${card.title}`}
-              />
-            ) : null}
-            <CardHeaderStatus card={card} />
-            <CardPriorityBadge priority={card.priority} />
-            {!isOverlay ? (
-              <BoardCardMenu
-                card={card}
-                columns={columns}
-                members={members}
-                role={role}
-                onPatch={onPatch}
-                onMove={onMove}
-                onArchive={onArchive}
-              />
-            ) : null}
-          </div>
-        </header>
+                  setEditingTitle(true);
+                }}
+              >
+                {card.title}
+              </h3>
+            )}
+            <div className="flex shrink-0 items-center gap-1">
+              {selectionEnabled && !isOverlay && onToggleSelect && !isTempCardId(card.id) ? (
+                <BoardCardSelectCheckbox
+                  checked={isSelected}
+                  onChange={() => onToggleSelect(card.id)}
+                  label={isSelected ? `Deselect ${card.title}` : `Select ${card.title}`}
+                />
+              ) : null}
+              <CardHeaderStatus card={card} />
+              <CardPriorityBadge priority={card.priority} />
+              {!isOverlay ? (
+                <BoardCardMenu
+                  card={card}
+                  columns={columns}
+                  members={members}
+                  role={role}
+                  onPatch={onPatch}
+                  onMove={onMove}
+                  onArchive={onArchive}
+                />
+              ) : null}
+            </div>
+          </header>
 
-        {propertyLine ? <CardPropertyLine line={propertyLine} /> : null}
+          {propertyLine ? <CardPropertyLine line={propertyLine} /> : null}
 
-        <CardMetaRow card={card} />
+          <CardMetaRow card={card} />
 
-        <CardFooter
-          nextAction={card.nextAction}
-          daysInColumn={card.daysInColumn}
-          isOverdue={card.isOverdue}
-          columnCategory={card.columnCategory}
-        />
+          <CardFooter
+            nextAction={card.nextAction}
+            daysInColumn={card.daysInColumn}
+            isOverdue={card.isOverdue}
+            columnCategory={card.columnCategory}
+          />
         </div>
       </div>
     </article>

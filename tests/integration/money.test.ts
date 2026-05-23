@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import { createCard } from '@/lib/domain/cards/createCard';
-import { createInvoiceDraft, getInvoiceForCard, markInvoicePaid } from '@/lib/domain/money/invoices';
+import {
+  createInvoiceDraft,
+  getInvoiceForCard,
+  markInvoicePaid,
+} from '@/lib/domain/money/invoices';
 import { getQuoteForCard, upsertQuoteDraft } from '@/lib/domain/money/quotes';
 import { hasTestSupabaseEnv } from '@/tests/helpers/env';
 import { hasMigrationsApplied } from '@/tests/helpers/migrate';
@@ -47,7 +51,13 @@ describe.skipIf(!integrationReady)('INT-MNY quotes & invoices', () => {
 
       expect(quote.total).toBe(500);
 
-      const invoice = await createInvoiceDraft(service, user.organizationId, card.id, user.id, quote.id);
+      const invoice = await createInvoiceDraft(
+        service,
+        user.organizationId,
+        card.id,
+        user.id,
+        quote.id,
+      );
 
       expect(invoice.total).toBe(500);
       expect(invoice.balanceDue).toBe(500);

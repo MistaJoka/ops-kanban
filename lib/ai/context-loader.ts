@@ -4,11 +4,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import {
-  BOARD_CARD_CAP,
-  capVisibleCards,
-  computeBoardMetrics,
-} from '@/lib/ai/context-utils';
+import { BOARD_CARD_CAP, capVisibleCards, computeBoardMetrics } from '@/lib/ai/context-utils';
 import { getPrimaryBoard } from '@/lib/domain/board/getBoard';
 import { getCardDetail } from '@/lib/domain/cards/cardDetail';
 import { listCardActivities } from '@/lib/domain/activities/listCardActivities';
@@ -21,7 +17,14 @@ import { getQuoteForCard } from '@/lib/domain/money/quotes';
 import { getReportsSummary } from '@/lib/domain/reports/getReports';
 import { listScheduledCards } from '@/lib/domain/scheduling/listScheduledCards';
 
-export type AiPage = 'board' | 'card' | 'dashboard' | 'customer' | 'calendar' | 'reports' | 'settings';
+export type AiPage =
+  | 'board'
+  | 'card'
+  | 'dashboard'
+  | 'customer'
+  | 'calendar'
+  | 'reports'
+  | 'settings';
 
 export type AiMode = 'ask' | 'analyze' | 'act' | 'draft' | 'automate';
 

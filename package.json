@@ -30,7 +30,11 @@
     "dev:reset-board": "tsx scripts/reset-dev-board.ts",
     "db:migrate": "tsx scripts/apply-migrations.ts",
     "check:no-mock": "bash scripts/check-no-mock.sh",
-    "check:css-health": "node scripts/check-css-health.mjs"
+    "check:css-health": "node scripts/check-css-health.mjs",
+    "check:slop-health": "node scripts/check-slop-health.mjs",
+    "check:slop": "npm run check:slop-health && npm run check:no-mock && npm run format:check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -68,6 +72,7 @@
     "eslint-config-next": "^16.2.6",
     "pg": "^8.21.0",
     "postcss": "^8.5.15",
+    "prettier": "^3.8.3",
     "tailwindcss": "^3.4.19",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3",

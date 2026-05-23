@@ -15,10 +15,10 @@ auth.users insert (Supabase Auth)
 
 ## Implementation options
 
-| Approach | Pros |
-|----------|------|
-| **Postgres trigger** on `auth.users` | Atomic, no race on refresh |
-| **Next.js signup Server Action** | Easier to debug; call service role once |
+| Approach                             | Pros                                    |
+| ------------------------------------ | --------------------------------------- |
+| **Postgres trigger** on `auth.users` | Atomic, no race on refresh              |
+| **Next.js signup Server Action**     | Easier to debug; call service role once |
 
 Recommendation: **Server Action** for MVP, move to trigger when stable.
 

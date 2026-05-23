@@ -9,19 +9,44 @@ import {
 describe('boardSyncStatus', () => {
   it('derives phase priority: misaligned over refreshing over syncing', () => {
     expect(
-      deriveBoardSyncPhase({ pendingCount: 2, queuedCount: 0, isRefreshing: true, syncIssue: 'Failed' }),
+      deriveBoardSyncPhase({
+        pendingCount: 2,
+        queuedCount: 0,
+        isRefreshing: true,
+        syncIssue: 'Failed',
+      }),
     ).toBe('misaligned');
     expect(
-      deriveBoardSyncPhase({ pendingCount: 0, queuedCount: 0, isRefreshing: true, syncIssue: null }),
+      deriveBoardSyncPhase({
+        pendingCount: 0,
+        queuedCount: 0,
+        isRefreshing: true,
+        syncIssue: null,
+      }),
     ).toBe('refreshing');
     expect(
-      deriveBoardSyncPhase({ pendingCount: 1, queuedCount: 0, isRefreshing: false, syncIssue: null }),
+      deriveBoardSyncPhase({
+        pendingCount: 1,
+        queuedCount: 0,
+        isRefreshing: false,
+        syncIssue: null,
+      }),
     ).toBe('syncing');
     expect(
-      deriveBoardSyncPhase({ pendingCount: 0, queuedCount: 2, isRefreshing: false, syncIssue: null }),
+      deriveBoardSyncPhase({
+        pendingCount: 0,
+        queuedCount: 2,
+        isRefreshing: false,
+        syncIssue: null,
+      }),
     ).toBe('syncing');
     expect(
-      deriveBoardSyncPhase({ pendingCount: 0, queuedCount: 0, isRefreshing: false, syncIssue: null }),
+      deriveBoardSyncPhase({
+        pendingCount: 0,
+        queuedCount: 0,
+        isRefreshing: false,
+        syncIssue: null,
+      }),
     ).toBe('synced');
   });
 

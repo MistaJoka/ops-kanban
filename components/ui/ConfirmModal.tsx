@@ -35,12 +35,7 @@ export function ConfirmModal({
         <p className="mt-2 text-sm text-[var(--text-secondary)]">{message}</p>
 
         <div className="mt-6 flex justify-end gap-2">
-          <button
-            type="button"
-            disabled={pending}
-            onClick={onCancel}
-            className="ops-btn-secondary"
-          >
+          <button type="button" disabled={pending} onClick={onCancel} className="ops-btn-secondary">
             {cancelLabel}
           </button>
           <button

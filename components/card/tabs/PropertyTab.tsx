@@ -21,19 +21,34 @@ export function PropertyTab({
       }}
     >
       <Field label="Customer name">
-        <input name="name" defaultValue={card.customer?.name ?? ''} required className="field-input" />
+        <input
+          name="name"
+          defaultValue={card.customer?.name ?? ''}
+          required
+          className="field-input"
+        />
       </Field>
       <Field label="Phone">
         <input name="phone" defaultValue={card.customer?.phone ?? ''} className="field-input" />
       </Field>
       <Field label="Email">
-        <input name="email" type="email" defaultValue={card.customer?.email ?? ''} className="field-input" />
+        <input
+          name="email"
+          type="email"
+          defaultValue={card.customer?.email ?? ''}
+          className="field-input"
+        />
       </Field>
       <Field label="Property address">
         <input name="address" defaultValue={card.customer?.address ?? ''} className="field-input" />
       </Field>
       <Field label="Access notes">
-        <textarea name="notes" defaultValue={card.customer?.notes ?? ''} rows={3} className="field-input" />
+        <textarea
+          name="notes"
+          defaultValue={card.customer?.notes ?? ''}
+          rows={3}
+          className="field-input"
+        />
       </Field>
       <button type="submit" disabled={saving} className="ops-btn-primary">
         Save property

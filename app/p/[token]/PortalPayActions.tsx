@@ -21,7 +21,11 @@ export function PortalPayActions({
 
   if (!canPay || invoiceStatus === 'paid' || balanceDue <= 0) {
     if (invoiceStatus === 'paid') {
-      return <p className="mt-4 text-sm font-medium text-[var(--success)]">This invoice is paid in full.</p>;
+      return (
+        <p className="mt-4 text-sm font-medium text-[var(--success)]">
+          This invoice is paid in full.
+        </p>
+      );
     }
     return null;
   }
