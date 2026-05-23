@@ -19,6 +19,7 @@ import {
 } from '@/components/pipeline/board-card-primitives';
 import { BoardCardMenu, type BoardCardPatch } from '@/components/pipeline/BoardCardMenu';
 import { BoardCardSelectCheckbox } from '@/components/pipeline/BoardCardSelectCheckbox';
+import { BoardCardSkeleton } from '@/components/pipeline/BoardCardSkeleton';
 import type { OrgRole } from '@/lib/domain/auth/roles';
 import type { OrgMemberView } from '@/lib/domain/organization/listMembers';
 import { cn } from '@/lib/utils';
@@ -77,6 +78,8 @@ export const BoardCardSurface = memo(function BoardCardSurface({
   const [titleDraft, setTitleDraft] = useState(card.title);
   const propertyLine = formatPropertyLine(card);
   const canEditTitle = role !== 'viewer';
+  const isStuck =
+    card.stateKey !== 'archived' && card.daysInColumn >= 5 && card.columnCategory !== 'aftercare';
 
   useEffect(() => {
     if (!editingTitle) {
@@ -124,6 +127,7 @@ export const BoardCardSurface = memo(function BoardCardSurface({
         isDimmed && !isDragging && 'ops-board-card--dimmed',
         card.isOverdue && 'ops-board-card--overdue',
         card.priority === 'urgent' && 'ops-board-card--urgent',
+        isStuck && 'ops-board-card--stuck',
         isSelected && 'ops-board-card--selected',
       )}
     >
@@ -200,6 +204,7 @@ export const BoardCardSurface = memo(function BoardCardSurface({
             nextAction={card.nextAction}
             daysInColumn={card.daysInColumn}
             isOverdue={card.isOverdue}
+            isStuck={isStuck}
             columnCategory={card.columnCategory}
           />
         </div>
@@ -235,14 +240,19 @@ export const BoardCard = memo(function BoardCard({
   onToggleSelect?: (cardId: string) => void;
   isDimmed?: boolean;
 }) {
+  const isTemp = isTempCardId(card.id);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: card.id,
-    disabled: isTempCardId(card.id),
+    disabled: isTemp,
     data: {
       type: 'card',
       columnId: card.columnId,
     },
   });
+
+  if (isTemp) {
+    return <BoardCardSkeleton title={card.title} />;
+  }
 
   return (
     <BoardCardSurface

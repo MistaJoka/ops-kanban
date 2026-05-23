@@ -6,6 +6,7 @@ import type { BoardCardView } from '@/lib/domain/cards/boardCard';
 import type { BoardColumnView } from '@/lib/domain/board/getBoard';
 import type { BoardSyncHandlers, MoveCardResult } from '@/components/pipeline/useBoardState';
 import type { EnqueueSidecar } from '@/components/pipeline/useOutboundSync';
+import { CardPanelSkeleton } from '@/components/card/CardPanelSkeleton';
 import { CardPanelHeader } from '@/components/card/CardPanelHeader';
 import { CardPanelBody } from '@/components/card/CardPanelBody';
 import { CardPanelModals } from '@/components/card/CardPanelModals';
@@ -104,13 +105,7 @@ export function CardPanel({
       <div className="ops-panel-overlay" onClick={onClose} aria-hidden />
       <aside className="ops-panel" role="dialog" aria-modal="true" aria-label="Job detail panel">
         {detail.loading && !detail.payload?.card ? (
-          <div
-            className="flex flex-1 flex-col items-center justify-center gap-3 p-8 text-sm text-[var(--text-secondary)]"
-            role="status"
-            aria-live="polite"
-          >
-            <p>Loading job…</p>
-          </div>
+          <CardPanelSkeleton />
         ) : detail.error && !detail.payload?.card ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
             <p role="alert" className="text-sm text-[var(--urgent)]">

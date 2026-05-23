@@ -351,11 +351,13 @@ export function CardFooter({
   nextAction,
   daysInColumn,
   isOverdue,
+  isStuck = false,
   columnCategory,
 }: {
   nextAction: string | null;
   daysInColumn: number;
   isOverdue: boolean;
+  isStuck?: boolean;
   columnCategory: ColumnCategory;
 }) {
   const next = nextAction ? truncateText(nextAction, 52) : null;
@@ -364,6 +366,8 @@ export function CardFooter({
 
   if (isOverdue) {
     stageParts.push('Overdue');
+  } else if (isStuck) {
+    stageParts.push('Stuck');
   }
 
   if (showStageDays) {
@@ -399,7 +403,11 @@ export function CardFooter({
         ) : null}
         {stageText ? (
           <span
-            className={cn('ops-board-card__stage', isOverdue && 'ops-board-card__stage--overdue')}
+            className={cn(
+              'ops-board-card__stage',
+              isOverdue && 'ops-board-card__stage--overdue',
+              isStuck && !isOverdue && 'ops-board-card__stage--stuck',
+            )}
           >
             {stageText}
           </span>

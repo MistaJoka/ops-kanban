@@ -14,20 +14,22 @@ export function PipelineGroupJump({
 }) {
   return (
     <nav className="ops-group-jump" aria-label="Pipeline groups">
-      {GROUP_KEYS.map((key) => (
-        <button
-          key={key}
-          type="button"
-          onClick={() => onJump(key)}
-          className={cn(
-            'ops-group-jump__chip',
-            activeGroup === key && 'ops-group-jump__chip--active',
-          )}
-          aria-current={activeGroup === key ? 'true' : undefined}
-        >
-          {PIPELINE_GROUP_LABELS[key]}
-        </button>
-      ))}
+      <div className="ops-group-jump__track">
+        {GROUP_KEYS.map((key) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => onJump(key)}
+            className={cn(
+              'ops-group-jump__chip',
+              activeGroup === key && 'ops-group-jump__chip--active',
+            )}
+            aria-current={activeGroup === key ? 'true' : undefined}
+          >
+            {PIPELINE_GROUP_LABELS[key]}
+          </button>
+        ))}
+      </div>
     </nav>
   );
 }

@@ -2,9 +2,9 @@
 
 **AI agents: read this file first every session; update it last.**
 
-`last_updated`: 2026-05-23T01:30:00Z  
-`current_phase`: AI slop detection (P14)  
-`current_task`: — (P14 complete)  
+`last_updated`: 2026-05-23T07:00:00Z  
+`current_phase`: Premium product polish (P15)  
+`current_task`: — (P15 complete)  
 `mvp_status`: `pilot_staging_ready`
 
 ---
@@ -28,6 +28,7 @@
 | P12   | UI master formula          | complete | 100 | DONE-12 |
 | P13   | Optimistic background sync | complete | 100 | DONE-13 |
 | P14   | AI slop detection          | complete | 100 | —       |
+| P15   | Premium product polish     | complete | 100 | DONE-15 |
 
 **Status values:** `not_started` | `in_progress` | `blocked` | `complete`
 
@@ -45,6 +46,7 @@
 
 | Task                         | Completed  | LOG               |
 | ---------------------------- | ---------- | ----------------- |
+| TASK-P15-001–008             | 2026-05-23 | LOG-2026-05-23-04 |
 | TASK-P14-001–006             | 2026-05-23 | LOG-2026-05-23-03 |
 | TASK-P13-001                 | 2026-05-23 | LOG-2026-05-23-01 |
 | TASK-P12-001                 | 2026-05-22 | LOG-2026-05-22-25 |
@@ -59,16 +61,17 @@
 
 ## Next recommended tasks
 
-1. Run `npm run check:slop` on PRs (G0 gate)
-2. Apply migration **017** (`column_entered_at`) via `npm run db:migrate` if not yet applied
-3. Run full regression: `npm run test:regression` after migrations applied
-4. Deploy v0.5.0 to Vercel staging with `DISABLE_AUTH=false`
-5. Pilot UAT on rapid drag/reorder, instant panel open, and background money sync
-6. (Stretch) Phase B notifications bell + `GET /api/ai/pending`
+1. Pilot UAT on `/pipeline` premium polish (board scan, mobile stage nav, command toolbar)
+2. Run `npm run test:e2e -- --grep @visual` in CI when snapshots are stable
+3. Apply migration **017** (`column_entered_at`) via `npm run db:migrate` if not yet applied
+4. Deploy v0.6.0 to Vercel staging with `DISABLE_AUTH=false`
+5. (Stretch) Phase B notifications bell + `GET /api/ai/pending`
 
 ---
 
 ## Session notes (latest)
+
+**Premium product polish (P15) — v0.6.0 shipped.** Command toolbar with board health chips (jobs · overdue · unassigned · due); scroll fade affordance; mobile stage nav; stuck-card signal (5d+); card/panel skeletons; Playwright VIS-P15-001–008 screenshots. Audit: `docs/qa/P15_PREMIUM_POLISH_AUDIT.md`. Smoke 17/17, a11y 3/3, unit 114/114, build ✅.
 
 **Optimistic background sync (P13) — v0.5.0 shipped.** Domain `outboundSyncQueue` with per-card FIFO, PATCH coalesce, and retry; `useOutboundSync` hook; board/panel/money fire-and-forget mutations; instant panel stub from board cache; sync pill queue depth + Retry. UNIT-SYNC-_ + E2E-SYNC-_.
 
@@ -112,7 +115,7 @@
 | Unit tests                     | 88/88                              |
 | AI tests                       | 24/24                              |
 | Integration tests              | 13/13 (+ Wave tests when migrated) |
-| E2E + a11y                     | 21/21                              |
+| E2E + a11y                     | 21/21 (+ VIS-P15 @visual)          |
 | G4 sign-off                    | ✅ Wave 2                          |
 | G5 sign-off                    | ✅ Wave 3                          |
 | G6 sign-off                    | ✅ Wave 4                          |

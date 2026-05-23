@@ -43,9 +43,7 @@ function KanbanBoardContent({
   return (
     <div className="ops-pipeline-root">
       <KanbanBoardToolbar
-        filteredCount={ctrl.filteredCards.length}
-        visibleColumnCount={ctrl.visibleColumns.length}
-        pipelineMode={ctrl.board.pipelineMode}
+        health={ctrl.boardHealth}
         syncStatus={syncStatus}
         onRetrySync={ctrl.boardSync.retryFailedSync}
         pipelineModePending={ctrl.pipelineModePending}
@@ -56,10 +54,6 @@ function KanbanBoardContent({
         onJobTypeFilterChange={ctrl.setJobTypeFilter}
         search={ctrl.search}
         onSearchChange={ctrl.setSearch}
-        searchInputRef={(element) => {
-          ctrl.searchInputRef.current = element;
-          ctrl.pipelineSearch?.registerSearchInput(element);
-        }}
         showAiButton={Boolean(ctrl.aiContext)}
         onOpenAiCopilot={() => ctrl.setAiCopilotOpen(true)}
         role={orgRole}
@@ -85,12 +79,15 @@ function KanbanBoardContent({
       />
 
       {ctrl.showNoMatches ? (
-        <div role="status" className="ops-empty-state mx-4 mt-2">
-          {ctrl.filterKey === 'archived'
-            ? 'No archived jobs match your search.'
-            : ctrl.filterKey !== 'all'
-              ? `No ${ctrl.filterLabel} jobs match your search.`
-              : 'No jobs match your search.'}
+        <div role="status" className="ops-filter-empty mx-4 mt-2">
+          <p className="ops-filter-empty__title">No matching jobs</p>
+          <p className="ops-filter-empty__detail">
+            {ctrl.filterKey === 'archived'
+              ? 'No archived jobs match your search.'
+              : ctrl.filterKey !== 'all'
+                ? `No ${ctrl.filterLabel} jobs match your search.`
+                : 'No jobs match your search.'}
+          </p>
         </div>
       ) : null}
 

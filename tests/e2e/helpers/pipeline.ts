@@ -21,7 +21,7 @@ export function boardCardByTitle(page: Page, title: string) {
 }
 
 export async function createJob(page: Page, title: string) {
-  await page.getByRole('button', { name: 'Create' }).click();
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
   await page.getByRole('menuitem', { name: 'New job' }).click();
 
   const modal = page.getByRole('dialog', { name: 'New job' });

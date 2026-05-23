@@ -1,0 +1,55 @@
+---
+description: External skills hierarchy — read AGENTS.md and roadmap first; distilled advisory layer; raw audit-only
+alwaysApply: true
+---
+
+# External skills hierarchy
+
+External skills are **advisory only**. They do not override [`AGENTS.md`](../../AGENTS.md) or canonical docs.
+
+## Read order (mandatory)
+
+1. **User explicit request**
+2. **[`AGENTS.md`](../../AGENTS.md)** — start-here list, architecture, do-not rules
+3. **Roadmap docs** — [`PROGRESS.md`](../../docs/roadmap/PROGRESS.md), task-linked docs from [`PHASE_TASKS.md`](../../docs/roadmap/PHASE_TASKS.md), [`DOC_INDEX.md`](../../docs/roadmap/DOC_INDEX.md)
+4. **Product/testing canonical docs** — `docs/product/`, `docs/testing/`, `docs/api/` as task requires
+5. **[`docs/external-skills/distilled/`](../../docs/external-skills/distilled/)** — when an advisory pattern applies (see routing below)
+6. **[`docs/external-skills/expansion-candidates/`](../../docs/external-skills/expansion-candidates/)** — unevaluated ideas only
+7. **`vendor-skills/raw/**`** — audit/expansion review only, user-requested
+
+**Stop on conflict:** If step 5–7 conflicts with steps 2–4 → canonical wins. Do not proceed with the external guidance.
+
+## Task routing (distilled layer)
+
+After steps 1–4, consult distilled docs when relevant:
+
+| Task type | Distilled doc |
+| --- | --- |
+| UI polish / pipeline / card surfaces | `frontend-design.md` |
+| Session discipline / plan-verify loop | `superpowers-workflow.md` |
+| Cursor rules / memory / context | `memory-rules.md` |
+| Code review reception or requests | `advisor-roles.md` |
+| Verification before "done" claims | `qa-review.md` |
+| RLS / secrets / auth-adjacent DB work | `security-review.md` |
+| Pre-merge / release gates | `release-review.md` |
+
+## Do not read raw by default
+
+Do **not** read `vendor-skills/raw/**` unless the user explicitly requests an audit or expansion review.
+
+Raw is archival reference only. Excluded from indexing via [`.cursorignore`](../../.cursorignore).
+
+## Hard overrides (never from external skills)
+
+[`NO_MOCK_DATA_POLICY.md`](../../docs/product/NO_MOCK_DATA_POLICY.md) · [`UI_MASTER_FORMULA.md`](../../docs/product/UI_MASTER_FORMULA.md) · [`AI_BUILD_PROTOCOL.md`](../../docs/roadmap/AI_BUILD_PROTOCOL.md) · [`DESIGN_TOKENS.md`](../../docs/product/DESIGN_TOKENS.md)
+
+## Promotion workflow
+
+1. New idea → `expansion-candidates/`
+2. Audit against AGENTS.md
+3. Adopt into `distilled/` or reject into `rejected-patterns.md`
+4. Never apply raw → code directly
+
+## Constraints
+
+External skills must not drive app behavior changes, API dependencies, or package installs unless the user's task explicitly requires implementation work.

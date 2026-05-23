@@ -76,7 +76,10 @@ export const KanbanColumn = memo(function KanbanColumn({
   const showDropTarget = isDragTarget || isOver;
 
   return (
-    <section className={cn('ops-column', showDropTarget && 'ops-column--drop-target')}>
+    <section
+      data-column-id={column.id}
+      className={cn('ops-column', showDropTarget && 'ops-column--drop-target')}
+    >
       <header className="rounded-t-xl border-b border-[var(--border-subtle)] bg-[var(--group-header-bg)] px-3 py-2.5">
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
@@ -112,23 +115,18 @@ export const KanbanColumn = memo(function KanbanColumn({
       >
         {cards.length === 0 ? (
           <div
-            className={cn(
-              'flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed px-3 py-10 text-center transition-colors',
-              showDropTarget
-                ? 'border-[var(--accent)] bg-[var(--accent-muted)]/40'
-                : 'border-[var(--topbar-border)]',
-            )}
+            className={cn('ops-column-empty', showDropTarget && 'ops-column-empty--drop-target')}
           >
-            <p className="text-xs leading-relaxed text-[var(--text-tertiary)]">
-              {showDropTarget ? 'Drop job here' : 'Empty'}
+            <p className="ops-column-empty__label">
+              {showDropTarget ? 'Release to drop here' : 'No jobs in stage'}
             </p>
             {!showDropTarget ? (
               <button
                 type="button"
                 onClick={() => onCreate(column.id)}
-                className="mt-2 text-xs font-medium text-[var(--accent)] hover:underline"
+                className="ops-column-empty__action"
               >
-                + Add job
+                Add job
               </button>
             ) : null}
           </div>

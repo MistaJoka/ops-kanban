@@ -56,6 +56,7 @@ Single map to avoid duplicate plans and drift. **Do not add a second roadmap.**
 | `AI_UTILIZATION`          | `AI_IMPLEMENTATION`              | Product vs engineering                     |
 | `AI_UTILIZATION`          | `AI_COMPETITIVE_BENCHMARK`       | Behavior spec vs elite market comparison   |
 | `DEFAULT_PIPELINE.md`     | `landscaping-default-columns.ts` | Doc + typed constant (keep in sync)        |
+| External skills advisory  | `docs/external-skills/README.md` | `vendor-skills/raw/` (audit-only archive)  |
 
 ---
 

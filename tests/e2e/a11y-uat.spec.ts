@@ -32,12 +32,14 @@ test.describe('Accessibility @a11y', () => {
     const title = uniqueJobTitle('keyboard create');
     await gotoPipeline(page);
 
-    page.once('dialog', async (dialog) => {
-      await dialog.accept(title);
-    });
-
     await page.getByRole('button', { name: 'Add job to New inquiry' }).focus();
     await page.keyboard.press('Enter');
+
+    const modal = page.getByRole('dialog', { name: 'New job' });
+    await expect(modal).toBeVisible();
+    await modal.getByLabel('Job title').fill(title);
+    await modal.getByRole('button', { name: 'Create', exact: true }).click();
+    await expect(modal).toBeHidden({ timeout: 5_000 });
 
     await expect(page.getByRole('article').filter({ hasText: title })).toBeVisible({
       timeout: 15_000,

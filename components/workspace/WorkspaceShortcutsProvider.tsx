@@ -63,6 +63,21 @@ export function WorkspaceShortcutsProvider({
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      const onPipeline = pathname === '/pipeline' || pathname.startsWith('/pipeline/');
+
+      if (
+        onPipeline &&
+        event.key === '/' &&
+        !event.shiftKey &&
+        !isShortcutModifier(event) &&
+        !isEditableTarget(event.target)
+      ) {
+        event.preventDefault();
+        pipelineHandlersRef.current?.focusSearch?.();
+        document.getElementById('pipeline-job-search')?.focus();
+        return;
+      }
+
       if (event.defaultPrevented) return;
 
       if (shortcutsOpen && event.key === 'Escape') {
@@ -94,15 +109,7 @@ export function WorkspaceShortcutsProvider({
         return;
       }
 
-      const onPipeline = pathname === '/pipeline' || pathname.startsWith('/pipeline?');
-
       if (onPipeline && matchShortcut(event, 'k', { meta: true })) {
-        event.preventDefault();
-        pipelineHandlersRef.current?.focusSearch?.();
-        return;
-      }
-
-      if (onPipeline && event.key === '/' && !isShortcutModifier(event)) {
         event.preventDefault();
         pipelineHandlersRef.current?.focusSearch?.();
         return;
@@ -123,8 +130,8 @@ export function WorkspaceShortcutsProvider({
       }
     };
 
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    document.addEventListener('keydown', onKeyDown, { capture: true });
+    return () => document.removeEventListener('keydown', onKeyDown, { capture: true });
   }, [closeShortcuts, onToggleSidebar, openShortcuts, pathname, shortcutsOpen]);
 
   const value = useMemo(

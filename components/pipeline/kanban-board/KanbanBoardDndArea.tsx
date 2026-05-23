@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import {
   DndContext,
@@ -11,9 +12,11 @@ import {
   type SensorDescriptor,
 } from '@dnd-kit/core';
 
+import { BoardScrollAffordance } from '@/components/pipeline/BoardScrollAffordance';
 import { KanbanColumn } from '@/components/pipeline/KanbanColumn';
 import { BoardCardSurface } from '@/components/pipeline/BoardCard';
 import { PipelineGroupJump } from '@/components/pipeline/PipelineGroupJump';
+import { PipelineMobileStageNav } from '@/components/pipeline/PipelineMobileStageNav';
 import type { BoardView } from '@/lib/domain/board/getBoard';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
 import type { OrgMemberView } from '@/lib/domain/organization/listMembers';
@@ -92,6 +95,17 @@ export function KanbanBoardDndArea({
   onSelectAllInColumn,
   onDeleteSelectedInColumn,
 }: Props) {
+  const visibleColumns = columnGroups.flatMap((group) => group.columns);
+  const [mobileActiveColumnId, setMobileActiveColumnId] = useState<string | null>(
+    visibleColumns[0]?.id ?? null,
+  );
+
+  const scrollToColumn = useCallback((columnId: string) => {
+    setMobileActiveColumnId(columnId);
+    const target = document.querySelector(`[data-column-id="${columnId}"]`);
+    target?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, []);
+
   return (
     <div className="ops-pipeline-body">
       {showGroupJump ? (
@@ -103,6 +117,13 @@ export function KanbanBoardDndArea({
         />
       ) : null}
 
+      <PipelineMobileStageNav
+        columns={visibleColumns}
+        cardsByColumn={cardsByColumn}
+        activeColumnId={mobileActiveColumnId}
+        onSelectColumn={scrollToColumn}
+      />
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
@@ -111,7 +132,7 @@ export function KanbanBoardDndArea({
         onDragEnd={onDragEnd}
         onDragCancel={onDragCancel}
       >
-        <div ref={setBoardScrollRef} className="ops-board-surface p-3 md:p-4">
+        <BoardScrollAffordance className="p-3 md:p-4" setScrollRef={setBoardScrollRef}>
           {showEmptyBoard ? (
             <div
               role="status"
@@ -124,17 +145,21 @@ export function KanbanBoardDndArea({
                 height={120}
                 className="opacity-90"
               />
-              <p className="text-sm text-[var(--text-secondary)]">
-                Your pipeline is ready.{' '}
-                <button
-                  type="button"
-                  onClick={onOpenNewJob}
-                  className="font-medium text-[var(--accent)] underline-offset-2 hover:underline"
-                >
-                  Create your first inquiry
-                </button>
-                .
-              </p>
+              <div className="ops-empty-state max-w-md border-none bg-transparent shadow-none">
+                <p className="font-display text-base font-semibold text-[var(--text-primary)]">
+                  Your pipeline is ready
+                </p>
+                <p className="mt-1 text-sm leading-relaxed">
+                  <button
+                    type="button"
+                    onClick={onOpenNewJob}
+                    className="font-medium text-[var(--accent)] underline-offset-2 hover:underline"
+                  >
+                    Create your first inquiry
+                  </button>{' '}
+                  to start moving real jobs to paid.
+                </p>
+              </div>
             </div>
           ) : (
             <div className="flex h-full min-h-0 items-stretch gap-4 md:gap-5">
@@ -149,6 +174,11 @@ export function KanbanBoardDndArea({
                   }
                   className="flex shrink-0 gap-3 md:gap-4"
                 >
+                  {group.label ? (
+                    <div className="ops-column-group-label hidden lg:flex" aria-hidden>
+                      <span>{group.label}</span>
+                    </div>
+                  ) : null}
                   <div className="flex gap-3 md:gap-4">
                     {group.columns.map((column) => (
                       <KanbanColumn
@@ -177,7 +207,7 @@ export function KanbanBoardDndArea({
               ))}
             </div>
           )}
-        </div>
+        </BoardScrollAffordance>
 
         <DragOverlay dropAnimation={null}>
           {activeCard ? (

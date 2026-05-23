@@ -1,8 +1,17 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useRef, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  type ReactNode,
+} from 'react';
 
 import type { PipelineGroupKey } from '@/lib/landscaping-full-pipeline';
+import { isEditableTarget, isShortcutModifier } from '@/lib/utils/keyboard';
 
 type PipelineSearchContextValue = {
   registerSearchInput: (el: HTMLInputElement | null) => void;
@@ -30,11 +39,29 @@ export function PipelineSearchProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const focusSearch = useCallback(() => {
-    const input = searchInputRef.current;
+    const input =
+      document.getElementById('pipeline-job-search') ??
+      searchInputRef.current ??
+      document.querySelector<HTMLInputElement>('input[aria-label="Search jobs"]');
     if (!input) return;
-    input.focus();
+    input.focus({ preventScroll: true });
     input.select();
   }, []);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (isShortcutModifier(event)) return;
+      if (event.key !== '/') return;
+      if (event.shiftKey) return;
+      if (isEditableTarget(event.target)) return;
+
+      event.preventDefault();
+      focusSearch();
+    };
+
+    document.addEventListener('keydown', onKeyDown, { capture: true });
+    return () => document.removeEventListener('keydown', onKeyDown, { capture: true });
+  }, [focusSearch]);
 
   const registerNewJobHandler = useCallback((fn: (() => void) | null) => {
     newJobHandlerRef.current = fn;

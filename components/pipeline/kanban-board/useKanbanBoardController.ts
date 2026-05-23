@@ -89,7 +89,6 @@ export function useKanbanBoardController(
   const [aiDockExpanded, setAiDockExpanded] = useState(false);
   const [aiCopilotOpen, setAiCopilotOpen] = useState(false);
   const [activeGroup, setActiveGroup] = useState<PipelineGroupKey | null>(null);
-  const searchInputRef = useRef<HTMLInputElement | null>(null);
   const pipelineSearch = usePipelineSearch();
   const workspaceShortcuts = useWorkspaceShortcutsOptional();
   const [newJobModal, setNewJobModal] = useState<{ defaultColumnId?: string } | null>(null);
@@ -378,7 +377,7 @@ export function useKanbanBoardController(
         }
         if (search.trim()) {
           setSearch('');
-          searchInputRef.current?.blur();
+          document.querySelector<HTMLInputElement>('input[aria-label="Search jobs"]')?.blur();
           return true;
         }
         return false;
@@ -629,6 +628,20 @@ export function useKanbanBoardController(
   const showEmptyBoard = activeCardCount === 0 && filterKey === 'all' && !search.trim();
   const filterLabel = getAdvancedFilterLabel(advancedFilter).toLowerCase();
 
+  const boardHealth = useMemo(
+    () => ({
+      jobCount: filteredCards.length,
+      overdueCount: filteredCards.filter((card) => card.isOverdue).length,
+      unassignedCount: filteredCards.filter(
+        (card) => !card.assigneeInitials && card.stateKey !== 'archived',
+      ).length,
+      balanceDueCount: filteredCards.filter((card) => card.moneyBadge === 'balance_due').length,
+      stageCount: visibleColumns.length,
+      pipelineMode: board.pipelineMode,
+    }),
+    [filteredCards, visibleColumns.length, board.pipelineMode],
+  );
+
   return {
     error,
     pipelineModePending,
@@ -650,7 +663,6 @@ export function useKanbanBoardController(
     setAiCopilotOpen,
     activeGroup,
     setActiveGroup,
-    searchInputRef,
     pipelineSearch,
     newJobModal,
     newJobPending,
@@ -689,6 +701,7 @@ export function useKanbanBoardController(
     showNoMatches,
     showEmptyBoard,
     filterLabel,
+    boardHealth,
     setBoardScrollRef,
     setGroupRef,
     toggleCardSelection,

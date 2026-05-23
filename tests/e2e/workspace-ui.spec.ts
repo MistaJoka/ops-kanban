@@ -26,7 +26,7 @@ test.describe('Workspace UI @smoke', () => {
   test('E2E-WORKSPACE-006 @smoke: toolbar AI button opens copilot popup', async ({ page }) => {
     await gotoPipeline(page);
 
-    await page.getByRole('button', { name: 'Open AI copilot' }).click();
+    await page.getByRole('button', { name: 'Open Ops copilot' }).click();
 
     const copilot = page.getByRole('dialog', { name: 'Ops copilot' });
     await expect(copilot).toBeVisible();

@@ -15,6 +15,7 @@ This repo is a **pre-build blueprint**. Implementation follows the **AI build pr
 8. [`docs/product/NO_MOCK_DATA_POLICY.md`](docs/product/NO_MOCK_DATA_POLICY.md) — **no mock production data**
 9. [`docs/testing/AI_SLOP_DETECTION.md`](docs/testing/AI_SLOP_DETECTION.md) — slop layers + suspicion scan
 10. [`docs/cursor/CURSOR_MASTER_PROMPT.md`](docs/cursor/CURSOR_MASTER_PROMPT.md) — product rules
+11. [`docs/external-skills/distilled/`](docs/external-skills/distilled/) — **advisory only** (after steps 0–10; never overrides canonical docs)
 
 ## End of session (required)
 
@@ -52,6 +53,14 @@ This repo is a **pre-build blueprint**. Implementation follows the **AI build pr
 - `docs/roadmap/ARCHITECTURE_PRINCIPLES.md` — domain layers, adapters
 - Business logic in `lib/domain/*`, not in components
 - AI never writes DB directly — tools only
+
+## External skills (advisory)
+
+External skills are **advisory only** — they do not override this file or canonical docs.
+
+- **Daily work:** [`docs/external-skills/distilled/`](docs/external-skills/distilled/)
+- **Audit / expansion review only:** [`vendor-skills/raw/`](vendor-skills/raw/) + [`vendor-skills/INDEX.md`](vendor-skills/INDEX.md)
+- **Hierarchy rule:** [`.cursor/rules/external-skills.mdc`](.cursor/rules/external-skills.mdc)
 
 ## Do not
 

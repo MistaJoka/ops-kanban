@@ -7,6 +7,29 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ---
 
+### LOG-2026-05-23-04 — Premium product polish (P15)
+
+| Field      | Value            |
+| ---------- | ---------------- |
+| **Phase**  | P15              |
+| **Tasks**  | TASK-P15-001–008 |
+| **Author** | agent            |
+| **Type**   | enhancement      |
+
+**Summary:** Premium polish pass on `/pipeline` — command toolbar, board scroll affordance, mobile stage nav, card stuck/skeleton states, panel skeleton, Playwright visual baselines. No new styling system; all `ops-*` tokens.
+
+**Progress:** Audit doc `docs/qa/P15_PREMIUM_POLISH_AUDIT.md`; `KanbanBoardToolbar` health summary; `BoardScrollAffordance`, `PipelineMobileStageNav`, `BoardCardSkeleton`, `CardPanelSkeleton`; `/` search shortcut hardened (before `defaultPrevented` guard).
+
+**Troubles:** Playwright `/` shortcut failed when handler ran after `defaultPrevented` guard; dnd-kit `role=button` on cards collided with Create button selector in E2E.
+
+**Fix:** Slash handler moved before `defaultPrevented` check; `getElementById('pipeline-job-search')` focus fallback; E2E `Create` uses `exact: true`; A11Y-004 aligned to New Job modal (not `prompt`).
+
+**Learning:** — (patterns captured in audit doc)
+
+**Verify:** `npm run check:slop` ✅; `check:css-health` ✅; `typecheck` ✅; unit 114/114 ✅; smoke 17/17 ✅; a11y 3/3 ✅; `build` ✅; VIS-P15 snapshots in `tests/e2e/p15-visual.spec.ts-snapshots/`.
+
+---
+
 ### LOG-2026-05-23-03 — AI Slop Detection System v2 (P14)
 
 | Field      | Value            |

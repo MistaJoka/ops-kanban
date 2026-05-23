@@ -8,6 +8,34 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
+## [0.6.0] — 2026-05-23
+
+Premium pipeline polish — command toolbar, mobile stage navigation, card/panel skeletons, visual regression screenshots.
+
+### Added
+
+- **`docs/qa/P15_PREMIUM_POLISH_AUDIT.md`** — surface scores, fixes, and risk notes
+- **Command toolbar** — board health chips (jobs, stages, overdue, unassigned, balance due); search field with icon and `/` hint; Copilot label
+- **`BoardScrollAffordance`** — horizontal scroll fade edges on the board
+- **`PipelineMobileStageNav`** — mobile stage chips with scroll-to-column
+- **`BoardCardSkeleton`** / **`CardPanelSkeleton`** — shimmer loading for optimistic cards and panel fetch
+- **Playwright VIS-P15-001–008** — screenshot baselines (`@visual` tag) for empty/populated/drag/filter/panel/modal/mobile/dark pipeline
+
+### Changed
+
+- Board cards show **stuck** signal (5d+ in column) with billing-tinted footer emphasis
+- Empty column copy → operational language (“No jobs in stage”, “Add job”)
+- Group jump rail uses horizontal scroll track; full pipeline group labels on large screens
+- Filter no-results uses structured status bar (`.ops-filter-empty`)
+- `/` pipeline search shortcut runs before global `defaultPrevented` guard (Playwright-compatible)
+
+### Fixed
+
+- E2E Create button strict-mode collision with sortable card `role=button`
+- A11Y-004 keyboard create flow uses New Job modal instead of deprecated `prompt` dialog
+
+---
+
 ## [0.3.0] — 2026-05-22
 
 Card ops complete — domain hardening, scan-rich board cards, modals, drag reorder, panel refactor, and advanced filters.
