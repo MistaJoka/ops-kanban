@@ -52,7 +52,7 @@ Derived when loading cards for the board or detail:
 
 | Field | Logic |
 |-------|--------|
-| `daysInColumn` | `now - updated_at` when `column_id` unchanged; reset on move |
+| `daysInColumn` | `now - column_entered_at`; reset when `column_id` changes (migration 017) |
 | `isOverdue` | `due_date < today` and not in `archived` column |
 | `isScheduledToday` | `scheduled_start` is today (org timezone) |
 | `moneyBadge` | `none` \| `estimate_draft` \| `estimate_sent` \| `invoice_draft` \| `balance_due` \| `paid` |
@@ -214,6 +214,8 @@ Mobile: Timeline and AI move to **Overview** bottom or overflow tab "Activity".
 
 ## 4. Visual style
 
+Visual direction and attention hierarchy defer to [`UI_MASTER_FORMULA.md`](UI_MASTER_FORMULA.md). Token values live in [`DESIGN_TOKENS.md`](DESIGN_TOKENS.md).
+
 ### Direction: **Field ledger**
 
 Utilitarian job-ticket clarity for office staff and crew leads — not a generic SaaS dashboard. Feels like a well-organized paper board digitized: crisp type, earthy palette, strong hierarchy.
@@ -304,10 +306,11 @@ Avoid Inter, Roboto, system-ui-only stacks.
 | Create from AI | ✓ | via tool + approval |
 | Drag move | ✓ | owner, manager, worker* |
 | Menu move | ✓ | all non-viewer |
-| Inline title edit | ✓ | non-viewer |
+| Inline title edit | ✓ | non-viewer (double-click) |
 | Filter/sort column | ✓ | all |
 | Assign from menu | ✓ | owner, manager |
-| Archive | ✓ | owner, manager |
+| Archive from menu | ✓ | owner, manager |
+| Advanced filters | ✓ | assigned, unassigned, balance, job type, week |
 
 *Worker: only cards assigned to them or unassigned (configurable).
 
@@ -323,7 +326,7 @@ Avoid Inter, Roboto, system-ui-only stacks.
 | Mark estimate sent | ✓ | owner, manager |
 | Comments | ✓ | non-viewer |
 | Checklist | ✓ simple | non-viewer |
-| Files upload | **Hidden in MVP** or empty state “No files yet” — no stock images/PDFs | Wave 3 |
+| Files upload | ✓ | owner, manager (Wave 3) |
 | AI summarize / draft / move | ✓ | per tool registry |
 | Activity timeline | ✓ read | all |
 

@@ -1,4 +1,4 @@
-import type { BoardAiContext, CardAiContext } from '@/lib/ai/context-loader';
+import type { LoadedAiContext } from '@/lib/ai/context-loader';
 import { getToolDefinition } from '@/lib/ai/tool-registry';
 
 export type ToolProposal = {
@@ -19,7 +19,7 @@ export function isBlockedPrompt(command: string): boolean {
 }
 
 function resolveCardId(
-  context: BoardAiContext | CardAiContext,
+  context: LoadedAiContext,
   explicitId?: string,
 ): string | undefined {
   if (explicitId) return explicitId;
@@ -31,7 +31,7 @@ function resolveCardId(
 
 export function routeCommand(
   command: string,
-  context: BoardAiContext | CardAiContext,
+  context: LoadedAiContext,
 ): ToolProposal | { message: string } | null {
   const trimmed = command.trim();
   const lower = trimmed.toLowerCase();
@@ -40,6 +40,56 @@ export function routeCommand(
     return {
       message: 'I cannot run destructive or unsafe commands. Use the board to manage jobs safely.',
     };
+  }
+
+  if (/unpaid|who owes|outstanding balance/.test(lower)) {
+    return { toolName: 'getUnpaidInvoices', input: { minBalance: 0 } };
+  }
+
+  if (/revenue|books|conversion/.test(lower)) {
+    return { toolName: 'getRevenueSummary', input: {} };
+  }
+
+  if (/schedule|calendar|this week/.test(lower) && /conflict|overlap/.test(lower)) {
+    return { message: 'Open the calendar or specify a job and time to check conflicts.' };
+  }
+
+  if (/create invoice|invoice draft/.test(lower)) {
+    const cardId = resolveCardId(context);
+    if (!cardId) {
+      return { message: 'Open the job you want to invoice.' };
+    }
+    return { toolName: 'createInvoiceDraft', input: { cardId } };
+  }
+
+  if (/payment link|pay link/.test(lower)) {
+    const cardId = resolveCardId(context);
+    if (!cardId) {
+      return { message: 'Open the job with the invoice first.' };
+    }
+    return { toolName: 'createPaymentLink', input: { cardId } };
+  }
+
+  if (/assign/.test(lower) && /to|crew|lead/.test(lower)) {
+    const cardId = resolveCardId(context);
+    const nameMatch = trimmed.match(/assign(?:\s+to)?\s+([A-Za-z][A-Za-z\s.'-]+)/i);
+    if (!cardId) {
+      return { message: 'Open the job you want to assign.' };
+    }
+    if (nameMatch) {
+      return {
+        toolName: 'assignCard',
+        input: { cardId, assigneeName: nameMatch[1].trim() },
+      };
+    }
+  }
+
+  if (/daily\s+brief|morning\s+brief|what\s+should\s+we\s+(tackle|do)\s+first/.test(lower)) {
+    return { toolName: 'getDailyBrief', input: {} };
+  }
+
+  if (/pipeline\s+metrics|revenue\s+by\s+column/.test(lower)) {
+    return { toolName: 'getPipelineMetrics', input: {} };
   }
 
   if (/summarize|summary|recap/.test(lower)) {
@@ -91,13 +141,7 @@ export function routeCommand(
         toolName: 'createQuoteDraft',
         input: {
           cardId,
-          lineItems: [
-            {
-              description: String(context.card.description).slice(0, 120),
-              quantity: 1,
-              unitPrice: Number(context.card.revenueValue ?? 0) || 150,
-            },
-          ],
+          scopeNotes: String(context.card.description),
         },
       };
     }
@@ -105,9 +149,44 @@ export function routeCommand(
       toolName: 'createQuoteDraft',
       input: {
         cardId,
-        lineItems: [{ description: 'Site work per scope notes', quantity: 1, unitPrice: 150 }],
+        scopeNotes: trimmed,
       },
     };
+  }
+
+  if (/mark\s+(?:invoice\s+)?paid/.test(lower)) {
+    const cardId = resolveCardId(context);
+    if (!cardId) {
+      return { message: 'Open the job with the invoice you want to mark paid.' };
+    }
+    return { toolName: 'markInvoicePaid', input: { cardId } };
+  }
+
+  if (/archive/.test(lower)) {
+    const cardId = resolveCardId(context);
+    if (!cardId) {
+      const titleMatch = trimmed.match(/archive(?:\s+(?:the|this))?\s+(?:job\s+)?["“']?([^"”'\n.!?]+?)["”']?(?:\s+job)?/i);
+      if (titleMatch?.[1]) {
+        return { toolName: 'archiveCard', input: { title: titleMatch[1].trim() } };
+      }
+      return { message: 'Which job should I archive? Tell me the job title.' };
+    }
+    return { toolName: 'archiveCard', input: { cardId } };
+  }
+
+  if (/\bdelete\b|\bremove\b/.test(lower)) {
+    const cardId = resolveCardId(context);
+    if (cardId) {
+      return { toolName: 'deleteCard', input: { cardId } };
+    }
+    const titleMatch = trimmed.match(
+      /(?:delete|remove)(?:\s+(?:the|this|that))?\s+(?:job\s+)?(.+?)\s*$/i,
+    );
+    if (titleMatch?.[1]) {
+      const title = titleMatch[1].trim().replace(/\s+job\s*$/i, '').trim();
+      return { toolName: 'deleteCard', input: { title } };
+    }
+    return { message: 'Which job should I delete? Tell me the job title.' };
   }
 
   if (/next\s+action|what\s+should\s+we\s+do/.test(lower)) {

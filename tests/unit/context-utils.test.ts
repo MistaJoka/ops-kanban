@@ -21,6 +21,12 @@ function makeCard(index: number): BoardCardView {
     isOverdue: index % 7 === 0,
     daysInColumn: index,
     moneyBadge: 'none',
+    assignedTo: null,
+    assigneeName: null,
+    assigneeInitials: null,
+    quoteTotal: 0,
+    balanceDue: 0,
+    columnEnteredAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 }

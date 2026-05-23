@@ -128,6 +128,16 @@ Format: **LEARN-NNN** — When / Problem / Solution / Verify / Refs
 
 ## Testing
 
+### LEARN-015 — Dev CSS 404 from poisoned `.next` cache
+
+| | |
+|-|-|
+| **When** | UI suddenly unstyled; Create menu “missing”; E2E passes HTML but page looks broken |
+| **Problem** | `npm run build` + `next dev` share `.next/`; prod `BUILD_ID` + dev HTML → `layout.css` 404; page returns 200 so failures look like “CSS bugs” |
+| **Solution** | `npm run dev:clean` to kill :3000 and remove `.next`; `npm run check:css-health` before UI sign-off; Playwright uses `playwright-dev-server.mjs` + global CSS check |
+| **Verify** | `npm run check:css-health` → OK; E2E `CSS-001 @smoke` green |
+| **Refs** | `docs/testing/CSS_DEV_GUARDRAILS.md`, `scripts/check-css-health.mjs` |
+
 <!-- LEARN-0xx flaky tests, fixtures -->
 
 ---
@@ -151,6 +161,66 @@ Format: **LEARN-NNN** — When / Problem / Solution / Verify / Refs
 | **Solution** | Reuse `getIntegrationEvent` / `insertIntegrationEvent` / `markIntegrationEvent` from payment processor for Twilio inbound |
 | **Verify** | WH-SMS-001, WH-PAY-003 |
 | **Refs** | `lib/domain/comms/processSmsWebhook.ts`, `lib/domain/integrations/processPaymentWebhook.ts` |
+
+### LEARN-012 — Stage age via `column_entered_at`
+
+| | |
+|-|-|
+| **When** | Showing days-in-column on board cards or computing stalled-job metrics |
+| **Problem** | `updated_at` resets on any field edit — title patch makes stage age lie |
+| **Solution** | Migration 017 adds `column_entered_at`; set only when `column_id` changes in `moveCard`/`reorderCard`; `computeDaysInColumn(column_entered_at)` in `boardCard.ts` and optimistic patches |
+| **Verify** | Edit title → days unchanged; move column → counter resets; unit boardCardFormatters |
+| **Refs** | `017_column_entered_at.sql`, `lib/domain/cards/moveCard.ts`, `lib/domain/board/boardOptimistic.ts` |
+
+### LEARN-013 — Board card menu + scan signals pattern
+
+| | |
+|-|-|
+| **When** | Extending board card scan density or adding quick actions without opening the panel |
+| **Problem** | Monolithic card component mixes drag, click-open, menu, and signal layout; too many badges overflow the scan row |
+| **Solution** | Split `BoardCardSurface` (layout/drag) from `board-card-primitives` (signals/footer) and `BoardCardMenu` (details/summary menu with `stopPropagation`); `CardSignalsRow` shows top 2 signals + `+N` overflow; menu actions call existing `onPatch`/`onMove`/`onArchive` hooks |
+| **Verify** | Hover reveals ⋮; menu assign/move does not open panel; drag still works; >2 signals collapse to `+N` |
+| **Refs** | `components/pipeline/BoardCard.tsx`, `BoardCardMenu.tsx`, `board-card-primitives.tsx` |
+
+### LEARN-014 — Gemini function calling with regex fallback
+
+| | |
+|-|-|
+| **When** | Extending AI copilot tools or debugging “AI doesn’t understand me” |
+| **Problem** | Regex-only routing misses natural language; LLM-only skips governance tests |
+| **Solution** | Primary: `runGeminiAgent` + `gemini-declarations.ts` (role-filtered). Fallback: `intent-router.ts` when `GEMINI_API_KEY` unset. Always validate with Zod + `executeToolCall`. |
+| **Verify** | `npm run test:ai`; with key set, paraphrased commands select tools |
+| **Refs** | `lib/ai/gemini-agent.ts`, `lib/ai/command-handler.ts` |
+
+### LEARN-016 — Pipeline AI dock as flex sibling
+
+| | |
+|-|-|
+| **When** | Adding persistent AI on the pipeline without stealing board scroll or overlapping the card panel |
+| **Problem** | Fixed-position popovers fight z-index with toolbar/panel; expanded copilot hides columns |
+| **Solution** | `AiCommandDock` is a shrink-0 flex sibling below `ops-pipeline-body`; collapsed height `--ai-dock-collapsed` (48px), expanded `--ai-dock-expanded` (220px); auto-collapse when card panel opens unless user expanded; sessionStorage preference |
+| **Verify** | E2E-WORKSPACE-001/002; toolbar visible when dock expanded; card panel + dock coexist |
+| **Refs** | `components/ai/AiCommandDock.tsx`, `app/globals.css`, `docs/product/UI_MASTER_FORMULA.md` |
+
+### LEARN-017 — Single workspace shortcuts provider
+
+| | |
+|-|-|
+| **When** | Global keyboard shortcuts across app shell + pipeline-specific handlers |
+| **Problem** | Duplicate `keydown` listeners in KanbanBoard and Sidebar conflict; Esc order inconsistent |
+| **Solution** | `WorkspaceShortcutsProvider` in `AppShell` owns one listener; pipeline registers handlers via `registerPipelineHandlers`; Esc stack: dock → card panel → modals → search clear |
+| **Verify** | E2E-WORKSPACE-004/005; `?` opens modal; `/` focuses search on pipeline only |
+| **Refs** | `components/workspace/WorkspaceShortcutsProvider.tsx`, `components/pipeline/PipelineSearchProvider.tsx` |
+
+### LEARN-018 — Outbound sync queue (optimistic background save)
+
+| | |
+|-|-|
+| **When** | Rapid board drags, panel edits, or money actions must feel instant without racing parallel fetches |
+| **Problem** | Optimistic paint existed but each mutation `await fetch`; money flows called `loadCard()` and flashed the panel |
+| **Solution** | Pure `OutboundSyncQueue` in domain (per-card FIFO, PATCH coalesce, retry); `useOutboundSync` enqueues API work; UI applies optimistic state then returns; sync pill shows `pending + queued`; rollback on 4xx |
+| **Verify** | UNIT-SYNC-*; E2E-SYNC-002/003; rapid drag manual QA |
+| **Refs** | `lib/domain/board/outboundSyncQueue.ts`, `components/pipeline/useOutboundSync.ts`, `useBoardState.ts` |
 
 ---
 

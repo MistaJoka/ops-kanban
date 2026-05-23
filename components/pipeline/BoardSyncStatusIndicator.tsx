@@ -3,13 +3,15 @@
 import { AlertCircle, Check, Loader2, RefreshCw } from 'lucide-react';
 
 import type { BoardSyncStatus } from '@/lib/domain/board/boardSyncStatus';
-import { formatLastSyncedAt } from '@/lib/domain/board/boardSyncStatus';
+import { formatLastSyncedAt, totalPendingSyncCount } from '@/lib/domain/board/boardSyncStatus';
 import { cn } from '@/lib/utils';
 
 function syncLabel(status: BoardSyncStatus): string {
+  const totalPending = totalPendingSyncCount(status);
+
   switch (status.phase) {
     case 'syncing':
-      return status.pendingCount > 1 ? `Saving ${status.pendingCount}…` : 'Saving…';
+      return totalPending > 1 ? `Saving · ${totalPending} pending` : 'Saving…';
     case 'refreshing':
       return 'Updating…';
     case 'misaligned':
@@ -35,7 +37,13 @@ function syncHint(status: BoardSyncStatus): string {
   }
 }
 
-export function BoardSyncStatusIndicator({ status }: { status: BoardSyncStatus }) {
+export function BoardSyncStatusIndicator({
+  status,
+  onRetry,
+}: {
+  status: BoardSyncStatus;
+  onRetry?: () => void;
+}) {
   const lastSynced = formatLastSyncedAt(status.lastSyncedAt);
   const label = syncLabel(status);
   const hint = syncHint(status);
@@ -61,6 +69,15 @@ export function BoardSyncStatusIndicator({ status }: { status: BoardSyncStatus }
         )}
       </span>
       <span className="ops-sync-status__label">{label}</span>
+      {status.phase === 'misaligned' && onRetry ? (
+        <button
+          type="button"
+          className="ops-sync-status__retry"
+          onClick={onRetry}
+        >
+          Retry
+        </button>
+      ) : null}
       {lastSynced && status.phase === 'synced' ? (
         <span className="ops-sync-status__meta">{lastSynced}</span>
       ) : null}

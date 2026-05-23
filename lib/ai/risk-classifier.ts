@@ -1,16 +1,5 @@
 export type RiskLevel = 'low' | 'medium' | 'high';
 
-const HIGH_RISK_TOOLS = new Set([
-  'sendInvoice',
-  'sendEmail',
-  'sendSms',
-  'markInvoicePaid',
-  'archiveCard',
-  'deleteCard',
-  'bulkUpdateCards',
-  'updateAutomationRule',
-]);
-
 const MEDIUM_RISK_TOOLS = new Set([
   'createCard',
   'moveCard',
@@ -20,6 +9,20 @@ const MEDIUM_RISK_TOOLS = new Set([
   'rescheduleEvent',
   'createQuoteDraft',
   'updateCustomer',
+  'createInvoiceDraft',
+  'createCustomer',
+]);
+
+const HIGH_RISK_TOOLS = new Set([
+  'sendInvoice',
+  'sendEmail',
+  'sendSms',
+  'markInvoicePaid',
+  'archiveCard',
+  'deleteCard',
+  'bulkUpdateCards',
+  'updateAutomationRule',
+  'createPaymentLink',
 ]);
 
 export function classifyToolRisk(toolName: string): RiskLevel {

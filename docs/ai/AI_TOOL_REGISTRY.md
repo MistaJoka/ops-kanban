@@ -80,12 +80,13 @@ AI may **draft** comms and **propose** links; execution requires approval + webh
 
 ## Implemented in starter (`tool-registry.ts`)
 
-- `createCard`
-- `moveCard`
-- `summarizeCard`
-- `createQuoteDraft`
+**Tier 1 read:** `summarizeCard`, `getBoardState`, `getOverdueCards`, `getStalledCards`, `getPipelineMetrics`, `suggestNextAction`, `getDailyBrief`, `searchCards`, `getCalendarSchedule`, `findScheduleConflicts`, `getUnpaidInvoices`, `getRevenueSummary`, `summarizeCustomerHistory`, `searchCustomers`, `searchMembers`
 
-Wire remaining tools as domain services land.
+**Tier 2 write:** `createCard`, `moveCard`, `assignCard`, `updateCard`, `createQuoteDraft`, `updateCustomer`, `createInternalNote`, `createInvoiceDraft`, `rescheduleEvent`, `createCustomer`, `draftSms`, `draftEmail`
+
+**Tier 3 high:** `markInvoicePaid`, `archiveCard`, `createPaymentLink`, `sendSms`, `sendEmail`
+
+Wire remaining post-MVP tools (`bulkUpdateCards`, `sendInvoice`, etc.) as domain services land.
 
 ---
 

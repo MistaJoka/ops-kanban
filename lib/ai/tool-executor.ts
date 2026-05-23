@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import type { BoardAiContext, CardAiContext } from '@/lib/ai/context-loader';
+import type { LoadedAiContext } from '@/lib/ai/context-loader';
+import { buildApprovalPreview } from '@/lib/ai/approval-preview';
 import { getToolDefinition } from '@/lib/ai/tool-registry';
 import { requiresApproval } from '@/lib/ai/risk-classifier';
 import {
@@ -16,7 +17,7 @@ export type ToolExecutionContext = {
   organizationId: string;
   userId: string | null;
   role: 'owner' | 'manager' | 'worker' | 'viewer';
-  loadedContext: BoardAiContext | CardAiContext;
+  loadedContext: LoadedAiContext;
 };
 
 export type ToolExecutionResult =
@@ -35,6 +36,7 @@ export type ToolExecutionResult =
       preview: {
         summary: string;
         input: Record<string, unknown>;
+        details?: string[];
       };
       message: string;
     };
@@ -74,9 +76,16 @@ export async function executeToolCall(params: {
       approvalStatus: 'pending',
     });
 
-    const preview = {
-      summary: `${params.toolName} awaiting approval`,
+    const previewBody = buildApprovalPreview({
+      toolName: params.toolName,
       input: parsedInput,
+      loadedContext: params.context.loadedContext,
+    });
+
+    const preview = {
+      summary: previewBody.summary,
+      input: parsedInput,
+      details: previewBody.details,
     };
 
     await insertApprovalRequest(params.context.client, {
@@ -132,7 +141,7 @@ export async function executeApprovedToolCall(params: {
   organizationId: string;
   userId: string | null;
   role: 'owner' | 'manager' | 'worker' | 'viewer';
-  loadedContext: BoardAiContext | CardAiContext;
+  loadedContext: LoadedAiContext;
   toolName: string;
   input: Record<string, unknown>;
   toolCallId: string;

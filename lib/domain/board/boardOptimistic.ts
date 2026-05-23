@@ -1,5 +1,7 @@
 import type { BoardColumnView } from '@/lib/domain/board/getBoard';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
+import { getAssigneeInitials } from '@/lib/domain/cards/boardCardFormatters';
+import { computeInsertPosition } from '@/lib/domain/cards/cardPosition';
 import type { CardDetailView } from '@/lib/domain/cards/cardDetail';
 import { COLUMN_CATEGORY } from '@/lib/domain/pipeline/types';
 
@@ -9,9 +11,9 @@ export function computeIsOverdue(dueDate: string | null, stateKey: string): bool
   );
 }
 
-export function computeDaysInColumn(updatedAt: string): number {
-  const updated = new Date(updatedAt).getTime();
-  return Math.max(0, Math.floor((Date.now() - updated) / (1000 * 60 * 60 * 24)));
+export function computeDaysInColumn(columnEnteredAt: string): number {
+  const entered = new Date(columnEnteredAt).getTime();
+  return Math.max(0, Math.floor((Date.now() - entered) / (1000 * 60 * 60 * 24)));
 }
 
 export function tempCardId(): string {
@@ -48,6 +50,12 @@ export function createOptimisticBoardCard(params: {
     daysInColumn: 0,
     isOverdue: false,
     moneyBadge: 'none',
+    assignedTo: null,
+    assigneeName: null,
+    assigneeInitials: null,
+    quoteTotal: 0,
+    balanceDue: 0,
+    columnEnteredAt: now,
     updatedAt: now,
   };
 }
@@ -71,8 +79,12 @@ export function applyBoardCardPatch(
     next.isOverdue = computeIsOverdue(next.dueDate, next.stateKey);
   }
 
-  if (patch.updatedAt !== undefined) {
-    next.daysInColumn = computeDaysInColumn(next.updatedAt);
+  if (patch.assigneeName !== undefined) {
+    next.assigneeInitials = getAssigneeInitials(next.assigneeName);
+  }
+
+  if (patch.columnEnteredAt !== undefined) {
+    next.daysInColumn = computeDaysInColumn(next.columnEnteredAt);
   }
 
   return next;
@@ -101,9 +113,15 @@ export function boardCardFromDetail(
     dueDate: detail.dueDate,
     scheduledStart: detail.scheduledStart,
     nextAction: detail.nextAction,
-    daysInColumn: computeDaysInColumn(detail.updatedAt),
+    daysInColumn: computeDaysInColumn(existing?.columnEnteredAt ?? detail.updatedAt),
     isOverdue: computeIsOverdue(detail.dueDate, detail.stateKey),
     moneyBadge,
+    assignedTo: detail.assignedTo,
+    assigneeName: detail.assigneeName,
+    assigneeInitials: getAssigneeInitials(detail.assigneeName),
+    quoteTotal: detail.quoteTotal,
+    balanceDue: existing?.balanceDue ?? 0,
+    columnEnteredAt: existing?.columnEnteredAt ?? detail.updatedAt,
     updatedAt: detail.updatedAt,
   };
 }
@@ -112,13 +130,16 @@ export function boardCardMovePatch(
   card: BoardCardView,
   targetColumn: BoardColumnView,
 ): BoardCardView {
+  const now = new Date().toISOString();
+
   return applyBoardCardPatch(card, {
     columnId: targetColumn.id,
     stateKey: targetColumn.stateKey,
     columnCategory:
       COLUMN_CATEGORY[targetColumn.stateKey as keyof typeof COLUMN_CATEGORY] ?? 'sales',
     daysInColumn: 0,
-    updatedAt: new Date().toISOString(),
+    columnEnteredAt: now,
+    updatedAt: now,
   });
 }
 
@@ -149,4 +170,90 @@ export function replaceBoardCard(
 
 export function removeBoardCardById(cards: BoardCardView[], cardId: string): BoardCardView[] {
   return cards.filter((card) => card.id !== cardId);
+}
+
+export function detailStubFromBoardCard(card: BoardCardView): CardDetailView {
+  const now = new Date().toISOString();
+
+  return {
+    id: card.id,
+    title: card.title,
+    description: null,
+    columnId: card.columnId,
+    stateKey: card.stateKey,
+    columnCategory:
+      card.columnCategory ??
+      COLUMN_CATEGORY[card.stateKey as keyof typeof COLUMN_CATEGORY] ??
+      'sales',
+    priority: card.priority,
+    jobType: card.jobType,
+    nextAction: card.nextAction,
+    dueDate: card.dueDate,
+    scheduledStart: card.scheduledStart,
+    scheduledEnd: null,
+    assignedTo: card.assignedTo,
+    assigneeName: card.assigneeName,
+    revenueValue: 0,
+    checklist: [],
+    customer:
+      card.customerName ?
+        {
+          id: 'stub-customer',
+          name: card.customerName,
+          phone: null,
+          email: null,
+          address: card.customerAddress,
+          notes: null,
+        }
+      : null,
+    quoteTotal: card.quoteTotal ?? 0,
+    createdAt: card.columnEnteredAt ?? now,
+    updatedAt: card.updatedAt ?? now,
+  };
+}
+
+export function insertAtPosition(
+  cards: BoardCardView[],
+  card: BoardCardView,
+  targetColumnId: string,
+  insertIndex: number,
+  targetColumn?: BoardColumnView,
+): BoardCardView[] {
+  const withoutCard = cards.filter((item) => item.id !== card.id);
+  const columnCards = withoutCard
+    .filter((item) => item.columnId === targetColumnId)
+    .sort((a, b) => a.position - b.position);
+  const otherCards = withoutCard.filter((item) => item.columnId !== targetColumnId);
+  const clampedIndex = Math.max(0, Math.min(insertIndex, columnCards.length));
+  const position = computeInsertPosition(columnCards, clampedIndex);
+
+  let nextCard = applyBoardCardPatch(card, { position });
+
+  if (targetColumn && card.columnId !== targetColumnId) {
+    nextCard = boardCardMovePatch(nextCard, targetColumn);
+  } else if (card.columnId !== targetColumnId) {
+    nextCard = applyBoardCardPatch(nextCard, {
+      columnId: targetColumnId,
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  columnCards.splice(clampedIndex, 0, nextCard);
+  return sortBoardCards([...otherCards, ...columnCards]);
+}
+
+export function reorderBoardCards(
+  cards: BoardCardView[],
+  cardId: string,
+  targetColumnId: string,
+  insertIndex: number,
+  columns: BoardColumnView[],
+): BoardCardView[] {
+  const card = cards.find((item) => item.id === cardId);
+  if (!card) {
+    return cards;
+  }
+
+  const targetColumn = columns.find((column) => column.id === targetColumnId);
+  return insertAtPosition(cards, card, targetColumnId, insertIndex, targetColumn);
 }

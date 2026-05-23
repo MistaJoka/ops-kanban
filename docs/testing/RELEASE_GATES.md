@@ -8,6 +8,7 @@
 ## Gate G0 — PR merge
 
 - [ ] PR smoke tests pass (`REGRESSION_MATRIX.md`)
+- [ ] `npm run check:css-health` pass when testing UI locally (or after `npm run dev:clean`)
 - [ ] No new S1/S2 introduced
 - [ ] Lint + typecheck pass
 - [ ] Test ID referenced in PR if fixing bug

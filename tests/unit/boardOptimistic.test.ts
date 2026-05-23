@@ -4,9 +4,11 @@ import {
   applyBoardCardPatch,
   boardCardMovePatch,
   createOptimisticBoardCard,
+  insertAtPosition,
   isTempCardId,
   nextCardPosition,
   removeBoardCardById,
+  reorderBoardCards,
   replaceBoardCard,
   sortBoardCards,
   tempCardId,
@@ -30,6 +32,12 @@ const sampleCard = (overrides: Partial<BoardCardView> = {}): BoardCardView => ({
   daysInColumn: 2,
   isOverdue: false,
   moneyBadge: 'none',
+  assignedTo: null,
+  assigneeName: null,
+  assigneeInitials: null,
+  quoteTotal: 0,
+  balanceDue: 0,
+  columnEnteredAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
   ...overrides,
 });
@@ -100,5 +108,36 @@ describe('boardOptimistic', () => {
     });
 
     expect(overdue.isOverdue).toBe(true);
+  });
+
+  it('inserts a card at a target index within a column', () => {
+    const cards = [
+      sampleCard({ id: 'a', columnId: 'col-1', position: 0 }),
+      sampleCard({ id: 'b', columnId: 'col-1', position: 1 }),
+      sampleCard({ id: 'c', columnId: 'col-2', position: 0 }),
+    ];
+
+    const inserted = insertAtPosition(cards, sampleCard({ id: 'b' }), 'col-1', 0);
+    const colOne = inserted.filter((card) => card.columnId === 'col-1');
+
+    expect(colOne.map((card) => card.id)).toEqual(['b', 'a']);
+    expect(colOne[0]?.position).toBeLessThan(colOne[1]?.position ?? 0);
+  });
+
+  it('reorders cards across columns with target metadata', () => {
+    const cards = [
+      sampleCard({ id: 'a', columnId: 'col-1', position: 0 }),
+      sampleCard({ id: 'b', columnId: 'col-1', position: 1 }),
+    ];
+
+    const reordered = reorderBoardCards(cards, 'a', 'col-2', 0, [
+      { id: 'col-1', name: 'Inquiry', stateKey: 'inquiry', position: 0 },
+      { id: 'col-2', name: 'Approved', stateKey: 'approved', position: 1 },
+    ]);
+
+    const moved = reordered.find((card) => card.id === 'a');
+    expect(moved?.columnId).toBe('col-2');
+    expect(moved?.stateKey).toBe('approved');
+    expect(reordered.filter((card) => card.columnId === 'col-1')).toHaveLength(1);
   });
 });

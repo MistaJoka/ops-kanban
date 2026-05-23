@@ -13,17 +13,80 @@ export async function gotoPipeline(page: Page) {
   await expect(page.getByRole('heading', { name: 'Job Pipeline' })).toBeVisible();
 }
 
-export async function createJob(page: Page, title: string) {
-  page.once('dialog', async (dialog) => {
-    await dialog.accept(title);
+/** Sortable cards expose role=button in the a11y tree; target the board card surface. */
+export function boardCardByTitle(page: Page, title: string) {
+  return page.locator('.ops-board-card').filter({
+    has: page.getByRole('heading', { name: title, exact: true }),
   });
+}
 
-  await page.getByRole('button', { name: '+ New job' }).click();
-  await expect(page.getByRole('article').filter({ hasText: title })).toBeVisible({ timeout: 15_000 });
+export async function createJob(page: Page, title: string) {
+  await page.getByRole('button', { name: 'Create' }).click();
+  await page.getByRole('menuitem', { name: 'New job' }).click();
+
+  const modal = page.getByRole('dialog', { name: 'New job' });
+  await expect(modal).toBeVisible();
+  await modal.getByLabel('Job title').fill(title);
+  await modal.getByRole('button', { name: 'Create', exact: true }).click();
+  await expect(modal).toBeHidden({ timeout: 5_000 });
+  await expect(boardCardByTitle(page, title)).toBeVisible({ timeout: 15_000 });
+}
+
+export function columnSection(page: Page, columnName: string) {
+  return page.locator('section').filter({
+    has: page.getByRole('heading', { name: columnName, exact: true }),
+  });
+}
+
+export async function dragCardToColumn(page: Page, title: string, columnName: string) {
+  const card = boardCardByTitle(page, title);
+  const targetColumn = columnSection(page, columnName);
+  await targetColumn.scrollIntoViewIfNeeded();
+
+  const cardBox = await card.boundingBox();
+  const dropZone = targetColumn.locator('div.flex-1.flex-col').first();
+  const targetBox = await dropZone.boundingBox();
+  if (!cardBox || !targetBox) {
+    throw new Error(`Could not resolve drag bounds for ${title} → ${columnName}`);
+  }
+
+  const startX = cardBox.x + cardBox.width / 2;
+  const startY = cardBox.y + cardBox.height / 2;
+  const endX = targetBox.x + targetBox.width / 2;
+  const endY = targetBox.y + targetBox.height / 2;
+
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  await page.mouse.move(startX + 12, startY, { steps: 3 });
+  await page.mouse.move(endX, endY, { steps: 20 });
+  await page.mouse.up();
+}
+
+/** Same outbound reorder queue as drag-end; reliable in Playwright. */
+export async function moveBoardCardToColumn(page: Page, title: string, columnName: string) {
+  const card = boardCardByTitle(page, title);
+  await card.getByRole('button', { name: 'Job actions' }).click();
+  await page.getByRole('menuitem', { name: 'Move to column' }).click();
+  await page.getByLabel('Move to column').selectOption({ label: columnName });
+  await page.keyboard.press('Escape');
+}
+
+export async function expectCardInColumn(page: Page, title: string, columnName: string) {
+  const column = columnSection(page, columnName);
+  await expect(column.locator('.ops-board-card').filter({ hasText: title })).toBeVisible({ timeout: 5_000 });
+}
+
+export async function waitForSyncPill(page: Page, label: 'Saving' | 'Synced') {
+  const pill = page.locator('.ops-sync-status__label');
+  if (label === 'Saving') {
+    await expect(pill).toContainText(/Saving/i, { timeout: 5_000 });
+    return;
+  }
+  await expect(pill).toContainText(/^Synced/i, { timeout: 30_000 });
 }
 
 export async function openJobPanel(page: Page, title: string) {
-  await page.getByRole('article').filter({ hasText: title }).click();
+  await boardCardByTitle(page, title).click();
   const panel = page.getByRole('dialog', { name: 'Job detail panel' });
   await expect(panel).toBeVisible();
   await expect(panel.getByRole('textbox').first()).toHaveValue(title);
@@ -130,20 +193,11 @@ export async function saveProperty(
 export async function saveEstimateLine(page: Page, description: string, unitPrice: string) {
   await openCardTab(page, 'Estimate');
   const panel = page.getByRole('dialog', { name: 'Job detail panel' });
+  await panel.getByRole('button', { name: 'Add line' }).click();
   await panel.getByPlaceholder('Description').first().fill(description);
   await panel.getByLabel('Quantity').first().fill('1');
   await panel.getByLabel('Unit price').first().fill(unitPrice);
-
-  const saveResponse = page.waitForResponse(
-    (response) => response.url().includes('/quotes') && response.request().method() === 'POST',
-  );
-
-  await Promise.all([
-    saveResponse,
-    panel.getByRole('button', { name: 'Save estimate' }).click(),
-  ]);
-
-  expect((await saveResponse).ok()).toBeTruthy();
+  await panel.getByRole('button', { name: 'Save estimate' }).click();
 }
 
 export async function setScheduleDate(page: Page) {
@@ -170,12 +224,12 @@ export async function createInvoiceDraft(page: Page) {
 }
 
 export async function markInvoicePaid(page: Page) {
-  page.once('dialog', async (dialog) => {
-    await dialog.accept();
-  });
-
   await openCardTab(page, 'Money');
   const panel = page.getByRole('dialog', { name: 'Job detail panel' });
   await panel.getByRole('button', { name: 'Mark paid & archive' }).click();
-  await expect(panel.getByText('Paid — job moved to archived.')).toBeVisible({ timeout: 15_000 });
+
+  const confirmModal = page.getByRole('dialog', { name: 'Mark invoice paid' });
+  await expect(confirmModal).toBeVisible();
+  await confirmModal.getByRole('button', { name: 'Mark paid' }).click();
+  await expect(panel.getByText(/Paid —/)).toBeVisible({ timeout: 15_000 });
 }

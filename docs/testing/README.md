@@ -101,3 +101,7 @@ Mapping: [TRACEABILITY.md](./TRACEABILITY.md).
 | `ci:ai` | T10 |
 | `ci:security` | T08, T03 |
 | `ci:release` | T20 gate |
+
+## CSS / dev cache (T21)
+
+See [CSS_DEV_GUARDRAILS.md](./CSS_DEV_GUARDRAILS.md). Run `npm run check:css-health` before UI PRs; use `npm run dev:clean` after any local `npm run build`.

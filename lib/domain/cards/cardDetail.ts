@@ -1,6 +1,13 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { COLUMN_CATEGORY, type ColumnCategory } from '@/lib/domain/pipeline/types';
+import type { OrgRole } from '@/lib/domain/auth/roles';
+import {
+  assertCanEditCard,
+  CardAuthorizationError,
+} from '@/lib/domain/cards/authorizeCardMutation';
+
+export { CardAuthorizationError };
 
 export type ChecklistItem = {
   id: string;
@@ -154,6 +161,7 @@ export type UpdateCardInput = {
   organizationId: string;
   cardId: string;
   actorId: string | null;
+  role: OrgRole;
   patch: {
     title?: string;
     description?: string | null;
@@ -173,6 +181,24 @@ export async function updateCard(
   client: SupabaseClient,
   input: UpdateCardInput,
 ): Promise<CardDetailView> {
+  const { data: existing, error: existingError } = await client
+    .from('cards')
+    .select('assigned_to')
+    .eq('id', input.cardId)
+    .eq('organization_id', input.organizationId)
+    .single();
+
+  if (existingError || !existing) {
+    throw new CardAuthorizationError('Card not found.', 'NOT_FOUND');
+  }
+
+  assertCanEditCard(
+    input.role,
+    input.patch,
+    { assignedTo: (existing.assigned_to as string | null) ?? null },
+    input.actorId,
+  );
+
   const payload: Record<string, unknown> = {
     updated_at: new Date().toISOString(),
   };

@@ -7,7 +7,167 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ---
 
-## How to write an entry
+### LOG-2026-05-23-02 — Sync Retry button fix
+
+| Field | Value |
+|-------|-------|
+| **Phase** | P13 |
+| **Tasks** | — (hotfix) |
+| **Author** | agent |
+| **Type** | fix |
+
+**Summary:** Fixed Out of sync Retry: clears `syncIssue` so pill shows Saving…, re-applies optimistic board mutation before re-enqueue, falls back to `refreshBoard()` when no queued failure; visible `ops-sync-status__retry` styling.
+
+**Progress:** Retry wired via `boardSync.retryFailedSync`; `peekLastFailure()` + `reapplyFailedMutation` in queue hook.
+
+**Troubles:** Retry left misaligned state because `syncIssue` blocked phase transition; rollback removed optimistic UI without re-apply on manual retry.
+
+**Fix:** `clearSyncIssue` + `reapplyFailedMutation` + refresh fallback; UNIT-SYNC-008.
+
+**Verify:** `npm run typecheck`; `npm run test:unit` 114/114.
+
+---
+
+### LOG-2026-05-23-01 — Optimistic background sync (P13)
+
+| Field | Value |
+|-------|-------|
+| **Phase** | P13 |
+| **Tasks** | TASK-P13-001 |
+| **Author** | agent |
+| **Type** | enhancement |
+
+**Summary:** Shipped outbound sync queue: domain `outboundSyncQueue`, `useOutboundSync`, fire-and-forget board create/move/reorder/patch, instant panel stub hydrate, money/panel mutations via queue, sync pill queue depth + Retry, v0.5.0 changelog.
+
+**Progress:** Phases 1–6 complete; `NEXT_PUBLIC_OUTBOUND_QUEUE` enabled by default (set `=0` to disable).
+
+**Troubles:** TypeScript narrowing on `OutboundExecutorResult` union; PATCH merge rollback types.
+
+**Fix:** Guard `onSuccess` with `result.ok`; split `mergePatchMutations` by kind.
+
+**Learning:** LEARN-018.
+
+**Verify:** `npm run test:unit` 110/110; `npm run typecheck`; `PLAYWRIGHT_SKIP_CSS_CHECK=1 npx playwright test tests/e2e/outbound-sync.spec.ts` 3/3.
+
+---
+
+### LOG-2026-05-22-25 — UI master formula alignment (P12)
+
+| Field | Value |
+|-------|-------|
+| **Phase** | P12 |
+| **Tasks** | TASK-P12-001 |
+| **Author** | agent |
+| **Type** | enhancement |
+
+**Summary:** Shipped UI master formula alignment: canonical `UI_MASTER_FORMULA.md`; pipeline bottom `AiCommandDock` (replaces popover); `PipelineGroupJump` + topo `ops-board-surface`; global `WorkspaceShortcutsProvider` + modal; brand SVGs; sidebar mark; help/changelog updates.
+
+**Progress:** Docs cross-links, CSS tokens, new components (`AiCommandDock`, `PipelineGroupJump`, `PipelineSearchProvider`, `WorkspaceShortcutsProvider`, `KeyboardShortcutsModal`), KanbanBoard layout refactor, AppShell/Sidebar wiring, tests E2E-WORKSPACE-001–005 + CSS-002 + unit `pickActiveGroup`.
+
+**Troubles:** Mid-session `WorkspaceShortcutsProvider` type block accidentally truncated during export add — restored imports/types.
+
+**Fix:** Re-exported `useWorkspaceShortcutsOptional`; completed KanbanBoard JSX (dock, group refs, empty illustration).
+
+**Learning:** LEARN-016 (flex dock sibling), LEARN-017 (single shortcuts provider).
+
+**Verify:** `npm run test:unit`; `npm run typecheck`; `npm run check:css-health` (when dev server available).
+
+**Deferred:** Phase B notifications bell + `GET /api/ai/pending` (stretch).
+
+---
+
+### LOG-2026-05-22-24 — Card anatomy pass 3
+
+| Field | Value |
+|-------|-------|
+| **Phase** | P11 |
+| **Tasks** | UX polish |
+| **Author** | agent |
+| **Type** | enhancement |
+
+**Summary:** Pass 3: property line restores `address · job type`, unified footer line per wireframe, always-visible assignee slot, IBM Plex Mono for money, panel category pill + map pin, focus/hover polish.
+
+**Verify:** `npm run test:unit`; `tsc --noEmit`.
+
+---
+
+### LOG-2026-05-22-23 — Board card menu z-index / portal
+
+| Field | Value |
+|-------|-------|
+| **Phase** | P11 |
+| **Tasks** | UX fix |
+| **Author** | agent |
+| **Type** | fix |
+
+**Summary:** Card action menu rendered behind pipeline toolbar because `z-30` was trapped inside the board scroll stacking context below toolbar `z-20`. Menu now portals to `document.body` with `position: fixed` and `z-45`.
+
+**Verify:** Open ⋮ on top-column card; menu opaque above toolbar.
+
+---
+
+### LOG-2026-05-22-22 — Card anatomy pass 2 (board + panel)
+
+| Field | Value |
+|-------|-------|
+| **Phase** | P11 |
+| **Tasks** | UX polish |
+| **Author** | agent |
+| **Type** | enhancement |
+
+**Summary:** Second card design pass: category wash, status dots, due/schedule short dates (`Thu 5/22`), property pin line, empty meta placeholder, panel summary strip aligned with board signals.
+
+**Progress:** `cardSignals.ts`, `board-card-primitives`, `CardPanelSummary`, `CardPanelHeader`, formatters + CSS.
+
+**Verify:** `npm run test:unit`; `tsc --noEmit`.
+
+---
+
+### LOG-2026-05-22-21 — Board card anatomy polish
+
+| Field | Value |
+|-------|-------|
+| **Phase** | P11 |
+| **Tasks** | UX polish |
+| **Author** | agent |
+| **Type** | enhancement |
+
+**Summary:** Refined board card layout to match `CARD_DESIGN.md` comfortable density: 128px min height, 4px category accent, property line with job type, meta band row (job/money/schedule/days + assignee), and clearer footer hierarchy.
+
+**Progress:** `board-card-primitives.tsx`, `BoardCard.tsx`, `boardCardFormatters.ts`, `globals.css`; unit tests for property line formatting.
+
+**Troubles:** —
+
+**Fix:** —
+
+**Learning:** —
+
+**Verify:** `npm run test:unit`; `tsc --noEmit`.
+
+---
+
+### LOG-2026-05-22-20 — CSS dev cache guardrails
+
+| Field | Value |
+|-------|-------|
+| **Phase** | QA |
+| **Tasks** | CSS guardrails |
+| **Author** | agent |
+| **Type** | fix |
+
+**Summary:** Confirmed recurring “CSS breaks” is stylesheet 404 from poisoned `.next` (build + dev mix), not globals.css regressions. Added check script, Playwright guards, E2E CSS-001, and docs.
+
+**Progress:** `scripts/check-css-health.mjs`, `warn-prod-cache.mjs`, `playwright-dev-server.mjs`; `predev`/`postbuild` warnings; Playwright globalSetup + CSS smoke; `docs/testing/CSS_DEV_GUARDRAILS.md`; LEARN-015.
+
+**Troubles:** `/pipeline` 200 while `layout.css` 404 when `.next/BUILD_ID` present after `npm run build`; stale :3000 dev process worsens it.
+
+**Fix:** `npm run dev:clean`; automated `check:css-health`; E2E starts with cache clean when prod BUILD_ID detected.
+
+**Learning:** LEARN-015
+
+**Verify:** `npm run check:css-health` fails before clean, passes after `dev:clean`; `CSS-001 @smoke` in Playwright.
+
+---
 
 ```markdown
 ### LOG-YYYY-MM-DD-NN — Short title
@@ -67,12 +227,173 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 | P8 | Wave 2 | `not_started` | — | — | DONE-8 |
 | P9 | Wave 3 | `not_started` | — | — | DONE-9 |
 | P10 | Wave 4 | `complete` | 2025-05-21 | 2025-05-21 | DONE-10 |
+| P11 | Card hardening | `complete` | 2026-05-22 | 2026-05-22 | DONE-11 |
 
 Update this table when a phase starts or completes. Mirror status in [`PROGRESS.md`](./PROGRESS.md).
 
 ---
 
 ## Entries
+
+### LOG-2026-05-22-01 — Card ops complete (v0.3.0)
+
+| Field | Value |
+|-------|-------|
+| **Phase** | P11 |
+| **Tasks** | TASK-P11-001–P11-011 |
+| **Author** | build agent |
+| **Type** | release |
+
+**Summary:** Shipped v0.3.0 — full CARD_DESIGN board layer with true stage age, scan-rich board cards, modals, @dnd-kit reorder, CardPanel refactor, and advanced filters.
+
+**Progress:** Migration 017 `column_entered_at`; `authorizeCardMutation` + hardened `validateMove`; `board-card-primitives` signals; `BoardCardMenu` + inline title edit; `NewJobModal`/`CustomerCreateModal`/confirmation modals; `reorderCard` + DnD; CardPanel hooks/tabs split; `boardFilters` advanced filter bar; CHANGELOG + productChangelog + PHASE_TASKS P11.
+
+**Troubles:** none
+
+**Fix:** n/a
+
+**Learning:** LEARN-012 (stage age), LEARN-013 (board menu + scan signals)
+
+**Changes:**
+- `supabase/migrations/017_column_entered_at.sql`
+- `lib/domain/cards/{boardCard,moveCard,reorderCard,authorizeCardMutation}.ts`
+- `components/pipeline/{BoardCard,BoardCardMenu,board-card-primitives,NewJobModal,KanbanBoard}.tsx`
+- `components/card/{useCardDetail,useCardMutations,tabs/*,CardPanelHeader,CardPanelBody}.tsx`
+- `lib/domain/board/{boardFilters,boardOptimistic}.ts`
+- `CHANGELOG.md`, `lib/content/productChangelog.ts`, docs roadmap updates
+
+**Tests run:** unit 88/88 ✅
+
+**DoD:** DONE-11; v0.3.0 release gate
+
+**Next:** Apply migration 017 on staging; pilot UAT on board card menu and filters
+
+---
+
+### LOG-2025-05-22-13 — AI command SSE streaming
+
+| Field | Value |
+|-------|-------|
+| **Phase** | AI-P5 |
+| **Tasks** | TASK-AI-P5-004 |
+| **Author** | build agent |
+| **Type** | complete |
+
+**Summary:** Added Server-Sent Events streaming to `POST /api/ai/command` with Gemini token streaming, tool execution status phases, and live copilot UI updates.
+
+**Progress:** `lib/ai/sse.ts`, `handleAiCommandStream`, `generateContentStream` in gemini-agent, route branches on `stream: true`, `submitAiCommand` client, `AiDock` streams by default with phase indicators.
+
+**Troubles:** none
+
+**Fix:** n/a
+
+**Learning:** none new
+
+**Tests run:** AI-SSE 3/3 ✅, unit 63/63 ✅, typecheck ✅ (build prerender blocked by missing `column_entered_at` migration in local DB)
+
+**DoD:** TASK-AI-P5-004 complete
+
+**Next:** TASK-AI-P5-002 empty next_action suggest
+
+---
+
+### LOG-2025-05-22-12 — AI phases P2–P4 build-out
+
+| Field | Value |
+|-------|-------|
+| **Phase** | AI-P2–P5 |
+| **Tasks** | TASK-AI-P2-001–P4-007, TASK-AI-P5-001/003 |
+| **Author** | build agent |
+| **Type** | complete |
+
+**Summary:** Defined AI build phases (P0–P5) and implemented Waves A–C: revenue loop, scheduling copilot, customer/money intel, multi-surface dock, voice input, and inline next-action banners.
+
+**Progress:** `docs/ai/AI_PHASES.md`; extended `loadAiContext` for dashboard/calendar/customer/reports; 12+ new tools in registry + `toolCalls`; `AiPageCopilot`, `AiInlineBanner`, Card Overview AI CTAs, voice on `AiDock`; `GET /api/app/context`. Kanban inline banner on column enter (estimate/invoice prompts).
+
+**Troubles:** `approval-preview.ts` corruption during edits (rewrote file); `KanbanBoard` handleMoveCard fuzzy match (fixed); `LoadedAiContext` type gaps in router/gemini-agent (fixed).
+
+**Fix:** Full rewrite of approval preview; intent-router accepts `LoadedAiContext`; Web Speech typed locally.
+
+**Learning:** none new
+
+**Changes:**
+- AI phases doc + PHASE_TASKS track
+- Revenue: `createInvoiceDraft`, `createPaymentLink`, assign-by-name
+- Scheduling: calendar context, `getCalendarSchedule`, `findScheduleConflicts`, `rescheduleEvent`
+- Intel: `getUnpaidInvoices`, `getRevenueSummary`, `summarizeCustomerHistory`, `searchCustomers`, `createCustomer`
+- UI: page copilots, inline banners, voice mic
+
+**Tests run:** typecheck ✅, AI 29/29 ✅, unit 60/60 ✅, build ✅
+
+**DoD:** AI-P2–P4 exit criteria met; P5 partial (SSE/vision/next-action suggest deferred)
+
+**Next:** TASK-AI-P5-002 empty next_action suggest; TASK-AI-P5-004 SSE streaming
+
+---
+
+### LOG-2025-05-22-11 — AI competitive benchmark (master)
+
+| Field | Value |
+|-------|-------|
+| **Phase** | Pilot / product |
+| **Tasks** | Competitive analysis deliverable |
+| **Author** | build agent |
+| **Type** | decision |
+
+**Summary:** Published canonical elite-provider AI comparison: capability matrix, JTBD scorecard, dimension weights, gap roadmap Waves A–D, sales messaging guide.
+
+**Progress:** `docs/ai/AI_COMPETITIVE_BENCHMARK.md` + interactive canvas `ai-competitive-benchmark.canvas.tsx`; indexed in `DOC_INDEX.md`.
+
+**Troubles:** none
+
+**Fix:** n/a
+
+**Learning:** none new
+
+**Changes:**
+- Master benchmark doc (Jobber, ServiceTitan, HCP, ServiceM8)
+- Visual canvas for exec review
+
+**Tests run:** none (docs only)
+
+**DoD:** n/a
+
+**Next:** Wave A gap closure (`createInvoiceDraft`, payment link, inline triggers)
+
+---
+
+### LOG-2025-05-22-10 — AI copilot A+ upgrade
+
+| Field | Value |
+|-------|-------|
+| **Phase** | P5 / Pilot |
+| **Tasks** | AI copilot upgrade |
+| **Author** | build agent |
+| **Type** | complete |
+
+**Summary:** Upgraded Ops copilot from regex-first MVP to Gemini function-calling agent with LLM estimate parsing, daily brief, card disambiguation, multi-turn UI, and human approval previews.
+
+**Progress:** `gemini-agent`, `estimate-parser`, `daily-brief`, mode chips, conversation thread, wired high-risk tools. AI 24/24, unit 55/55, build ✅.
+
+**Troubles:** none
+
+**Fix:** n/a
+
+**Learning:** LEARN-014
+
+**Changes:**
+- Native Gemini function calling as primary router
+- LLM scope-notes → estimate line items
+- Multi-turn conversation + mode-aware chips
+- Human approval previews + high-risk checkbox
+
+**Tests run:** `npm run test:ai`, `npm run test:unit`, `npm run typecheck`, `npm run build`
+
+**DoD:** DONE-5 AI governance + new tool tests
+
+**Next:** Pilot UAT with `GEMINI_API_KEY` on estimate drafting + daily brief
+
+---
 
 ### LOG-2025-05-22-09 — Premium settings menu
 

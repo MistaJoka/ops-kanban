@@ -14,15 +14,26 @@ export function ApprovalModal({
 }: {
   toolCallId: string;
   toolName: string;
-  preview: { summary: string; input: Record<string, unknown> };
+  preview: { summary: string; input: Record<string, unknown>; details?: string[] };
   context: AiClientContext;
   onClose: () => void;
   onComplete: (message: string) => void;
 }) {
   const [pending, setPending] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isHighRisk =
+    toolName === 'markInvoicePaid' ||
+    toolName === 'archiveCard' ||
+    toolName === 'createPaymentLink';
+
   const approve = async () => {
+    if (isHighRisk && !confirmed) {
+      setError('Confirm this high-risk action before approving.');
+      return;
+    }
+
     setPending(true);
     setError(null);
 
@@ -77,12 +88,31 @@ export function ApprovalModal({
         <h2 id="approval-modal-title" className="ops-modal-title">
           Approve AI action
         </h2>
-        <p className="mt-2 text-sm text-[var(--text-secondary)]">
-          {preview.summary} — <span className="font-medium text-[var(--text-primary)]">{toolName}</span>
+        <p className="mt-2 text-sm font-medium text-[var(--text-primary)]">{preview.summary}</p>
+        <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+          Tool: <span className="font-mono">{toolName}</span>
         </p>
-        <pre className="mt-4 max-h-40 overflow-auto rounded-[var(--radius-control)] bg-[var(--surface-inset)] p-3 font-mono text-xs text-[var(--text-secondary)]">
-          {JSON.stringify(preview.input, null, 2)}
-        </pre>
+
+        {preview.details?.length ? (
+          <ul className="mt-4 space-y-1.5 rounded-[var(--radius-control)] bg-[var(--surface-inset)] p-3 text-sm text-[var(--text-secondary)]">
+            {preview.details.map((detail) => (
+              <li key={detail}>{detail}</li>
+            ))}
+          </ul>
+        ) : null}
+
+        {isHighRisk ? (
+          <label className="mt-4 flex items-start gap-2 text-sm text-[var(--text-secondary)]">
+            <input
+              type="checkbox"
+              checked={confirmed}
+              onChange={(event) => setConfirmed(event.target.checked)}
+              className="mt-0.5"
+            />
+            <span>I confirm this {toolName === 'markInvoicePaid' ? 'payment' : toolName === 'createPaymentLink' ? 'payment link' : 'archive'} action.</span>
+          </label>
+        ) : null}
+
         {error ? (
           <p role="alert" aria-live="assertive" className="ops-alert-error mt-3">
             {error}

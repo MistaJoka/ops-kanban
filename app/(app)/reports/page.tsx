@@ -1,5 +1,6 @@
 'use client';
 
+import { AiPageCopilot } from '@/components/ai/AiPageCopilot';
 import { useCallback, useEffect, useState } from 'react';
 
 type ReportsSummary = {
@@ -273,6 +274,7 @@ export default function ReportsPage() {
           </section>
         </div>
       )}
+      <AiPageCopilot page="reports" />
     </main>
   );
 }

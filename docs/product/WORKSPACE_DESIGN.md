@@ -2,6 +2,8 @@
 
 The **Job Pipeline** is the primary workspace: a horizontal Kanban board with grouped columns, filters, and AI. Everything else is reached through a **collapsible app shell** (sidebar + top bar).
 
+**UI philosophy:** [`UI_MASTER_FORMULA.md`](UI_MASTER_FORMULA.md) — why the workspace feels and behaves this way. This doc is the layout spec (including bottom AI dock §5).
+
 Related: `CARD_DESIGN.md`, `FULL_PIPELINE.md`, `VERTICAL_LANDSCAPING.md`.
 
 ---

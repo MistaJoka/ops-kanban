@@ -5,8 +5,11 @@ import { mapCompactArchivedToFull } from '@/lib/domain/pipeline/stateMap';
 import { FULL_STATE_ORDER } from '@/lib/domain/pipeline/types';
 
 const baseContext = {
+  actorId: 'owner-1',
+  assignedToId: null,
   scheduledStart: '2026-06-01T09:00:00.000Z',
   quoteTotal: 500,
+  quoteLineItemCount: 1,
   balanceDue: 0,
   hasCustomer: true,
   hasTitle: true,

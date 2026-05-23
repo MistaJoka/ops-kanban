@@ -1,21 +1,22 @@
+import { ChangelogTimeline } from '@/components/support/ChangelogTimeline';
+
 export default function ChangelogPage() {
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="text-2xl font-semibold text-[var(--text-primary)]">What&apos;s new</h1>
-      <article className="mt-8 rounded-xl border border-[var(--topbar-border)] bg-[var(--surface-card)] p-6">
-        <p className="text-xs uppercase tracking-wide text-[var(--text-secondary)]">2025-05-21 · v0.1.0</p>
-        <h2 className="mt-2 text-lg font-semibold text-[var(--text-primary)]">Wave 0 MVP</h2>
-        <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-[var(--text-secondary)]">
-          <li>9-column job pipeline with drag-and-drop, search, and filters</li>
-          <li>Deep card: property, scope, schedule, estimate, invoice, and activity</li>
-          <li>Manual mark paid → archive; move validation gates</li>
-          <li>AI copilot on board and card with approval for write actions</li>
-          <li>Multi-tenant RLS — your org data only</li>
-        </ul>
-        <p className="mt-4 text-xs text-[var(--text-secondary)]">
-          Full history: see <code className="rounded bg-[var(--surface-rail)] px-1">CHANGELOG.md</code> in the repo.
+    <main className="ops-page-shell max-w-3xl">
+      <header>
+        <h1 className="ops-page-title text-2xl">What&apos;s new</h1>
+        <p className="mt-1.5 text-sm text-[var(--text-secondary)]">
+          Major product updates with release date and time. Newest first.
         </p>
-      </article>
+      </header>
+
+      <ChangelogTimeline />
+
+      <p className="mt-8 text-xs text-[var(--text-tertiary)]">
+        Full engineering history lives in{' '}
+        <code className="rounded bg-[var(--surface-rail)] px-1.5 py-0.5">CHANGELOG.md</code> and{' '}
+        <code className="rounded bg-[var(--surface-rail)] px-1.5 py-0.5">docs/roadmap/DEVELOPMENT_LOG.md</code>.
+      </p>
     </main>
   );
 }

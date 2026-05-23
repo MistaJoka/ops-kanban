@@ -55,11 +55,16 @@ export const toolRegistry: ToolDefinition[] = [
     description: 'Create a quote draft from card/job details.',
     schema: z.object({
       cardId: z.string().uuid(),
-      lineItems: z.array(z.object({
-        description: z.string(),
-        quantity: z.number(),
-        unitPrice: z.number(),
-      })),
+      scopeNotes: z.string().optional(),
+      lineItems: z
+        .array(
+          z.object({
+            description: z.string(),
+            quantity: z.number(),
+            unitPrice: z.number(),
+          }),
+        )
+        .optional(),
       notes: z.string().optional(),
     }),
     riskLevel: classifyToolRisk('createQuoteDraft'),
@@ -97,12 +102,100 @@ export const toolRegistry: ToolDefinition[] = [
     requiredRoles: ['owner', 'manager', 'worker'],
   },
   {
-    name: 'assignCard',
-    description: 'Assign a crew lead or worker to a card.',
+    name: 'getPipelineMetrics',
+    description: 'Count jobs and revenue by pipeline column.',
+    schema: z.object({}),
+    riskLevel: classifyToolRisk('getPipelineMetrics'),
+    requiredRoles: ['owner', 'manager', 'worker', 'viewer'],
+  },
+  {
+    name: 'getDailyBrief',
+    description: 'Morning briefing: schedule, overdue, stalled, top actions.',
+    schema: z.object({}),
+    riskLevel: classifyToolRisk('getDailyBrief'),
+    requiredRoles: ['owner', 'manager', 'worker', 'viewer'],
+  },
+  {
+    name: 'searchCards',
+    description: 'Find jobs by title, customer, or address.',
+    schema: z.object({
+      query: z.string().min(1),
+      limit: z.number().optional(),
+    }),
+    riskLevel: classifyToolRisk('searchCards'),
+    requiredRoles: ['owner', 'manager', 'worker', 'viewer'],
+  },
+  {
+    name: 'createInternalNote',
+    description: 'Add an internal comment on a card.',
     schema: z.object({
       cardId: z.string().uuid(),
-      assigneeId: z.string().uuid(),
+      body: z.string().min(1),
     }),
+    riskLevel: classifyToolRisk('createInternalNote'),
+    requiredRoles: ['owner', 'manager', 'worker'],
+  },
+  {
+    name: 'updateCustomer',
+    description: 'Update customer/property fields linked to a card.',
+    schema: z.object({
+      cardId: z.string().uuid(),
+      name: z.string().optional(),
+      phone: z.string().optional(),
+      email: z.string().optional(),
+      address: z.string().optional(),
+      notes: z.string().optional(),
+    }),
+    riskLevel: classifyToolRisk('updateCustomer'),
+    requiredRoles: ['owner', 'manager'],
+  },
+  {
+    name: 'markInvoicePaid',
+    description: 'Mark the card invoice as paid.',
+    schema: z.object({
+      cardId: z.string().uuid(),
+      method: z.string().optional(),
+    }),
+    riskLevel: classifyToolRisk('markInvoicePaid'),
+    requiredRoles: ['owner', 'manager'],
+  },
+  {
+    name: 'archiveCard',
+    description: 'Archive a completed or closed job.',
+    schema: z.object({
+      cardId: z.string().uuid(),
+      reason: z.string().optional(),
+    }),
+    riskLevel: classifyToolRisk('archiveCard'),
+    requiredRoles: ['owner', 'manager'],
+  },
+  {
+    name: 'deleteCard',
+    description: 'Permanently delete a job from the board. Match by title when cardId is unknown.',
+    schema: z
+      .object({
+        cardId: z.string().uuid(),
+        title: z.string().optional(),
+        reason: z.string().optional(),
+      })
+      .refine((value) => Boolean(value.cardId), {
+        message: 'cardId is required',
+      }),
+    riskLevel: classifyToolRisk('deleteCard'),
+    requiredRoles: ['owner', 'manager'],
+  },
+  {
+    name: 'assignCard',
+    description: 'Assign a crew lead or worker to a card.',
+    schema: z
+      .object({
+        cardId: z.string().uuid(),
+        assigneeId: z.string().uuid().optional(),
+        assigneeName: z.string().optional(),
+      })
+      .refine((value) => Boolean(value.assigneeId || value.assigneeName), {
+        message: 'assigneeId or assigneeName is required',
+      }),
     riskLevel: classifyToolRisk('assignCard'),
     requiredRoles: ['owner', 'manager'],
   },
@@ -162,6 +255,112 @@ export const toolRegistry: ToolDefinition[] = [
       intent: z.string().optional(),
     }),
     riskLevel: classifyToolRisk('draftEmail'),
+    requiredRoles: ['owner', 'manager', 'worker'],
+  },
+  {
+    name: 'createInvoiceDraft',
+    description: 'Create an invoice draft from the job estimate.',
+    schema: z.object({
+      cardId: z.string().uuid(),
+    }),
+    riskLevel: classifyToolRisk('createInvoiceDraft'),
+    requiredRoles: ['owner', 'manager'],
+  },
+  {
+    name: 'createPaymentLink',
+    description: 'Create a Stripe payment link for the job invoice.',
+    schema: z.object({
+      cardId: z.string().uuid(),
+    }),
+    riskLevel: classifyToolRisk('createPaymentLink'),
+    requiredRoles: ['owner', 'manager'],
+  },
+  {
+    name: 'searchMembers',
+    description: 'Find team members by name for assignment.',
+    schema: z.object({
+      query: z.string().min(1),
+      limit: z.number().optional(),
+    }),
+    riskLevel: classifyToolRisk('searchMembers'),
+    requiredRoles: ['owner', 'manager'],
+  },
+  {
+    name: 'getCalendarSchedule',
+    description: 'List scheduled jobs in the current calendar range.',
+    schema: z.object({}),
+    riskLevel: classifyToolRisk('getCalendarSchedule'),
+    requiredRoles: ['owner', 'manager', 'worker', 'viewer'],
+  },
+  {
+    name: 'findScheduleConflicts',
+    description: 'Check for overlapping scheduled jobs at a proposed time.',
+    schema: z.object({
+      cardId: z.string().uuid().optional(),
+      scheduledStart: z.string(),
+      scheduledEnd: z.string().optional(),
+    }),
+    riskLevel: classifyToolRisk('findScheduleConflicts'),
+    requiredRoles: ['owner', 'manager', 'worker'],
+  },
+  {
+    name: 'rescheduleEvent',
+    description: 'Reschedule a job to new start/end times.',
+    schema: z.object({
+      cardId: z.string().uuid(),
+      scheduledStart: z.string(),
+      scheduledEnd: z.string().optional(),
+    }),
+    riskLevel: classifyToolRisk('rescheduleEvent'),
+    requiredRoles: ['owner', 'manager'],
+  },
+  {
+    name: 'getUnpaidInvoices',
+    description: 'List unpaid invoices and balances.',
+    schema: z.object({
+      minBalance: z.number().optional(),
+      limit: z.number().optional(),
+    }),
+    riskLevel: classifyToolRisk('getUnpaidInvoices'),
+    requiredRoles: ['owner', 'manager', 'worker', 'viewer'],
+  },
+  {
+    name: 'getRevenueSummary',
+    description: 'Summarize revenue, unpaid balance, and pipeline conversion.',
+    schema: z.object({}),
+    riskLevel: classifyToolRisk('getRevenueSummary'),
+    requiredRoles: ['owner', 'manager'],
+  },
+  {
+    name: 'summarizeCustomerHistory',
+    description: 'Summarize a customer job history before a callback.',
+    schema: z.object({
+      customerId: z.string().uuid(),
+    }),
+    riskLevel: classifyToolRisk('summarizeCustomerHistory'),
+    requiredRoles: ['owner', 'manager', 'worker', 'viewer'],
+  },
+  {
+    name: 'searchCustomers',
+    description: 'Find customers by name, phone, or address.',
+    schema: z.object({
+      query: z.string().min(1),
+      limit: z.number().optional(),
+    }),
+    riskLevel: classifyToolRisk('searchCustomers'),
+    requiredRoles: ['owner', 'manager', 'worker', 'viewer'],
+  },
+  {
+    name: 'createCustomer',
+    description: 'Create a new customer record.',
+    schema: z.object({
+      name: z.string().min(1),
+      phone: z.string().optional(),
+      email: z.string().optional(),
+      address: z.string().optional(),
+      notes: z.string().optional(),
+    }),
+    riskLevel: classifyToolRisk('createCustomer'),
     requiredRoles: ['owner', 'manager', 'worker'],
   },
 ];

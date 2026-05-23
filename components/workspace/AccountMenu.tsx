@@ -46,7 +46,7 @@ export function AccountMenu({
   }, [open]);
 
   return (
-    <div ref={rootRef} className="relative">
+    <div ref={rootRef} className="ops-dropdown">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
@@ -71,7 +71,7 @@ export function AccountMenu({
           role="menu"
           className={cn(
             'ops-menu',
-            collapsed ? 'left-0 right-auto' : 'right-0',
+            collapsed ? 'ops-menu--up left-0 right-auto' : 'right-0',
           )}
         >
           <Link
@@ -84,7 +84,14 @@ export function AccountMenu({
             Settings
           </Link>
           {authDisabled ? (
-            <p className="px-3 py-2 text-xs text-[var(--nav-text-muted)]">Auth bypassed (dev)</p>
+            <Link
+              href="/settings/general#dev-workspace"
+              role="menuitem"
+              className="ops-menu-item flex items-center gap-2 text-[var(--nav-text-muted)]"
+              onClick={() => setOpen(false)}
+            >
+              Dev workspace
+            </Link>
           ) : (
             <form action={signOutAction}>
               <button

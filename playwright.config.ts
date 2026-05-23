@@ -5,6 +5,7 @@ const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${port}`;
 
 export default defineConfig({
   testDir: './tests/e2e',
+  globalSetup: './tests/e2e/global-setup.ts',
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
@@ -18,9 +19,10 @@ export default defineConfig({
     ...devices['Desktop Chrome'],
   },
   webServer: {
-    command: `npm run dev -- --port ${port}`,
+    command: `node scripts/playwright-dev-server.mjs ${port}`,
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer:
+      !process.env.CI && process.env.PLAYWRIGHT_FRESH_SERVER !== '1',
     timeout: 120_000,
   },
 });

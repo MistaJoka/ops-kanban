@@ -3,7 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export function DevResetBoardButton() {
+import { cn } from '@/lib/utils';
+
+export function DevResetBoardButton({ variant = 'banner' }: { variant?: 'banner' | 'settings' }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
 
@@ -43,7 +45,12 @@ export function DevResetBoardButton() {
       type="button"
       onClick={() => void resetBoard()}
       disabled={pending}
-      className="rounded-md border border-[var(--accent)]/30 bg-[var(--surface-panel)] px-2.5 py-1 text-[11px] font-medium text-[var(--accent)] transition-colors hover:bg-[var(--surface-panel)]/80 disabled:opacity-60"
+      className={cn(
+        variant === 'settings'
+          ? 'ops-btn-secondary'
+          : 'rounded-md border border-[var(--accent)]/30 bg-[var(--surface-panel)] px-2.5 py-1 text-[11px] font-medium text-[var(--accent)] transition-colors hover:bg-[var(--surface-panel)]/80',
+        'disabled:opacity-60',
+      )}
     >
       {pending ? 'Resetting…' : 'Reset board'}
     </button>

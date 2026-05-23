@@ -66,9 +66,11 @@ export async function createChangeOrder(
     .select(
       `
       id, title, column_id, priority, job_type, position, due_date,
-      scheduled_start, next_action, updated_at, customer_id,
+      scheduled_start, next_action, updated_at, column_entered_at, customer_id,
+      assigned_to,
       columns!inner(state_key),
       customers(name, address),
+      profiles:assigned_to(full_name),
       quotes(status, total),
       invoices(status, balance_due)
     `,

@@ -1,5 +1,5 @@
 import type { OrgRole } from '@/lib/domain/auth/roles';
-import { canMoveCard } from '@/lib/domain/auth/roles';
+import { canArchiveCard, canMoveCard } from '@/lib/domain/auth/roles';
 import {
   type StateKey,
   isStateKey,
@@ -8,10 +8,13 @@ import {
 
 export type MoveValidationContext = {
   role: OrgRole;
+  actorId: string | null;
+  assignedToId: string | null;
   fromStateKey: string;
   toStateKey: string;
   scheduledStart: string | null;
   quoteTotal: number;
+  quoteLineItemCount: number;
   balanceDue: number;
   hasCustomer: boolean;
   hasTitle: boolean;
@@ -35,6 +38,17 @@ const OWNER_MANAGER_SKIPS: Array<[StateKey, StateKey]> = [
 
 function isAllowedSkip(from: StateKey, to: StateKey): boolean {
   return OWNER_MANAGER_SKIPS.some(([fromKey, toKey]) => fromKey === from && toKey === to);
+}
+
+function isWorkerAssignedToCard(
+  assignedToId: string | null,
+  actorId: string | null,
+): boolean {
+  if (!assignedToId) {
+    return true;
+  }
+
+  return Boolean(actorId && assignedToId === actorId);
 }
 
 function isRoleAllowedTransition(
@@ -78,6 +92,17 @@ export function validateMove(context: MoveValidationContext): MoveValidationResu
     };
   }
 
+  if (
+    context.role === 'worker' &&
+    !isWorkerAssignedToCard(context.assignedToId, context.actorId)
+  ) {
+    return {
+      allowed: false,
+      code: 'FORBIDDEN',
+      message: 'Workers can only move cards assigned to them or unassigned jobs.',
+    };
+  }
+
   if (!isStateKey(context.fromStateKey, pipelineMode) || !isStateKey(context.toStateKey, pipelineMode)) {
     return {
       allowed: false,
@@ -104,6 +129,14 @@ export function validateMove(context: MoveValidationContext): MoveValidationResu
     };
   }
 
+  if (context.role === 'worker' && to === 'paid') {
+    return {
+      allowed: false,
+      code: 'FORBIDDEN',
+      message: 'Workers cannot mark jobs as paid.',
+    };
+  }
+
   if (to === 'estimating' && !context.hasCustomer && !context.hasTitle) {
     return {
       allowed: false,
@@ -112,12 +145,22 @@ export function validateMove(context: MoveValidationContext): MoveValidationResu
     };
   }
 
-  if (to === 'estimate_sent' && context.quoteTotal <= 0) {
-    return {
-      allowed: false,
-      code: 'ESTIMATE_REQUIRED',
-      message: 'Add estimate line items before moving to Estimate sent.',
-    };
+  if (to === 'estimate_sent') {
+    if (!context.hasCustomer) {
+      return {
+        allowed: false,
+        code: 'INVALID_STATE',
+        message: 'Add a customer before moving to Estimate sent.',
+      };
+    }
+
+    if (context.quoteTotal <= 0 || context.quoteLineItemCount <= 0) {
+      return {
+        allowed: false,
+        code: 'ESTIMATE_REQUIRED',
+        message: 'Add estimate line items before moving to Estimate sent.',
+      };
+    }
   }
 
   const scheduleStates = pipelineMode === 'full' ? ['scheduling', 'ready'] : ['scheduled'];
@@ -134,6 +177,14 @@ export function validateMove(context: MoveValidationContext): MoveValidationResu
   }
 
   if (to === 'archived') {
+    if (!canArchiveCard(context.role)) {
+      return {
+        allowed: false,
+        code: 'FORBIDDEN',
+        message: 'Your role cannot archive jobs.',
+      };
+    }
+
     const needsBalanceReason = context.balanceDue > 0;
 
     return {

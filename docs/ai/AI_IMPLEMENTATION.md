@@ -2,7 +2,8 @@
 
 > **How to use AI in the product:** `AI_UTILIZATION.md`  
 > **Example prompts:** `AI_PROMPT_LIBRARY.md`  
-> **Tool list:** `AI_TOOL_REGISTRY.md`
+> **Tool list:** `AI_TOOL_REGISTRY.md`  
+> **Elite market comparison:** `AI_COMPETITIVE_BENCHMARK.md`
 
 ## MVP surfaces
 
@@ -19,6 +20,8 @@ Operational Copilot for landscaping: command, analysis, drafting, and **tool-gat
 ## Model
 
 Gemini 2.5 Flash — `GEMINI_API_KEY`, pin model id in `gemini-client.ts`.
+
+**Routing:** `runGeminiAgent` uses native function calling (primary). Regex `intent-router` + template tools are degraded fallback when `GEMINI_API_KEY` is unset.
 
 ## Context object
 
@@ -53,13 +56,27 @@ Loader must return small packages — see `AI_UTILIZATION.md` §4.
 ```txt
 POST /api/ai/command
 → loadAiContext (Supabase)
-→ Gemini + tool definitions
-→ tool selection + Zod parse
+→ runGeminiAgent (function calling) | routeCommand fallback
+→ tool selection + Zod parse + card disambiguation
 → classifyToolRisk
-→ execute | approval_required
+→ execute | approval_required (human preview)
 → activities + ai_tool_calls
-→ JSON response + UI refresh
+→ JSON response (default) or SSE stream (`stream: true`)
+→ UI refresh
 ```
+
+### SSE streaming
+
+Set `"stream": true` on the command body to receive `text/event-stream` instead of JSON.
+
+| Event | Payload |
+|-------|---------|
+| `status` | `{ phase: 'context' \| 'thinking' \| 'tool' \| 'executing' \| 'polishing', toolName? }` |
+| `delta` | `{ text: string }` — token/chunk from Gemini or polished tool output |
+| `result` | `{ data: CommandResult }` — same shape as JSON response |
+| `error` | `{ message, code? }` |
+
+Client helper: `lib/ai/ai-command-client.ts` (`submitAiCommand`). `AiDock` streams by default.
 
 **Hard rule:** AI never writes directly to the database.
 

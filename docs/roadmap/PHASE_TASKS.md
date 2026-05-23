@@ -219,6 +219,49 @@
 
 ---
 
+## Phase 11 — Card hardening
+
+**Goal:** Full CARD_DESIGN board layer — domain correctness, scan UI, modals, reorder, panel refactor, filters.  
+**DoD:** DONE-11 | **Depends on:** Phase 10
+
+| ID | Task | Status | Tests | Deps |
+|----|------|--------|-------|------|
+| TASK-P11-001 | Migration `column_entered_at` + domain wiring | done | — | P10 |
+| TASK-P11-002 | `validateMove` + `authorizeCardMutation` + API role gates | done | UNIT-PIPE-*, authorize | P11-001 |
+| TASK-P11-003 | Board card signals (chips, money $, schedule labels) | done | boardCardFormatters | P11-001 |
+| TASK-P11-004 | Board card menu + inline title edit | done | E2E smoke | P11-003 |
+| TASK-P11-005 | New Job modal + remove prompts | done | E2E-JOB-001 | P11-002 |
+| TASK-P11-006 | Estimate/paid/customer confirmation modals | done | — | P11-005 |
+| TASK-P11-007 | Position reorder API + optimistic UI | done | UNIT cardPosition | P11-004 |
+| TASK-P11-008 | `@dnd-kit` column/card DnD | done | E2E drag | P11-007 |
+| TASK-P11-009 | CardPanel split (hooks + tabs) | done | panel E2E | P11-006 |
+| TASK-P11-010 | Advanced filters + keyboard shortcuts | done | boardFilters | P11-003 |
+| TASK-P11-011 | Regression, docs, changelog v0.3.0 | done | test:regression | P11-008, P11-009, P11-010 |
+
+---
+
+## Phase 12 — UI master formula alignment
+
+**Goal:** Canonical UI philosophy doc + WORKSPACE_DESIGN gap closure (bottom dock, shortcuts, group jump, topo, brand).  
+**DoD:** AC-1–AC-12 in `UI_MASTER_FORMULA.md` | **Depends on:** P11
+
+| ID | Task | Status | Tests | Deps |
+|----|------|--------|-------|------|
+| TASK-P12-001 | UI master formula doc + WORKSPACE gap closure | done | E2E-WORKSPACE-*, CSS-002 | P11 |
+
+---
+
+## Phase 13 — Optimistic background sync
+
+**Goal:** Instant UI feedback with background server sync queue (board, panel, money).  
+**DoD:** AC-1–AC-14 in plan v2 | **Depends on:** P12
+
+| ID | Task | Status | Tests | Deps |
+|----|------|--------|-------|------|
+| TASK-P13-001 | Outbound sync queue + fire-and-forget mutations | done | UNIT-SYNC-*, E2E-SYNC-* | P12 |
+
+---
+
 ## Parallel track: QA (ongoing)
 
 | ID | Task | Start after | Status |
@@ -235,7 +278,39 @@
 ```txt
 P0 → P1 → P2 → P3 → P4 → P5 → P6 [MVP]
                   ↓
-            P7 → P8 → P9 → P10
+            P7 → P8 → P9 → P10 → P11 [Card ops] → P12 [UI master formula]
 ```
 
 QA runs parallel from P1 onward.
+
+---
+
+## AI phases (post-MVP copilot track)
+
+**DoD:** per [`AI_PHASES.md`](../ai/AI_PHASES.md) | **Depends on:** P5 AI foundation
+
+| ID | Task | Status | Tests |
+|----|------|--------|-------|
+| TASK-AI-P2-001 | Invoice draft via AI (`createInvoiceDraft`) | done | AI-P2-001 |
+| TASK-AI-P2-002 | Payment link proposal (`createPaymentLink`) | done | UNIT-AI-007 |
+| TASK-AI-P2-003 | Assign crew by name (`searchMembers` + resolver) | done | AI-P2-003 |
+| TASK-AI-P2-004 | Inline estimate CTA (Card Overview) | done | — |
+| TASK-AI-P2-005 | Inline invoice CTA on job complete | done | — |
+| TASK-AI-P2-006 | Board move inline banner | done | — |
+| TASK-AI-P3-001 | Calendar context loader | done | — |
+| TASK-AI-P3-002 | Week schedule read | done | — |
+| TASK-AI-P3-003 | Conflict detection | done | — |
+| TASK-AI-P3-004 | NL reschedule | done | — |
+| TASK-AI-P3-005 | Calendar page copilot | done | — |
+| TASK-AI-P4-001 | Dashboard context | done | — |
+| TASK-AI-P4-002 | Reports context | done | — |
+| TASK-AI-P4-003 | Unpaid invoices list | done | AI-P3-001 |
+| TASK-AI-P4-004 | Revenue summary | done | — |
+| TASK-AI-P4-005 | Customer history | done | — |
+| TASK-AI-P4-006 | Search / create customer | done | — |
+| TASK-AI-P4-007 | Multi-page copilot (dashboard, customers, reports) | done | — |
+| TASK-AI-P5-001 | Voice input (Web Speech API) | done | — |
+| TASK-AI-P5-002 | Empty next_action suggest | deferred | — |
+| TASK-AI-P5-003 | App context API (`GET /api/app/context`) | done | — |
+| TASK-AI-P5-004 | Streaming responses (SSE) | done | AI-SSE-* |
+| TASK-AI-P5-005 | Vision on attachments | deferred | — |

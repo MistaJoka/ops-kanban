@@ -12,7 +12,7 @@ const bodySchema = z.object({
   toolCallId: z.string().uuid(),
   context: z
     .object({
-      page: z.enum(['board', 'card']),
+      page: z.enum(['board', 'card', 'dashboard', 'calendar', 'customer', 'reports', 'settings']),
       organizationId: z.string().uuid(),
       userId: z.string().uuid(),
       role: z.enum(['owner', 'manager', 'worker', 'viewer']),
@@ -48,6 +48,13 @@ export async function POST(request: Request) {
 
   if (toolCall.toolName === 'createQuoteDraft' && !canManageMoney(context.role)) {
     return jsonError('Your role cannot approve money actions.', 403, 'FORBIDDEN');
+  }
+
+  if (
+    (toolCall.toolName === 'markInvoicePaid' || toolCall.toolName === 'archiveCard') &&
+    !canManageMoney(context.role)
+  ) {
+    return jsonError('Your role cannot approve high-risk actions.', 403, 'FORBIDDEN');
   }
 
   const aiContext: AiContext = parsed.data.context

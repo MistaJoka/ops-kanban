@@ -13,8 +13,13 @@ import { getPrimaryBoard } from '@/lib/domain/board/getBoard';
 import { getCardDetail } from '@/lib/domain/cards/cardDetail';
 import { listCardActivities } from '@/lib/domain/activities/listCardActivities';
 import { listCardComments } from '@/lib/domain/comments/cardComments';
+import { getCustomerHistory } from '@/lib/domain/customers/customerHistory';
+import { listCustomers } from '@/lib/domain/customers/listCustomers';
+import { getDashboardSummary } from '@/lib/domain/dashboard/getDashboardSummary';
 import { getInvoiceForCard } from '@/lib/domain/money/invoices';
 import { getQuoteForCard } from '@/lib/domain/money/quotes';
+import { getReportsSummary } from '@/lib/domain/reports/getReports';
+import { listScheduledCards } from '@/lib/domain/scheduling/listScheduledCards';
 
 export type AiPage = 'board' | 'card' | 'dashboard' | 'customer' | 'calendar' | 'reports' | 'settings';
 
@@ -30,6 +35,7 @@ export type AiContext = {
   selectedCustomerId?: string;
   visibleColumnIds?: string[];
   pipelineMode?: 'compact' | 'full';
+  calendarRange?: { start: string; end: string };
   filters?: {
     assignee?: string;
     overdue?: boolean;
@@ -69,16 +75,61 @@ export type CardAiContext = {
   boardId?: string;
 };
 
+export type DashboardAiContext = {
+  page: 'dashboard';
+  summary: Awaited<ReturnType<typeof getDashboardSummary>>;
+  rules: AiOrgRules;
+};
+
+export type CalendarAiContext = {
+  page: 'calendar';
+  range: { start: string; end: string };
+  scheduledCards: Awaited<ReturnType<typeof listScheduledCards>>;
+  rules: AiOrgRules;
+};
+
+export type CustomerAiContext = {
+  page: 'customer';
+  selectedCustomer: Awaited<ReturnType<typeof getCustomerHistory>> | null;
+  customers: Array<{ id: string; name: string; jobCount: number }>;
+  rules: AiOrgRules;
+};
+
+export type ReportsAiContext = {
+  page: 'reports';
+  summary: Awaited<ReturnType<typeof getReportsSummary>>;
+  rules: AiOrgRules;
+};
+
+export type LoadedAiContext =
+  | BoardAiContext
+  | CardAiContext
+  | DashboardAiContext
+  | CalendarAiContext
+  | CustomerAiContext
+  | ReportsAiContext;
+
 const defaultRules: AiOrgRules = {
   requireApprovalForMoneyActions: true,
   requireApprovalForBulkActions: true,
   aiMaySendExternalMessages: false,
 };
 
+function defaultCalendarRange(): { start: string; end: string } {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  const day = start.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  start.setDate(start.getDate() + diff);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 7);
+  return { start: start.toISOString(), end: end.toISOString() };
+}
+
 export async function loadAiContext(
   client: SupabaseClient,
   input: AiContext,
-): Promise<BoardAiContext | CardAiContext> {
+): Promise<LoadedAiContext> {
   if (input.page === 'card' && input.selectedCardId) {
     const [detail, quote, invoice, activities, comments] = await Promise.all([
       getCardDetail(client, input.organizationId, input.selectedCardId),
@@ -137,6 +188,40 @@ export async function loadAiContext(
       })),
       rules: defaultRules,
     };
+  }
+
+  if (input.page === 'dashboard') {
+    const summary = await getDashboardSummary(client, input.organizationId);
+    return { page: 'dashboard', summary, rules: defaultRules };
+  }
+
+  if (input.page === 'calendar') {
+    const range = input.calendarRange ?? defaultCalendarRange();
+    const scheduledCards = await listScheduledCards(client, input.organizationId, range);
+    return { page: 'calendar', range, scheduledCards, rules: defaultRules };
+  }
+
+  if (input.page === 'customer') {
+    const customers = await listCustomers(client, input.organizationId);
+    const selectedCustomer = input.selectedCustomerId
+      ? await getCustomerHistory(client, input.organizationId, input.selectedCustomerId)
+      : null;
+
+    return {
+      page: 'customer',
+      selectedCustomer,
+      customers: customers.slice(0, 30).map((row) => ({
+        id: row.id,
+        name: row.name,
+        jobCount: row.jobCount,
+      })),
+      rules: defaultRules,
+    };
+  }
+
+  if (input.page === 'reports') {
+    const summary = await getReportsSummary(client, input.organizationId);
+    return { page: 'reports', summary, rules: defaultRules };
   }
 
   const board = await getPrimaryBoard(client, input.organizationId, true);

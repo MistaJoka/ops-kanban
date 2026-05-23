@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { jsonData, jsonError } from '@/lib/api/response';
 import { getHandlerContext, isHandlerContext } from '@/lib/domain/api/handlerContext';
+import { canEditCardCustomer } from '@/lib/domain/cards/authorizeCardMutation';
 import { upsertCustomerForCard } from '@/lib/domain/customers/upsertCustomer';
 import { getCardDetail } from '@/lib/domain/cards/cardDetail';
 
@@ -21,6 +22,10 @@ export async function PUT(
   if (!isHandlerContext(context)) return context;
 
   const { id } = await params;
+
+  if (!canEditCardCustomer(context.role)) {
+    return jsonError('Your role cannot edit customer records.', 403, 'FORBIDDEN');
+  }
 
   let body: unknown;
   try {

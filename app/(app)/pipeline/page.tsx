@@ -4,6 +4,8 @@ import { getAppContext, getAppDataClient } from '@/lib/domain/auth/appContext';
 import { getPrimaryBoard } from '@/lib/domain/board/getBoard';
 import { KanbanBoard } from '@/components/pipeline/KanbanBoard';
 
+export const dynamic = 'force-dynamic';
+
 function PipelineLoading() {
   return (
     <div className="flex flex-1 items-center justify-center p-8 text-sm text-[var(--text-secondary)]">

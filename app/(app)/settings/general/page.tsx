@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { SettingsPageHeader } from '@/components/settings/SettingsPageHeader';
+import { DevWorkspaceSection } from '@/components/settings/DevWorkspaceSection';
 import { cn } from '@/lib/utils';
 
 type OrgSettings = {
@@ -178,6 +179,8 @@ export default function GeneralSettingsPage() {
               <p className="text-xs text-[var(--text-secondary)]">Updating pipeline…</p>
             ) : null}
           </section>
+
+          <DevWorkspaceSection />
         </div>
       )}
     </div>

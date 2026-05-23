@@ -1,5 +1,6 @@
 'use client';
 
+import { AiPageCopilot } from '@/components/ai/AiPageCopilot';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { FileText, Users } from 'lucide-react';
@@ -103,6 +104,7 @@ export default function CustomersPage() {
           No customers yet. Add property details on a job card to create one.
         </p>
       )}
+      <AiPageCopilot page="customer" />
     </main>
   );
 }

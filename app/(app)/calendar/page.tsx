@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { AiPageCopilot } from '@/components/ai/AiPageCopilot';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 type ScheduledCard = {
@@ -162,6 +163,7 @@ export default function CalendarPage() {
           })}
         </div>
       )}
+      <AiPageCopilot page="calendar" calendarRange={range} />
     </main>
   );
 }

@@ -2,7 +2,7 @@
 
 How AI creates value in OpsBoard: **where it lives**, **what it should do**, **what it must not do**, and **how users should rely on it** day to day.
 
-Technical wiring: `AI_IMPLEMENTATION.md`, `AI_TOOL_REGISTRY.md`, `src-starter/lib/ai/*`.
+Technical wiring: `AI_IMPLEMENTATION.md`, `AI_TOOL_REGISTRY.md`, `AI_COMPETITIVE_BENCHMARK.md`, `src-starter/lib/ai/*`.
 
 Product context: `VERTICAL_LANDSCAPING.md`, `CARD_DESIGN.md`, `WORKSPACE_DESIGN.md`.
 

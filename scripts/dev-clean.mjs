@@ -43,6 +43,7 @@ rmSync(path.join(projectRoot, '.next'), { recursive: true, force: true });
 rmSync(path.join(projectRoot, 'node_modules', '.cache'), { recursive: true, force: true });
 
 console.log('Starting Next.js dev server…');
+console.log('Tip: after UI work, run npm run check:css-health in another terminal.');
 const result = spawnSync('npx', ['next', 'dev'], {
   cwd: projectRoot,
   stdio: 'inherit',

@@ -195,8 +195,10 @@ describe.skipIf(!integrationReady)('INT-API AI command', () => {
       expect(() =>
         assertOrgScope(
           {
-            ...loadedContext,
+            page: 'board',
             organizationId: '00000000-0000-4000-8000-000000000099',
+            userId: user.id,
+            role: 'owner',
           },
           user.organizationId,
         ),

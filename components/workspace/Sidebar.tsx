@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -10,6 +11,7 @@ import {
   ChevronRight,
   HelpCircle,
   Kanban,
+  Keyboard,
   LayoutDashboard,
   Mail,
   Settings,
@@ -20,6 +22,7 @@ import {
 
 import { AccountMenu } from '@/components/workspace/AccountMenu';
 import { ThemeToggle } from '@/components/workspace/ThemeToggle';
+import { useWorkspaceShortcutsOptional } from '@/components/workspace/WorkspaceShortcutsProvider';
 import { cn } from '@/lib/utils';
 
 const SIDEBAR_KEY = 'opsboard-sidebar-collapsed';
@@ -45,7 +48,15 @@ const SUPPORT_ITEMS: NavItem[] = [
   { href: '/support/changelog', label: "What's new", icon: Sparkles },
 ];
 
-function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
+function NavLink({
+  item,
+  collapsed,
+  onNavigate,
+}: {
+  item: NavItem;
+  collapsed: boolean;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
   const active =
     item.href === '/settings'
@@ -74,6 +85,7 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
     <Link
       href={item.href}
       title={collapsed ? item.label : undefined}
+      onClick={() => onNavigate?.()}
       className={cn(
         'relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
         active
@@ -96,27 +108,63 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   );
 }
 
+function ShortcutsNavButton({
+  collapsed,
+  onNavigate,
+}: {
+  collapsed: boolean;
+  onNavigate?: () => void;
+}) {
+  const shortcuts = useWorkspaceShortcutsOptional();
+
+  return (
+    <button
+      type="button"
+      title={collapsed ? 'Keyboard shortcuts' : undefined}
+      onClick={() => {
+        shortcuts?.openShortcuts();
+        onNavigate?.();
+      }}
+      className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--nav-text-muted)] transition-colors hover:bg-white/5 hover:text-[var(--nav-text)]"
+    >
+      <Keyboard className="size-[18px] shrink-0" strokeWidth={1.75} />
+      {!collapsed ? <span className="truncate">Keyboard shortcuts</span> : null}
+    </button>
+  );
+}
+
 export function Sidebar({
   collapsed,
   onToggle,
   displayName,
   authDisabled,
+  mobileOpen = false,
+  onMobileClose,
 }: {
   collapsed: boolean;
   onToggle: () => void;
   displayName: string;
   authDisabled: boolean;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
 }) {
   return (
     <aside
       className={cn(
-        'flex shrink-0 flex-col border-r border-black/20 bg-[var(--nav-bg)] text-[var(--nav-text)] transition-[width] duration-200',
+        'ops-sidebar',
         collapsed ? 'w-16' : 'w-60',
+        mobileOpen && 'ops-sidebar--open',
       )}
     >
       <div className="flex items-center gap-3 border-b border-white/10 px-4 py-4">
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[var(--nav-active)] text-xs font-bold tracking-tight text-white shadow-[0_2px_8px_rgba(0,0,0,0.25)]">
-          OB
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[var(--nav-active)] shadow-[0_2px_8px_rgba(0,0,0,0.25)]">
+          <Image
+            src="/brand/mark.svg"
+            alt=""
+            width={22}
+            height={22}
+            className="size-[22px]"
+          />
         </div>
         {!collapsed ? (
           <div className="min-w-0">
@@ -135,7 +183,12 @@ export function Sidebar({
           ) : null}
           <div className="space-y-0.5">
             {WORKSPACE_ITEMS.map((item) => (
-              <NavLink key={item.href} item={item} collapsed={collapsed} />
+              <NavLink
+                key={item.href}
+                item={item}
+                collapsed={collapsed}
+                onNavigate={onMobileClose}
+              />
             ))}
           </div>
         </div>
@@ -148,8 +201,14 @@ export function Sidebar({
           ) : null}
           <div className="space-y-0.5">
             {SUPPORT_ITEMS.map((item) => (
-              <NavLink key={item.href} item={item} collapsed={collapsed} />
+              <NavLink
+                key={item.href}
+                item={item}
+                collapsed={collapsed}
+                onNavigate={onMobileClose}
+              />
             ))}
+            <ShortcutsNavButton collapsed={collapsed} onNavigate={onMobileClose} />
           </div>
         </div>
       </nav>
@@ -157,6 +216,7 @@ export function Sidebar({
       <div className="space-y-2 border-t border-white/10 p-3">
         <NavLink
           collapsed={collapsed}
+          onNavigate={onMobileClose}
           item={{ href: '/settings', label: 'Settings', icon: Settings }}
         />
         <AccountMenu

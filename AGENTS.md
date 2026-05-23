@@ -41,7 +41,9 @@ This repo is a **pre-build blueprint**. Implementation follows the **AI build pr
 | RLS | `004_rls_policies.sql` |
 | AI | `docs/ai/AI_UTILIZATION.md` |
 | Tests | `docs/testing/README.md` |
+| CSS dev guardrails | `docs/testing/CSS_DEV_GUARDRAILS.md` |
 | Design tokens | `docs/product/DESIGN_TOKENS.md` |
+| UI philosophy | `docs/product/UI_MASTER_FORMULA.md` |
 
 ## Architecture
 
@@ -56,6 +58,7 @@ This repo is a **pre-build blueprint**. Implementation follows the **AI build pr
 - Skip RLS on new tables
 - Ship `tool-executor` without domain persistence (Phase 5)
 - Skip post-session PROGRESS / LOG / PRB / LEARN updates
+- Run `npm run build` while `next dev` is running — poisons `.next` and breaks CSS (see `docs/testing/CSS_DEV_GUARDRAILS.md`, `npm run dev:clean`)
 
 ## Migrations order
 

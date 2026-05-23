@@ -21,11 +21,14 @@ Single map to avoid duplicate plans and drift. **Do not add a second roadmap.**
 | **Column seed at signup** | [`SIGNUP_BOOTSTRAP.md`](../database/SIGNUP_BOOTSTRAP.md) | `supabase/seed/*.sql` (commented reference) |
 | **API shapes** | [`API_ROUTES.md`](../api/API_ROUTES.md) | `API_CONTRACTS.md` (tests only) |
 | **Layering rules** | [`ARCHITECTURE_PRINCIPLES.md`](./ARCHITECTURE_PRINCIPLES.md) | `SYSTEM_ARCHITECTURE.md` (diagram) |
+| **AI build phases** | [`AI_PHASES.md`](../ai/AI_PHASES.md) | Waves A–D → AI-P2–P5 |
 | **AI product behavior** | [`AI_UTILIZATION.md`](../ai/AI_UTILIZATION.md) | — |
+| **AI competitive benchmark** | [`AI_COMPETITIVE_BENCHMARK.md`](../ai/AI_COMPETITIVE_BENCHMARK.md) | — |
 | **AI wiring** | [`AI_IMPLEMENTATION.md`](../ai/AI_IMPLEMENTATION.md) | — |
 | **AI tools list** | [`AI_TOOL_REGISTRY.md`](../ai/AI_TOOL_REGISTRY.md) | `src-starter/lib/ai/tool-registry.ts` (code) |
 | **Success criteria** | [`PRODUCT_BRIEF.md`](../product/PRODUCT_BRIEF.md) | — |
 | **Cursor product rules** | [`CURSOR_MASTER_PROMPT.md`](../cursor/CURSOR_MASTER_PROMPT.md) | Phase numbers inside = pre-P0 labels; map to P1–P6 |
+| **UI philosophy** | [`UI_MASTER_FORMULA.md`](../product/UI_MASTER_FORMULA.md) | Ad-hoc UI notes in chat or PROGRESS |
 
 ---
 
@@ -49,6 +52,7 @@ Single map to avoid duplicate plans and drift. **Do not add a second roadmap.**
 | `API_ROUTES` | `API_CONTRACTS` | Spec vs test IDs |
 | `RISK_MODEL` | `FMEA` | RBT scoring vs failure table |
 | `AI_UTILIZATION` | `AI_IMPLEMENTATION` | Product vs engineering |
+| `AI_UTILIZATION` | `AI_COMPETITIVE_BENCHMARK` | Behavior spec vs elite market comparison |
 | `DEFAULT_PIPELINE.md` | `landscaping-default-columns.ts` | Doc + typed constant (keep in sync) |
 
 ---

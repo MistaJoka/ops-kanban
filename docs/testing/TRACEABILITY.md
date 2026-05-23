@@ -18,13 +18,14 @@ Links **product requirements** → **risk** → **tests**. Update when adding fe
 | REQ-10 | PRODUCT_BRIEF #10 AI assist | R-02 | F-06 | E2E-AI-*, AI-TOOL-* |
 | REQ-11 | MVP_SCOPE RLS Phase 1 | R-01 | F-10 | SEC-RLS-*, UAT-10 |
 | REQ-12 | CARD_DESIGN move validation | — | F-03,F-04 | UNIT-VAL-*, E2E-JOB-004,006 |
-| REQ-13 | WORKSPACE sidebar + pipeline | — | — | E2E-NAV-001, E2E-BOOT-001 |
+| REQ-13 | WORKSPACE sidebar + pipeline | — | — | E2E-NAV-001, E2E-BOOT-001, E2E-WORKSPACE-* |
 | REQ-14 | AI_UTILIZATION approval | R-02 | F-12 | AI-LOG-*, INT-API-020 |
 | REQ-15 | DEFAULT_PIPELINE 9 columns | — | F-01 | INT-BOOT-001, UAT-01 |
 | REQ-16 | SUPPORT_PAGES help | — | — | E2E-SUP-001 |
 | REQ-17 | NO_MOCK_DATA_POLICY | R-03 | — | V1–V7, TASK-P6-011 |
 | REQ-18 | API_ROUTES + APPROVAL_FLOW | R-02 | F-12 | INT-API-* |
-| REQ-19 | DESIGN_TOKENS / Field ledger UI | — | — | visual review |
+| REQ-19 | DESIGN_TOKENS / Field ledger UI | — | — | visual review, UI-MASTER-001, CSS-002 |
+| REQ-20 | Optimistic background sync queue | — | — | UNIT-SYNC-*, E2E-SYNC-* |
 
 ## Wave 1+ (placeholder)
 

@@ -3,6 +3,7 @@ export type BoardSyncPhase = 'synced' | 'syncing' | 'refreshing' | 'misaligned';
 export type BoardSyncStatus = {
   phase: BoardSyncPhase;
   pendingCount: number;
+  queuedCount: number;
   lastSyncedAt: number | null;
   liveConnected: boolean;
   detail: string | null;
@@ -12,6 +13,7 @@ export type RealtimeConnectionStatus = 'connecting' | 'connected' | 'disconnecte
 
 export function deriveBoardSyncPhase(input: {
   pendingCount: number;
+  queuedCount: number;
   isRefreshing: boolean;
   syncIssue: string | null;
 }): BoardSyncPhase {
@@ -23,7 +25,7 @@ export function deriveBoardSyncPhase(input: {
     return 'refreshing';
   }
 
-  if (input.pendingCount > 0) {
+  if (input.pendingCount > 0 || input.queuedCount > 0) {
     return 'syncing';
   }
 
@@ -32,6 +34,7 @@ export function deriveBoardSyncPhase(input: {
 
 export function buildBoardSyncStatus(input: {
   pendingCount: number;
+  queuedCount: number;
   isRefreshing: boolean;
   syncIssue: string | null;
   lastSyncedAt: number | null;
@@ -40,6 +43,7 @@ export function buildBoardSyncStatus(input: {
   return {
     phase: deriveBoardSyncPhase(input),
     pendingCount: input.pendingCount,
+    queuedCount: input.queuedCount,
     lastSyncedAt: input.lastSyncedAt,
     liveConnected: input.liveConnected,
     detail: input.syncIssue,
@@ -65,4 +69,8 @@ export function formatLastSyncedAt(timestamp: number | null): string | null {
   }
 
   return new Date(timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
+
+export function totalPendingSyncCount(status: BoardSyncStatus): number {
+  return status.pendingCount + status.queuedCount;
 }

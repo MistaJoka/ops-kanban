@@ -10,6 +10,7 @@ import {
   Kanban,
 } from 'lucide-react';
 
+import { AiPageCopilot } from '@/components/ai/AiPageCopilot';
 import { CATEGORY_ACCENT, COLUMN_CATEGORY } from '@/lib/domain/pipeline/types';
 import { cn } from '@/lib/utils';
 
@@ -178,6 +179,7 @@ export default function DashboardPage() {
           </section>
         </div>
       )}
+      <AiPageCopilot page="dashboard" />
     </main>
   );
 }

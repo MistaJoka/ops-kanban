@@ -3,8 +3,11 @@ import { describe, expect, it } from 'vitest';
 import { validateMove } from '@/lib/domain/pipeline/validateMove';
 
 const baseContext = {
+  actorId: 'user-1',
+  assignedToId: null as string | null,
   scheduledStart: '2026-06-01T09:00:00.000Z',
   quoteTotal: 500,
+  quoteLineItemCount: 2,
   balanceDue: 0,
   hasCustomer: true,
   hasTitle: true,
@@ -66,10 +69,50 @@ describe('UNIT-PIPE pipeline validation', () => {
       fromStateKey: 'estimating',
       toStateKey: 'estimate_sent',
       quoteTotal: 0,
+      quoteLineItemCount: 0,
     });
 
     expect(result.allowed).toBe(false);
     expect(result.code).toBe('ESTIMATE_REQUIRED');
+  });
+
+  it('UNIT-PIPE-005b: estimate_sent without customer blocked', () => {
+    const result = validateMove({
+      ...baseContext,
+      role: 'owner',
+      fromStateKey: 'estimating',
+      toStateKey: 'estimate_sent',
+      hasCustomer: false,
+    });
+
+    expect(result.allowed).toBe(false);
+    expect(result.code).toBe('INVALID_STATE');
+  });
+
+  it('UNIT-PIPE-005c: worker cannot move unassigned card assigned to another user', () => {
+    const result = validateMove({
+      ...baseContext,
+      role: 'worker',
+      actorId: 'worker-2',
+      assignedToId: 'worker-1',
+      fromStateKey: 'inquiry',
+      toStateKey: 'site_visit',
+    });
+
+    expect(result.allowed).toBe(false);
+    expect(result.code).toBe('FORBIDDEN');
+  });
+
+  it('UNIT-PIPE-005d: worker cannot archive jobs', () => {
+    const result = validateMove({
+      ...baseContext,
+      role: 'worker',
+      fromStateKey: 'complete',
+      toStateKey: 'archived',
+    });
+
+    expect(result.allowed).toBe(false);
+    expect(result.code).toBe('FORBIDDEN');
   });
 
   it('UNIT-PIPE-006: archived sets archived_at flag', () => {

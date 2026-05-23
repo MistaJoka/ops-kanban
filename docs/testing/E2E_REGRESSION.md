@@ -9,6 +9,7 @@
 | ID | Journey | Tags | P |
 |----|---------|------|---|
 | E2E-BOOT-001 | Signup → land on `/pipeline` → 9 columns visible | smoke | P0 |
+| CSS-001 | App shell loads compiled CSS (no stylesheet 404 on `/support/help`) | smoke | P0 |
 | E2E-JOB-001 | Create inquiry card from + button | smoke | P0 |
 | E2E-JOB-002 | Drag card inquiry→site_visit; fail rollback on mock 500 | regression | P0 |
 | E2E-JOB-003 | Open card slide-over → Property tab → save address | smoke | P0 |

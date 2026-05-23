@@ -1,14 +1,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { getAssigneeInitials } from '@/lib/domain/cards/boardCardFormatters';
+import { computeMoneyBadge, type MoneyBadge } from '@/lib/domain/cards/cardSignals';
 import { COLUMN_CATEGORY, type ColumnCategory } from '@/lib/domain/pipeline/types';
 
-export type MoneyBadge =
-  | 'none'
-  | 'estimate_draft'
-  | 'estimate_sent'
-  | 'invoice_draft'
-  | 'balance_due'
-  | 'paid';
+export type { MoneyBadge };
 
 export type BoardCardView = {
   id: string;
@@ -27,6 +23,12 @@ export type BoardCardView = {
   daysInColumn: number;
   isOverdue: boolean;
   moneyBadge: MoneyBadge;
+  assignedTo: string | null;
+  assigneeName: string | null;
+  assigneeInitials: string | null;
+  quoteTotal: number;
+  balanceDue: number;
+  columnEnteredAt: string;
   updatedAt: string;
 };
 
@@ -41,8 +43,14 @@ type CardRow = {
   scheduled_start: string | null;
   next_action: string | null;
   updated_at: string;
+  column_entered_at: string;
   customer_id: string | null;
+  assigned_to: string | null;
   columns: { state_key: string } | { state_key: string }[] | null;
+  profiles:
+    | { full_name: string | null }
+    | { full_name: string | null }[]
+    | null;
   customers:
     | { name: string; address: string | null }
     | { name: string; address: string | null }[]
@@ -59,50 +67,21 @@ function relationOne<T>(value: T | T[] | null | undefined): T | null {
   return Array.isArray(value) ? (value[0] ?? null) : value;
 }
 
-function computeMoneyBadge(
-  quotes: Array<{ status: string; total: number }> | null | undefined,
-  invoices: Array<{ status: string; balance_due: number }> | null | undefined,
-): MoneyBadge {
-  const invoice = invoices?.[0];
-  if (invoice) {
-    if (invoice.status === 'paid' || invoice.balance_due <= 0) {
-      return 'paid';
-    }
-
-    if (invoice.balance_due > 0) {
-      return 'balance_due';
-    }
-
-    return 'invoice_draft';
-  }
-
-  const quote = quotes?.[0];
-  if (!quote) {
-    return 'none';
-  }
-
-  if (quote.status === 'sent') {
-    return 'estimate_sent';
-  }
-
-  if (quote.total > 0) {
-    return 'estimate_draft';
-  }
-
-  return 'none';
-}
-
-function computeDaysInColumn(updatedAt: string): number {
-  const updated = new Date(updatedAt).getTime();
+function computeDaysInColumn(columnEnteredAt: string): number {
+  const entered = new Date(columnEnteredAt).getTime();
   const now = Date.now();
-  return Math.max(0, Math.floor((now - updated) / (1000 * 60 * 60 * 24)));
+  return Math.max(0, Math.floor((now - entered) / (1000 * 60 * 60 * 24)));
 }
 
 export function mapCardRowToBoardView(row: CardRow): BoardCardView {
   const column = relationOne(row.columns);
   const customer = relationOne(row.customers);
+  const assignee = relationOne(row.profiles);
   const stateKey = column?.state_key ?? 'inquiry';
   const dueDate = row.due_date;
+  const quote = row.quotes?.[0];
+  const invoice = row.invoices?.[0];
+  const assigneeName = assignee?.full_name ?? null;
   const isOverdue = Boolean(
     dueDate && new Date(dueDate).getTime() < Date.now() && stateKey !== 'archived',
   );
@@ -121,9 +100,15 @@ export function mapCardRowToBoardView(row: CardRow): BoardCardView {
     dueDate,
     scheduledStart: row.scheduled_start,
     nextAction: row.next_action,
-    daysInColumn: computeDaysInColumn(row.updated_at),
+    daysInColumn: computeDaysInColumn(row.column_entered_at ?? row.updated_at),
     isOverdue,
     moneyBadge: computeMoneyBadge(row.quotes, row.invoices),
+    assignedTo: row.assigned_to,
+    assigneeName,
+    assigneeInitials: getAssigneeInitials(assigneeName),
+    quoteTotal: quote?.total ?? 0,
+    balanceDue: invoice?.balance_due ?? 0,
+    columnEnteredAt: row.column_entered_at ?? row.updated_at,
     updatedAt: row.updated_at,
   };
 }
@@ -139,9 +124,11 @@ export async function fetchBoardCards(
     .select(
       `
       id, title, column_id, priority, job_type, position, due_date,
-      scheduled_start, next_action, updated_at, customer_id,
+      scheduled_start, next_action, updated_at, column_entered_at, customer_id,
+      assigned_to,
       columns!inner(state_key),
       customers(name, address),
+      profiles:assigned_to(full_name),
       quotes(status, total),
       invoices(status, balance_due)
     `,

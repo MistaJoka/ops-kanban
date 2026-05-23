@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 import { jsonData, jsonError } from '@/lib/api/response';
 import { getHandlerContext, isHandlerContext } from '@/lib/domain/api/handlerContext';
-import { getCardDetail, updateCard } from '@/lib/domain/cards/cardDetail';
+import { getCardDetail, updateCard, CardAuthorizationError } from '@/lib/domain/cards/cardDetail';
+import { DeleteCardError, deleteCard } from '@/lib/domain/cards/deleteCard';
 import { listCardActivities } from '@/lib/domain/activities/listCardActivities';
 import { listCardComments } from '@/lib/domain/comments/cardComments';
 import { getLatestPaymentForInvoice } from '@/lib/domain/integrations/payments';
@@ -76,6 +77,35 @@ export async function GET(
   }
 }
 
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const context = await getHandlerContext();
+  if (!isHandlerContext(context)) return context;
+
+  const { id } = await params;
+
+  try {
+    await deleteCard(context.client, {
+      organizationId: context.organizationId,
+      cardId: id,
+      actorId: context.userId,
+      role: context.role,
+    });
+
+    return jsonData({ deleted: true });
+  } catch (error) {
+    if (error instanceof DeleteCardError) {
+      const status = error.code === 'FORBIDDEN' ? 403 : error.code === 'NOT_FOUND' ? 404 : 400;
+      return jsonError(error.message, status, error.code);
+    }
+
+    const message = error instanceof Error ? error.message : 'Failed to delete card.';
+    return jsonError(message, 500);
+  }
+}
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -102,11 +132,16 @@ export async function PATCH(
       organizationId: context.organizationId,
       cardId: id,
       actorId: context.userId,
+      role: context.role,
       patch: parsed.data,
     });
 
     return jsonData(card);
   } catch (error) {
+    if (error instanceof CardAuthorizationError) {
+      const status = error.code === 'NOT_FOUND' ? 404 : 403;
+      return jsonError(error.message, status, error.code);
+    }
     const message = error instanceof Error ? error.message : 'Failed to update card.';
     return jsonError(message, 400, 'VALIDATION_ERROR');
   }

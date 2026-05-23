@@ -4,6 +4,7 @@ import { logActivity } from '@/lib/domain/activities/logActivity';
 import { runAutomationsForColumnEnter } from '@/lib/domain/automations/runAutomations';
 import type { OrgRole } from '@/lib/domain/auth/roles';
 import { mapCardRowToBoardView, type BoardCardView } from '@/lib/domain/cards/boardCard';
+import { computeInsertPosition } from '@/lib/domain/cards/cardPosition';
 import { validateMove } from '@/lib/domain/pipeline/validateMove';
 
 export type MoveCardInput = {
@@ -13,6 +14,7 @@ export type MoveCardInput = {
   actorId: string | null;
   role: OrgRole;
   reason?: string;
+  insertIndex?: number;
 };
 
 export class MoveCardError extends Error {
@@ -25,22 +27,24 @@ export class MoveCardError extends Error {
   }
 }
 
+const CARD_SELECT = `
+  id, title, column_id, priority, job_type, position, due_date,
+  scheduled_start, next_action, updated_at, column_entered_at, customer_id,
+  assigned_to, archived_at,
+  columns!inner(state_key),
+  customers(name, address),
+  profiles:assigned_to(full_name),
+  quotes(status, total, quote_items(id)),
+  invoices(status, balance_due)
+`;
+
 export async function moveCard(
   client: SupabaseClient,
   input: MoveCardInput,
 ): Promise<BoardCardView> {
   const { data: card, error: cardError } = await client
     .from('cards')
-    .select(
-      `
-      id, title, column_id, priority, job_type, position, due_date,
-      scheduled_start, next_action, updated_at, customer_id, archived_at,
-      columns!inner(state_key),
-      customers(name, address),
-      quotes(status, total),
-      invoices(status, balance_due)
-    `,
-    )
+    .select(CARD_SELECT)
     .eq('id', input.cardId)
     .eq('organization_id', input.organizationId)
     .single();
@@ -62,7 +66,9 @@ export async function moveCard(
 
   const fromColumn = Array.isArray(card.columns) ? card.columns[0] : card.columns;
   const fromStateKey = fromColumn?.state_key ?? 'inquiry';
-  const quoteTotal = (card.quotes as Array<{ total: number }> | null)?.[0]?.total ?? 0;
+  const quoteRow = (card.quotes as Array<{ total: number; quote_items?: Array<{ id: string }> }> | null)?.[0];
+  const quoteTotal = quoteRow?.total ?? 0;
+  const quoteLineItemCount = quoteRow?.quote_items?.length ?? 0;
   const balanceDue =
     (card.invoices as Array<{ balance_due: number }> | null)?.[0]?.balance_due ?? 0;
 
@@ -82,10 +88,13 @@ export async function moveCard(
 
   const validation = validateMove({
     role: input.role,
+    actorId: input.actorId,
+    assignedToId: (card.assigned_to as string | null) ?? null,
     fromStateKey,
     toStateKey: targetColumn.state_key,
     scheduledStart: card.scheduled_start,
     quoteTotal,
+    quoteLineItemCount,
     balanceDue: Number(balanceDue),
     hasCustomer: Boolean(card.customer_id),
     hasTitle: Boolean(card.title?.trim()),
@@ -103,13 +112,44 @@ export async function moveCard(
     );
   }
 
+  const now = new Date().toISOString();
+  const columnChanged = card.column_id !== input.targetColumnId;
+
+  let nextPosition: number | undefined;
+  if (input.insertIndex !== undefined) {
+    const { data: siblings, error: siblingsError } = await client
+      .from('cards')
+      .select('id, position')
+      .eq('organization_id', input.organizationId)
+      .eq('column_id', input.targetColumnId)
+      .neq('id', input.cardId)
+      .order('position', { ascending: true });
+
+    if (siblingsError) {
+      throw new MoveCardError(siblingsError.message, 'INTERNAL');
+    }
+
+    nextPosition = computeInsertPosition(
+      (siblings ?? []).map((row) => ({ position: Number(row.position) })),
+      input.insertIndex,
+    );
+  }
+
   const updatePayload: Record<string, unknown> = {
     column_id: input.targetColumnId,
-    updated_at: new Date().toISOString(),
+    updated_at: now,
   };
 
+  if (nextPosition !== undefined) {
+    updatePayload.position = nextPosition;
+  }
+
+  if (columnChanged) {
+    updatePayload.column_entered_at = now;
+  }
+
   if (validation.setArchivedAt) {
-    updatePayload.archived_at = new Date().toISOString();
+    updatePayload.archived_at = now;
   } else if (targetColumn.state_key !== 'archived') {
     updatePayload.archived_at = null;
   }
@@ -119,16 +159,7 @@ export async function moveCard(
     .update(updatePayload)
     .eq('id', input.cardId)
     .eq('organization_id', input.organizationId)
-    .select(
-      `
-      id, title, column_id, priority, job_type, position, due_date,
-      scheduled_start, next_action, updated_at, customer_id,
-      columns!inner(state_key),
-      customers(name, address),
-      quotes(status, total),
-      invoices(status, balance_due)
-    `,
-    )
+    .select(CARD_SELECT)
     .single();
 
   if (updateError || !updated) {

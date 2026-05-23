@@ -31,6 +31,7 @@ Core product rules:
    - Empty states only; never fake “sample” jobs.
    - Test fixtures live under tests/ only.
    - Wire tool-executor to real domain services (no fake “executed” without DB write).
+10. UI decisions defer to docs/product/UI_MASTER_FORMULA.md + WORKSPACE_DESIGN.md + CARD_DESIGN.md + DESIGN_TOKENS.md.
 
 Target stack:
 - Next.js
