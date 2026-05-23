@@ -2,6 +2,22 @@
 
 Fast navigation for AI-assisted coding sessions.
 
+## Context folder
+
+| Need | File |
+|---|---|
+| Folder index | `context/README.md` |
+| First briefing | `context/START_HERE.md` |
+| Product identity | `context/PROJECT_NORTH_STAR.md` |
+| Repo state | `context/CURRENT_STATE.md` |
+| Stable decisions | `context/DECISIONS_LOCKED.md` |
+| Next-task selection | `context/BUILD_NEXT.md` |
+| Session flow | `context/AI_SESSION_CHECKLIST.md` |
+| Acceptance checks | `context/QUALITY_GATE.md` |
+| Stable constraints | `context/DO_NOT_BREAK.md` |
+| File navigation | `context/FILE_MAP.md` |
+| Context upkeep | `context/CONTEXT_MAINTENANCE.md` |
+
 ## Start points
 
 | Need | File |
@@ -48,11 +64,25 @@ Fast navigation for AI-assisted coding sessions.
 | Signup bootstrap | `docs/database/SIGNUP_BOOTSTRAP.md` |
 | Migrations | `supabase/migrations/` |
 
+## App/code areas
+
+| Need | Path |
+|---|---|
+| App routes | `app/` or `src/app/` |
+| UI components | `components/` or `src/components/` |
+| Domain logic | `lib/domain/` |
+| Supabase clients | `lib/db/supabase/` |
+| Env validation | `lib/env/` |
+| Starter snippets | `src-starter/` |
+| Migrations | `supabase/migrations/` |
+
 ## Testing
 
-| Need | File |
+| Need | File/path |
 |---|---|
 | QA pack | `docs/testing/README.md` |
+| Unit tests | Search for `*.test.*` / test scripts in `package.json` |
+| E2E smoke | Playwright smoke command from README/package scripts |
 
 ## Cursor
 
