@@ -2,11 +2,11 @@
 
 ## Product identity
 
-`ops-kanban` is an AI-first operations board for a solo or small landscaping business.
+`ops-kanban` is an AI-first operations Kanban for a solo or small landscaping business.
 
 It is not a generic Trello clone.
 
-The product is a business operating workspace where each job moves through a real-world pipeline.
+It is a business operating workspace where each job moves through a real-world lifecycle from inquiry to paid and archived.
 
 ## Core thesis
 
@@ -23,6 +23,7 @@ AI is the operational copilot.
 A solo landscaper or small landscaping operator who needs a simple, mobile-first system to manage:
 
 - New inquiries
+- Customer/property details
 - Site visits
 - Estimates
 - Scheduling
@@ -32,6 +33,17 @@ A solo landscaper or small landscaping operator who needs a simple, mobile-first
 - Payments
 - Follow-ups
 - Archived work
+
+## Business outcome
+
+The app should help the operator:
+
+- Capture jobs without losing details
+- Know what needs attention today
+- Move work through the pipeline faster
+- Reduce admin friction
+- Keep customer/job/payment info connected
+- Use AI to draft, summarize, and guide actions
 
 ## Product feel
 
@@ -49,6 +61,18 @@ The app should feel:
 
 A user should be able to run the essential job lifecycle from one universal board.
 
+## UX standard
+
+```txt
+Open app.
+See work.
+Move card.
+Open card.
+Know details.
+Take action.
+Close loop.
+```
+
 ## Non-goals
 
 Do not turn this into:
@@ -59,6 +83,7 @@ Do not turn this into:
 - A multi-board maze
 - A dashboard that replaces the Kanban workspace
 - A system that requires the user to understand technical concepts
+- An AI toy that does not update real operational workflows
 
 ## Primitive compression
 
