@@ -13,11 +13,7 @@ const FAIL_LINE_COUNT = 600;
 const TARGET_LINE_COUNT = 500;
 
 /** Grandfathered mega-files — shrink as splits land (TASK-P14-006). */
-const ALLOWLIST = new Set([
-  'components/pipeline/kanban-board/useKanbanBoardController.ts',
-  'components/pipeline/useBoardState.ts',
-  'lib/domain/ai/toolCalls.ts',
-]);
+const ALLOWLIST = new Set([]);
 
 const SCAN_DIRS = ['app', 'components', 'lib'];
 const EXT = new Set(['.ts', '.tsx']);

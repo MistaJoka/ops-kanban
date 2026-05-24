@@ -1,69 +1,38 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { SettingsPageHeader } from '@/components/settings/SettingsPageHeader';
-
-type Template = {
-  id: string;
-  name: string;
-  channel: 'sms' | 'email';
-  subject: string | null;
-  body: string;
-};
+import { useSettingsMessageTemplates } from '@/components/settings/hooks/useSettingsHooks';
 
 export default function MessageTemplatesPage() {
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const templates = useSettingsMessageTemplates();
   const [name, setName] = useState('');
   const [channel, setChannel] = useState<'sms' | 'email'>('sms');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const load = async () => {
-    setLoading(true);
-    const response = await fetch('/api/message-templates');
-    const payload = await response.json();
-    if (payload.data) {
-      setTemplates(payload.data);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    void load();
-  }, []);
-
   const create = async (event: React.FormEvent) => {
     event.preventDefault();
     setSaving(true);
-    setError(null);
+    templates.setError(null);
 
     try {
-      const response = await fetch('/api/message-templates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          channel,
-          subject: channel === 'email' ? subject : undefined,
-          body,
-          variables: ['customer_name', 'job_title', 'scheduled_date', 'organization_name'],
-        }),
+      await templates.create({
+        name,
+        channel,
+        subject: channel === 'email' ? subject : undefined,
+        body,
+        variables: ['customer_name', 'job_title', 'scheduled_date', 'organization_name'],
       });
-      const payload = await response.json();
-      if (!response.ok) {
-        throw new Error(payload.error ?? 'Failed to create template.');
-      }
-
       setName('');
       setSubject('');
       setBody('');
-      await load();
     } catch (createError) {
-      setError(createError instanceof Error ? createError.message : 'Failed to create template.');
+      templates.setError(
+        createError instanceof Error ? createError.message : 'Failed to create template.',
+      );
     } finally {
       setSaving(false);
     }
@@ -76,9 +45,9 @@ export default function MessageTemplatesPage() {
         description="Reusable SMS and email copy. Use {{customer_name}}, {{job_title}}, {{scheduled_date}}."
       />
 
-      {error ? (
+      {templates.error ? (
         <p role="alert" className="ops-alert-error mt-4">
-          {error}
+          {templates.error}
         </p>
       ) : null}
 
@@ -122,12 +91,12 @@ export default function MessageTemplatesPage() {
 
       <section className="mt-8 space-y-3">
         <h2 className="text-sm font-semibold text-[var(--text-primary)]">Saved templates</h2>
-        {loading ? (
+        {templates.loading ? (
           <p className="text-sm text-[var(--text-secondary)]">Loading…</p>
-        ) : templates.length === 0 ? (
+        ) : templates.items.length === 0 ? (
           <p className="ops-empty-state">No templates yet.</p>
         ) : (
-          templates.map((template) => (
+          templates.items.map((template) => (
             <article key={template.id} className="ops-section-card">
               <p className="font-medium text-[var(--text-primary)]">
                 {template.name}{' '}

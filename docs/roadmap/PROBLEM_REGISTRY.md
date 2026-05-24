@@ -45,8 +45,8 @@ When resolved, set **Status** `resolved` and add **Prevention** test or LEARN.
 | PRB-001      | Remote migrations not applied     | resolved | db   | P1    |
 | PRB-SLOP-001 | KanbanBoard god component         | resolved | ui   | P14   |
 | PRB-SLOP-002 | useCardMutations mega-hook        | resolved | ui   | P14   |
-| PRB-SLOP-003 | useBoardState orchestration bloat | open     | ui   | P14   |
-| PRB-SLOP-004 | toolCalls.ts size                 | open     | ai   | P14   |
+| PRB-SLOP-003 | useBoardState orchestration bloat | resolved | ui   | P14   |
+| PRB-SLOP-004 | toolCalls.ts size                 | resolved | ai   | P14   |
 
 ---
 
@@ -94,29 +94,35 @@ When resolved, set **Status** `resolved` and add **Prevention** test or LEARN.
 
 | Field        | Value |
 | ------------ | ----- |
-| **Status**   | open  |
+| **Status**   | resolved |
 | **Phase**    | P14   |
 | **Area**     | ui    |
 | **Severity** | S4    |
-| **LEARN**    | —     |
+| **Resolved** | LOG-2026-05-24-01 |
+| **LEARN**    | LEARN-019 |
 
 **Symptom:** 740-line hook mirrors domain mutation kinds.
 
-**Prevention:** Allowlisted until sync folder extraction.
+**Fix:** Extracted `sync/useBoardMutations.ts` + `createReapplyFailedMutation`; composer ≤400 lines.
+
+**Prevention:** `check:slop-health`; allowlist entry removed.
 
 ### PRB-SLOP-004 — toolCalls.ts size
 
 | Field        | Value |
 | ------------ | ----- |
-| **Status**   | open  |
+| **Status**   | resolved |
 | **Phase**    | P14   |
 | **Area**     | ai    |
 | **Severity** | S4    |
-| **LEARN**    | —     |
+| **Resolved** | LOG-2026-05-24-01 |
+| **LEARN**    | LEARN-019 |
 
 **Symptom:** 840-line domain module.
 
-**Prevention:** Allowlisted; split by tool category in future task.
+**Fix:** Split to `lib/domain/ai/tools/*` category modules; thin dispatcher in `toolCalls.ts`.
+
+**Prevention:** Allowlist empty; `check:slop-health` passes with zero grandfathered files.
 
 ### PRB-001 — Remote Supabase migrations not applied
 

@@ -17,6 +17,8 @@ export function FilesTab({
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [copyingPortal, setCopyingPortal] = useState(false);
+  const [analyzingId, setAnalyzingId] = useState<string | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -84,6 +86,38 @@ export function FilesTab({
     }
   };
 
+  const analyzePhoto = async (attachment: AttachmentView) => {
+    if (!attachment.mimeType.startsWith('image/')) {
+      setError('Vision analysis supports images only.');
+      return;
+    }
+
+    setAnalyzingId(attachment.id);
+    setError(null);
+    setAnalysisResult(null);
+
+    try {
+      const response = await fetch(
+        `/api/cards/${cardId}/attachments/${attachment.id}/analyze`,
+        { method: 'POST' },
+      );
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error ?? 'Analysis failed.');
+      }
+
+      const message =
+        payload.data?.status === 'executed'
+          ? String(payload.data.message)
+          : String(payload.data?.message ?? 'Analysis complete.');
+      setAnalysisResult(message);
+    } catch (analyzeError) {
+      setError(analyzeError instanceof Error ? analyzeError.message : 'Analysis failed.');
+    } finally {
+      setAnalyzingId(null);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -137,13 +171,25 @@ export function FilesTab({
                 </p>
               </div>
               {canManage ? (
-                <button
-                  type="button"
-                  onClick={() => void remove(attachment.id)}
-                  className="rounded-lg border border-[var(--topbar-border)] px-2 py-1 text-xs"
-                >
-                  Remove
-                </button>
+                <div className="flex shrink-0 gap-2">
+                  {attachment.mimeType.startsWith('image/') ? (
+                    <button
+                      type="button"
+                      disabled={analyzingId === attachment.id}
+                      onClick={() => void analyzePhoto(attachment)}
+                      className="rounded-lg border border-[var(--accent)] px-2 py-1 text-xs font-medium text-[var(--accent)]"
+                    >
+                      {analyzingId === attachment.id ? 'Analyzing…' : 'Analyze photo'}
+                    </button>
+                  ) : null}
+                  <button
+                    type="button"
+                    onClick={() => void remove(attachment.id)}
+                    className="rounded-lg border border-[var(--topbar-border)] px-2 py-1 text-xs"
+                  >
+                    Remove
+                  </button>
+                </div>
               ) : null}
             </li>
           ))}
@@ -171,6 +217,13 @@ export function FilesTab({
           >
             {uploading ? 'Uploading…' : 'Upload file'}
           </button>
+        </div>
+      ) : null}
+
+      {analysisResult ? (
+        <div className="rounded-xl border border-[var(--topbar-border)] bg-[var(--accent-muted)] px-4 py-3 text-sm text-[var(--text-primary)]">
+          <p className="font-semibold">AI scope analysis</p>
+          <p className="mt-1 whitespace-pre-wrap">{analysisResult}</p>
         </div>
       ) : null}
 

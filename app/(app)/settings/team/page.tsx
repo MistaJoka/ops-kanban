@@ -1,38 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
 import { SettingsPageHeader } from '@/components/settings/SettingsPageHeader';
-
-type Member = {
-  userId: string;
-  fullName: string | null;
-  role: string;
-};
+import { useSettingsMembers } from '@/components/settings/hooks/useSettingsHooks';
 
 function roleLabel(role: string): string {
   return role.charAt(0).toUpperCase() + role.slice(1);
 }
 
 export default function TeamSettingsPage() {
-  const [members, setMembers] = useState<Member[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    void (async () => {
-      setLoading(true);
-      const response = await fetch('/api/members');
-      const payload = await response.json();
-      if (!response.ok) {
-        setError(payload.error ?? 'Failed to load team members.');
-        setLoading(false);
-        return;
-      }
-      setMembers(payload.data ?? []);
-      setLoading(false);
-    })();
-  }, []);
+  const { data: members, loading, error } = useSettingsMembers();
 
   return (
     <div className="ops-page-shell max-w-3xl">
@@ -59,7 +35,7 @@ export default function TeamSettingsPage() {
         <h2 className="text-sm font-semibold text-[var(--text-primary)]">Members</h2>
         {loading ? (
           <p className="mt-4 text-sm text-[var(--text-secondary)]">Loading…</p>
-        ) : members.length ? (
+        ) : members?.length ? (
           <ul className="mt-4 divide-y" style={{ borderColor: 'var(--topbar-border)' }}>
             {members.map((member) => (
               <li

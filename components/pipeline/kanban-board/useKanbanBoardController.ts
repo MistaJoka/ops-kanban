@@ -1,42 +1,32 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-  useSensor,
-  useSensors,
-  PointerSensor,
-  type DragEndEvent,
-  type DragOverEvent,
-  type DragStartEvent,
-} from '@dnd-kit/core';
+import { useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
 
 import type { BoardView } from '@/lib/domain/board/getBoard';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
-import { getAssigneeInitials } from '@/lib/domain/cards/boardCardFormatters';
 import {
   filterBoardCards,
   getAdvancedFilterLabel,
   BOARD_JOB_TYPES,
   type AdvancedFilterKey,
 } from '@/lib/domain/board/boardFilters';
-import { isTempCardId } from '@/lib/domain/board/boardOptimistic';
 import type { OrgMemberView } from '@/lib/domain/organization/listMembers';
 import { nextGroupKey, pickActiveGroup } from '@/lib/domain/pipeline/pickActiveGroup';
 import { PIPELINE_GROUP_LABELS, type PipelineGroupKey } from '@/lib/landscaping-full-pipeline';
-import type { BoardCardPatch } from '@/components/pipeline/BoardCardMenu';
 import type { NewJobFormValues } from '@/components/pipeline/NewJobModal';
 import { usePipelineSearch } from '@/components/pipeline/PipelineSearchProvider';
 import { useBoardRealtime } from '@/components/pipeline/useBoardRealtime';
 import type { BoardSyncHandlers } from '@/components/pipeline/useBoardState';
-import { createClientMutationId } from '@/components/pipeline/useOutboundSync';
 import { useWorkspaceShortcutsOptional } from '@/components/workspace/WorkspaceShortcutsProvider';
 import {
   GROUP_KEYS,
   resolveAdvancedFilter,
-  resolveDragOverColumnId,
-  resolveReorderTarget,
 } from '@/components/pipeline/kanban-board/kanbanDndUtils';
+import { useKanbanBulkActions } from '@/components/pipeline/kanban-board/useKanbanBulkActions';
+import { useKanbanCardActions } from '@/components/pipeline/kanban-board/useKanbanCardActions';
+import { useKanbanDragHandlers } from '@/components/pipeline/kanban-board/useKanbanDragHandlers';
 
 type BoardStateSlice = {
   board: BoardView;
@@ -80,8 +70,6 @@ export function useKanbanBoardController(
     setLiveConnected,
   } = boardState;
 
-  const [activeCardId, setActiveCardId] = useState<string | null>(null);
-  const [dragOverColumnId, setDragOverColumnId] = useState<string | null>(null);
   const [members, setMembers] = useState<OrgMemberView[]>([]);
   const [search, setSearch] = useState('');
   const [filterKey, setFilterKey] = useState<AdvancedFilterKey>('all');
@@ -100,9 +88,6 @@ export function useKanbanBoardController(
     actionLabel: string;
     command: string;
   } | null>(null);
-  const [selectedCardIds, setSelectedCardIds] = useState<Set<string>>(() => new Set());
-  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState<{ cardIds: string[] } | null>(null);
-  const [bulkDeletePending, setBulkDeletePending] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedCardId = searchParams.get('card');
@@ -116,11 +101,6 @@ export function useKanbanBoardController(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },
     }),
-  );
-
-  const activeCard = useMemo(
-    () => (activeCardId ? (board.cards.find((card) => card.id === activeCardId) ?? null) : null),
-    [activeCardId, board.cards],
   );
 
   const openCard = useCallback(
@@ -139,101 +119,6 @@ export function useKanbanBoardController(
       void refreshBoard(true);
     }
   }, [includeArchived, refreshBoard]);
-
-  useEffect(() => {
-    setSelectedCardIds((current) => {
-      const validIds = new Set(board.cards.map((card) => card.id));
-      let changed = false;
-      const next = new Set<string>();
-      for (const id of current) {
-        if (validIds.has(id)) {
-          next.add(id);
-        } else {
-          changed = true;
-        }
-      }
-      return changed ? next : current;
-    });
-  }, [board.cards]);
-
-  const toggleCardSelection = useCallback((cardId: string) => {
-    setSelectedCardIds((current) => {
-      const next = new Set(current);
-      if (next.has(cardId)) next.delete(cardId);
-      else next.add(cardId);
-      return next;
-    });
-  }, []);
-
-  const selectAllInColumn = useCallback((_columnId: string, cardIds: string[]) => {
-    setSelectedCardIds((current) => {
-      const next = new Set(current);
-      const allSelected = cardIds.length > 0 && cardIds.every((id) => next.has(id));
-      if (allSelected) {
-        for (const id of cardIds) next.delete(id);
-      } else {
-        for (const id of cardIds) next.add(id);
-      }
-      return next;
-    });
-  }, []);
-
-  const requestDeleteSelectedInColumn = useCallback((_columnId: string, cardIds: string[]) => {
-    if (cardIds.length === 0) return;
-    setBulkDeleteConfirm({ cardIds: [...cardIds] });
-  }, []);
-
-  const confirmBulkDelete = useCallback(async () => {
-    if (!bulkDeleteConfirm || bulkDeleteConfirm.cardIds.length === 0) return;
-
-    const cardIds = bulkDeleteConfirm.cardIds;
-    const previousCards = boardSync.getBoardSnapshot();
-    setBulkDeletePending(true);
-
-    for (const cardId of cardIds) {
-      boardSync.removeCard(cardId);
-    }
-
-    setSelectedCardIds((current) => {
-      const next = new Set(current);
-      for (const id of cardIds) next.delete(id);
-      return next;
-    });
-
-    try {
-      if (boardSync.queueEnabled) {
-        for (const cardId of cardIds) {
-          boardSync.enqueue({
-            kind: 'deleteCard',
-            clientMutationId: createClientMutationId(),
-            cardId,
-            rollback: { cards: previousCards },
-          });
-        }
-      } else {
-        boardSync.beginOutboundSync();
-        for (const cardId of cardIds) {
-          const response = await fetch(`/api/cards/${cardId}`, { method: 'DELETE' });
-          const data = await response.json();
-          if (!response.ok) throw new Error(data.error ?? 'Failed to delete job.');
-        }
-        boardSync.endOutboundSync(true);
-      }
-
-      setBulkDeleteConfirm(null);
-      if (selectedCardId && cardIds.includes(selectedCardId)) closeCard();
-    } catch (deleteError) {
-      if (!boardSync.queueEnabled) {
-        await refreshBoard(includeArchived);
-        boardSync.endOutboundSync(
-          false,
-          deleteError instanceof Error ? deleteError.message : 'Failed to delete jobs.',
-        );
-      }
-    } finally {
-      setBulkDeletePending(false);
-    }
-  }, [boardSync, bulkDeleteConfirm, closeCard, includeArchived, refreshBoard, selectedCardId]);
 
   useEffect(() => {
     void fetch('/api/members')
@@ -273,6 +158,58 @@ export function useKanbanBoardController(
     }
     return map;
   }, [visibleColumns, filteredCards]);
+
+  const setMoveInlinePrompt = useCallback((cardId: string, stateKey: string) => {
+    if (['estimating', 'site_visit'].includes(stateKey)) {
+      setInlinePrompt({
+        cardId,
+        message: 'Job moved — draft an estimate from scope notes?',
+        actionLabel: 'AI draft estimate',
+        command: 'Draft estimate from scope notes',
+      });
+    } else if (['complete', 'invoice_prep'].includes(stateKey)) {
+      setInlinePrompt({
+        cardId,
+        message: 'Job complete — create an invoice draft?',
+        actionLabel: 'Create invoice',
+        command: 'Create invoice draft for this job',
+      });
+    } else {
+      setInlinePrompt(null);
+    }
+  }, []);
+
+  const bulk = useKanbanBulkActions({
+    boardCards: board.cards,
+    boardSync,
+    refreshBoard,
+    includeArchived,
+    selectedCardId,
+    closeCard,
+  });
+
+  const { handleMoveCard, handlePatchCard, handleArchiveCard } = useKanbanCardActions({
+    board,
+    boardSync,
+    members,
+    reorderCard,
+    onColumnChange: setMoveInlinePrompt,
+  });
+
+  const drag = useKanbanDragHandlers({
+    board,
+    cardsByColumn,
+    reorderCard,
+    onColumnChange: setMoveInlinePrompt,
+  });
+
+  const activeCard = useMemo(
+    () =>
+      drag.activeCardId
+        ? (board.cards.find((card) => card.id === drag.activeCardId) ?? null)
+        : null,
+    [drag.activeCardId, board.cards],
+  );
 
   const columnGroups = useMemo(() => {
     if (board.pipelineMode !== 'full') {
@@ -436,149 +373,6 @@ export function useKanbanBoardController(
     [createCardWithDetails, openCard],
   );
 
-  const setMoveInlinePrompt = useCallback((cardId: string, stateKey: string) => {
-    if (['estimating', 'site_visit'].includes(stateKey)) {
-      setInlinePrompt({
-        cardId,
-        message: 'Job moved — draft an estimate from scope notes?',
-        actionLabel: 'AI draft estimate',
-        command: 'Draft estimate from scope notes',
-      });
-    } else if (['complete', 'invoice_prep'].includes(stateKey)) {
-      setInlinePrompt({
-        cardId,
-        message: 'Job complete — create an invoice draft?',
-        actionLabel: 'Create invoice',
-        command: 'Create invoice draft for this job',
-      });
-    } else {
-      setInlinePrompt(null);
-    }
-  }, []);
-
-  const handleMoveCard = useCallback(
-    async (cardId: string, targetColumnId: string) => {
-      const targetColumn = board.columns.find((column) => column.id === targetColumnId);
-      const columnCards = board.cards
-        .filter((card) => card.columnId === targetColumnId && card.id !== cardId)
-        .sort((a, b) => a.position - b.position);
-      const result = await reorderCard(cardId, targetColumnId, columnCards.length);
-      if (result.ok && targetColumn) setMoveInlinePrompt(cardId, targetColumn.stateKey);
-    },
-    [board.cards, board.columns, reorderCard, setMoveInlinePrompt],
-  );
-
-  const handlePatchCard = useCallback(
-    async (cardId: string, patch: BoardCardPatch) => {
-      const existing = board.cards.find((card) => card.id === cardId);
-      if (!existing || isTempCardId(cardId)) return;
-
-      const optimisticPatch: Partial<BoardCardView> = {
-        ...(patch.title !== undefined ? { title: patch.title } : {}),
-        ...(patch.dueDate !== undefined ? { dueDate: patch.dueDate } : {}),
-      };
-      if (patch.assignedTo !== undefined) {
-        const member = members.find((item) => item.userId === patch.assignedTo);
-        optimisticPatch.assignedTo = patch.assignedTo;
-        optimisticPatch.assigneeName = member?.fullName ?? null;
-        optimisticPatch.assigneeInitials = getAssigneeInitials(member?.fullName);
-      }
-
-      boardSync.patchCard(cardId, optimisticPatch);
-      const apiPatch: Record<string, unknown> = {};
-      if (patch.title !== undefined) apiPatch.title = patch.title;
-      if (patch.dueDate !== undefined) apiPatch.dueDate = patch.dueDate;
-      if (patch.assignedTo !== undefined) apiPatch.assignedTo = patch.assignedTo;
-
-      if (boardSync.queueEnabled) {
-        boardSync.enqueue({
-          kind: 'patchCard',
-          clientMutationId: createClientMutationId(),
-          cardId,
-          patch: apiPatch,
-          rollback: { cards: board.cards },
-        });
-        return;
-      }
-
-      boardSync.beginOutboundSync();
-      try {
-        const response = await fetch(`/api/cards/${cardId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(apiPatch),
-        });
-        const payload = await response.json();
-        if (!response.ok) throw new Error(payload.error ?? 'Failed to save job.');
-        boardSync.syncFromDetail(payload.data);
-        boardSync.endOutboundSync(true);
-      } catch (patchError) {
-        boardSync.patchCard(cardId, existing);
-        boardSync.endOutboundSync(
-          false,
-          patchError instanceof Error ? patchError.message : 'Failed to save job.',
-        );
-      }
-    },
-    [board.cards, boardSync, members],
-  );
-
-  const handleDragStart = useCallback((event: DragStartEvent) => {
-    setActiveCardId(String(event.active.id));
-  }, []);
-
-  const handleDragOver = useCallback(
-    (event: DragOverEvent) => {
-      const overId = event.over ? String(event.over.id) : null;
-      if (!overId) {
-        setDragOverColumnId(null);
-        return;
-      }
-      setDragOverColumnId(resolveDragOverColumnId(board.columns, cardsByColumn, overId));
-    },
-    [board.columns, cardsByColumn],
-  );
-
-  const handleDragEnd = useCallback(
-    async (event: DragEndEvent) => {
-      const activeId = String(event.active.id);
-      const overId = event.over ? String(event.over.id) : null;
-      setActiveCardId(null);
-      setDragOverColumnId(null);
-      if (!overId) return;
-
-      const target = resolveReorderTarget(board.columns, cardsByColumn, activeId, overId);
-      if (!target) return;
-
-      const targetColumn = board.columns.find((column) => column.id === target.targetColumnId);
-      const result = await reorderCard(activeId, target.targetColumnId, target.insertIndex);
-      if (result.ok && targetColumn) {
-        const priorStateKey = board.cards.find((card) => card.id === activeId)?.stateKey;
-        if (priorStateKey !== targetColumn.stateKey) {
-          setMoveInlinePrompt(activeId, targetColumn.stateKey);
-        }
-      }
-    },
-    [board.columns, board.cards, cardsByColumn, reorderCard, setMoveInlinePrompt],
-  );
-
-  const handleDragCancel = useCallback(() => {
-    setActiveCardId(null);
-    setDragOverColumnId(null);
-  }, []);
-
-  const handleArchiveCard = useCallback(
-    async (cardId: string) => {
-      const archivedColumn = board.columns.find((column) => column.stateKey === 'archived');
-      if (!archivedColumn) return;
-      const columnCards = board.cards
-        .filter((card) => card.columnId === archivedColumn.id && card.id !== cardId)
-        .sort((a, b) => a.position - b.position);
-      await reorderCard(cardId, archivedColumn.id, columnCards.length);
-    },
-    [board.cards, board.columns, reorderCard],
-  );
-
   const runInlineAi = useCallback(async () => {
     if (!inlinePrompt || !userId) return;
     const response = await fetch('/api/ai/command', {
@@ -669,31 +463,31 @@ export function useKanbanBoardController(
     newJobError,
     inlinePrompt,
     setInlinePrompt,
-    selectedCardIds,
-    bulkDeleteConfirm,
-    setBulkDeleteConfirm,
-    bulkDeletePending,
+    selectedCardIds: bulk.selectedCardIds,
+    bulkDeleteConfirm: bulk.bulkDeleteConfirm,
+    setBulkDeleteConfirm: bulk.setBulkDeleteConfirm,
+    bulkDeletePending: bulk.bulkDeletePending,
     selectedCardId,
     openCard,
     closeCard,
     openNewJobModal,
     closeNewJobModal,
-    confirmBulkDelete,
+    confirmBulkDelete: bulk.confirmBulkDelete,
     visibleColumns,
     filteredCards,
     cardsByColumn,
     columnGroups,
     activeCard,
-    activeCardId,
-    dragOverColumnId,
+    activeCardId: drag.activeCardId,
+    dragOverColumnId: drag.dragOverColumnId,
     members,
     handleNewJobSubmit,
     handleMoveCard,
     handlePatchCard,
-    handleDragStart,
-    handleDragOver,
-    handleDragEnd,
-    handleDragCancel,
+    handleDragStart: drag.handleDragStart,
+    handleDragOver: drag.handleDragOver,
+    handleDragEnd: drag.handleDragEnd,
+    handleDragCancel: drag.handleDragCancel,
     handleArchiveCard,
     runInlineAi,
     aiContext,
@@ -704,8 +498,8 @@ export function useKanbanBoardController(
     boardHealth,
     setBoardScrollRef,
     setGroupRef,
-    toggleCardSelection,
-    selectAllInColumn,
-    requestDeleteSelectedInColumn,
+    toggleCardSelection: bulk.toggleCardSelection,
+    selectAllInColumn: bulk.selectAllInColumn,
+    requestDeleteSelectedInColumn: bulk.requestDeleteSelectedInColumn,
   };
 }

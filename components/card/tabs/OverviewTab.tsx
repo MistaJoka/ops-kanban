@@ -6,6 +6,7 @@ import type { InvoiceView } from '@/lib/domain/money/invoices';
 import type { QuoteView } from '@/lib/domain/money/quotes';
 import type { CardIntegrationSummary } from '@/lib/domain/integrations/cardIntegrationSummary';
 import { CardAiSummary } from '@/components/ai/CardAiSummary';
+import { AiInlineBanner } from '@/components/ai/AiInlineBanner';
 import { IntegrationStrip } from '@/components/card/IntegrationStrip';
 import { Field } from '@/components/card/Field';
 
@@ -21,6 +22,8 @@ export function OverviewTab({
   onOpenEstimate,
   onDraftEstimateFromAi,
   aiDraftLoading,
+  onSuggestNextAction,
+  suggestNextActionLoading,
   onCreateInvoice,
   integrations,
   saving,
@@ -37,6 +40,8 @@ export function OverviewTab({
   onOpenEstimate: () => void;
   onDraftEstimateFromAi?: () => void;
   aiDraftLoading?: boolean;
+  onSuggestNextAction?: () => void;
+  suggestNextActionLoading?: boolean;
   onCreateInvoice: () => Promise<void>;
   integrations?: CardIntegrationSummary;
   saving: boolean;
@@ -109,11 +114,19 @@ export function OverviewTab({
       </Field>
       <Field label="Next action">
         <input
+          key={card.nextAction ?? 'empty'}
           defaultValue={card.nextAction ?? ''}
           onBlur={(event) => void onPatch({ nextAction: event.target.value || null })}
           className="field-input"
         />
       </Field>
+      {canManage && !card.nextAction && onSuggestNextAction ? (
+        <AiInlineBanner
+          message="No next step set — AI can suggest one based on this job's stage."
+          actionLabel={suggestNextActionLoading ? 'Suggesting…' : 'Suggest next step'}
+          onAction={() => onSuggestNextAction()}
+        />
+      ) : null}
       <Field label="Due date">
         <input
           type="date"

@@ -4,19 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { SettingsPageHeader } from '@/components/settings/SettingsPageHeader';
-
-type Contract = {
-  id: string;
-  customerId: string;
-  customerName: string;
-  title: string;
-  jobType: string | null;
-  frequency: string;
-  nextRunAt: string;
-  amount: number | null;
-  active: boolean;
-  lastCardId: string | null;
-};
+import { useSettingsContracts } from '@/components/settings/hooks/useSettingsHooks';
 
 export default function ContractsSettingsPage() {
   return (
@@ -34,9 +22,8 @@ export default function ContractsSettingsPage() {
 
 function ContractsSettingsContent() {
   const searchParams = useSearchParams();
-  const [contracts, setContracts] = useState<Contract[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const contracts = useSettingsContracts();
+
   const [customerId, setCustomerId] = useState('');
   const [title, setTitle] = useState('');
   const [frequency, setFrequency] = useState<'weekly' | 'biweekly' | 'monthly' | 'seasonal'>(
@@ -46,21 +33,7 @@ function ContractsSettingsContent() {
   const [amount, setAmount] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const load = async () => {
-    setLoading(true);
-    const response = await fetch('/api/contracts');
-    const payload = await response.json();
-    if (!response.ok) {
-      setError(payload.error ?? 'Failed to load contracts.');
-      setLoading(false);
-      return;
-    }
-    setContracts(payload.data ?? []);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    void load();
     const presetCustomerId = searchParams.get('customerId');
     if (presetCustomerId) {
       setCustomerId(presetCustomerId);
@@ -69,61 +42,56 @@ function ContractsSettingsContent() {
 
   const runDue = async () => {
     setSaving(true);
-    setError(null);
-    const response = await fetch('/api/contracts/run-due', { method: 'POST' });
-    const payload = await response.json();
-    if (!response.ok) {
-      setError(payload.error ?? 'Failed to run due contracts.');
+    contracts.setError(null);
+    try {
+      await contracts.postAction('/api/contracts/run-due');
+    } catch (runError) {
+      contracts.setError(
+        runError instanceof Error ? runError.message : 'Failed to run due contracts.',
+      );
+    } finally {
       setSaving(false);
-      return;
     }
-    setSaving(false);
-    await load();
   };
 
   const create = async () => {
     if (!customerId.trim() || !title.trim() || !nextRunAt) {
-      setError('Customer, title, and next run date are required.');
+      contracts.setError('Customer, title, and next run date are required.');
       return;
     }
 
     setSaving(true);
-    setError(null);
+    contracts.setError(null);
 
-    const response = await fetch('/api/contracts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    try {
+      await contracts.create({
         customerId: customerId.trim(),
         title: title.trim(),
         frequency,
         nextRunAt: new Date(nextRunAt).toISOString(),
         amount: amount ? Number(amount) : null,
-      }),
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-      setError(payload.error ?? 'Failed to create contract.');
+      });
+      setCustomerId('');
+      setTitle('');
+      setNextRunAt('');
+      setAmount('');
+    } catch (createError) {
+      contracts.setError(
+        createError instanceof Error ? createError.message : 'Failed to create contract.',
+      );
+    } finally {
       setSaving(false);
-      return;
     }
-
-    setCustomerId('');
-    setTitle('');
-    setNextRunAt('');
-    setAmount('');
-    setSaving(false);
-    await load();
   };
 
   const generate = async (id: string) => {
-    const response = await fetch(`/api/contracts/${id}/generate`, { method: 'POST' });
-    const payload = await response.json();
-    if (!response.ok) {
-      setError(payload.error ?? 'Failed to generate job.');
-      return;
+    try {
+      await contracts.postAction(`/api/contracts/${id}/generate`);
+    } catch (generateError) {
+      contracts.setError(
+        generateError instanceof Error ? generateError.message : 'Failed to generate job.',
+      );
     }
-    await load();
   };
 
   return (
@@ -143,9 +111,9 @@ function ContractsSettingsContent() {
         }
       />
 
-      {error ? (
+      {contracts.error ? (
         <p role="alert" className="ops-alert-error mt-4">
-          {error}
+          {contracts.error}
         </p>
       ) : null}
 
@@ -201,11 +169,11 @@ function ContractsSettingsContent() {
 
       <section className="ops-section-card mt-6">
         <h2 className="font-semibold text-[var(--text-primary)]">Active contracts</h2>
-        {loading ? (
+        {contracts.loading ? (
           <p className="mt-4 text-sm text-[var(--text-secondary)]">Loading…</p>
-        ) : contracts.length ? (
+        ) : contracts.items.length ? (
           <ul className="mt-4 space-y-3">
-            {contracts.map((contract) => (
+            {contracts.items.map((contract) => (
               <li
                 key={contract.id}
                 className="flex items-start justify-between gap-4 rounded-lg border p-3"

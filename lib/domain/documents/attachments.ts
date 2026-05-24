@@ -136,6 +136,40 @@ export async function uploadCardAttachment(
   };
 }
 
+export async function getAttachmentBytes(
+  client: SupabaseClient,
+  organizationId: string,
+  cardId: string,
+  attachmentId: string,
+): Promise<{ mimeType: string; base64: string; filename: string } | null> {
+  const { data: row, error } = await client
+    .from('attachments')
+    .select('id, storage_path, filename, mime_type')
+    .eq('id', attachmentId)
+    .eq('organization_id', organizationId)
+    .eq('card_id', cardId)
+    .maybeSingle();
+
+  if (error || !row) {
+    return null;
+  }
+
+  const { data: blob, error: downloadError } = await client.storage
+    .from(BUCKET)
+    .download(row.storage_path);
+
+  if (downloadError || !blob) {
+    return null;
+  }
+
+  const buffer = Buffer.from(await blob.arrayBuffer());
+  return {
+    mimeType: row.mime_type,
+    base64: buffer.toString('base64'),
+    filename: row.filename,
+  };
+}
+
 export async function deleteCardAttachment(
   client: SupabaseClient,
   organizationId: string,

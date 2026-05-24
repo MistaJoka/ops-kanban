@@ -77,6 +77,8 @@ export function CardPanelBody({
             onOpenEstimate={() => setTab('estimate')}
             onDraftEstimateFromAi={() => void mutations.draftEstimateFromAi()}
             aiDraftLoading={mutations.aiDraftLoading}
+            onSuggestNextAction={() => void mutations.suggestNextActionFromAi()}
+            suggestNextActionLoading={mutations.suggestNextActionLoading}
             onCreateInvoice={mutations.createInvoice}
             integrations={payload.integrations}
             saving={mutations.saving}

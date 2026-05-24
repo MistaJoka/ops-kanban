@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 import type { AiContext } from '@/lib/ai/context-loader';
 import { loadAiContext } from '@/lib/ai/context-loader';
+import { loadOrgAiMemoriesForPrompt } from '@/lib/domain/ai/memories';
 import { resolveCardProposalInput } from '@/lib/ai/card-resolver';
 import type { ConversationTurn } from '@/lib/ai/conversation';
 import { hasGeminiAgent, polishToolResult, runGeminiAgent } from '@/lib/ai/gemini-agent';
@@ -141,12 +142,17 @@ async function processAiCommand(params: {
   });
 
   params.emit?.({ type: 'status', phase: 'thinking' });
+  const orgMemoryPrompt = await loadOrgAiMemoriesForPrompt(
+    params.client,
+    params.organizationId,
+  );
   const agentResult = await runGeminiAgent({
     command: params.command,
     loadedContext,
     role: params.role,
     mode: params.context.mode,
     history: params.conversationHistory,
+    orgMemoryPrompt,
     onDelta: params.emit ? (text) => params.emit?.({ type: 'delta', text }) : undefined,
   });
 

@@ -4,6 +4,7 @@ import { Bot, Search, Sparkles } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
 import { CreateMenu } from '@/components/workspace/CreateMenu';
+import { NotificationsBell } from '@/components/ai/NotificationsBell';
 import { BoardSyncStatusIndicator } from '@/components/pipeline/BoardSyncStatusIndicator';
 import { usePipelineSearch } from '@/components/pipeline/PipelineSearchProvider';
 import {
@@ -127,6 +128,8 @@ export function KanbanBoardToolbar({
 
         <div className="ops-toolbar-actions">
           <BoardSyncStatusIndicator status={syncStatus} onRetry={onRetrySync} />
+
+          <NotificationsBell />
 
           <button
             type="button"

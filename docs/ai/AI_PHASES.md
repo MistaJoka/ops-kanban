@@ -16,7 +16,7 @@ Product behavior: [`AI_UTILIZATION.md`](./AI_UTILIZATION.md). Competitive gaps: 
 | **AI-P2** | Revenue loop           | complete    | Invoice draft, pay link, inline CTAs, assign-by-name                    |
 | **AI-P3** | Scheduling             | complete    | Calendar context, conflicts, NL reschedule                              |
 | **AI-P4** | Customer & money intel | complete    | Customer 360, unpaid AR, dashboard/reports copilot                      |
-| **AI-P5** | Field & polish         | in_progress | Voice + multi-surface dock shipped; vision/next-action suggest deferred |
+| **AI-P5** | Field & polish         | complete    | Voice, SSE, next_action UI, vision, ai_memories, notifications bell |
 
 Legacy roadmap **P5** maps to AI-P0 + AI-P1. Waves A–D from competitive benchmark map to AI-P2–P5.
 

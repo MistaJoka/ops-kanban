@@ -43,7 +43,7 @@ export function PipelineSearchProvider({ children }: { children: ReactNode }) {
       document.getElementById('pipeline-job-search') ??
       searchInputRef.current ??
       document.querySelector<HTMLInputElement>('input[aria-label="Search jobs"]');
-    if (!input) return;
+    if (!input || !(input instanceof HTMLInputElement)) return;
     input.focus({ preventScroll: true });
     input.select();
   }, []);

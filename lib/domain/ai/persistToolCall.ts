@@ -177,3 +177,70 @@ export async function markApprovalGranted(
     throw new Error(error.message);
   }
 }
+
+export type PendingApprovalItem = {
+  id: string;
+  toolCallId: string;
+  toolName: string;
+  cardId: string | null;
+  preview: { summary: string; input: Record<string, unknown>; details?: string[] };
+  createdAt: string;
+};
+
+export async function listPendingApprovals(
+  client: SupabaseClient,
+  organizationId: string,
+): Promise<PendingApprovalItem[]> {
+  const { data, error } = await client
+    .from('ai_action_approvals')
+    .select(
+      `
+      id,
+      created_at,
+      payload,
+      ai_tool_calls!inner (
+        id,
+        tool_name,
+        card_id
+      )
+    `,
+    )
+    .eq('organization_id', organizationId)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []).map((row) => {
+    const toolCallRaw = row.ai_tool_calls;
+    const toolCall = (Array.isArray(toolCallRaw) ? toolCallRaw[0] : toolCallRaw) as {
+      id: string;
+      tool_name: string;
+      card_id: string | null;
+    } | null;
+
+    if (!toolCall) {
+      throw new Error('Pending approval missing tool call.');
+    }
+    const payload = row.payload as {
+      summary: string;
+      input: Record<string, unknown>;
+      details?: string[];
+    };
+
+    return {
+      id: row.id,
+      toolCallId: toolCall.id,
+      toolName: toolCall.tool_name,
+      cardId: toolCall.card_id,
+      preview: {
+        summary: payload.summary,
+        input: payload.input,
+        details: payload.details,
+      },
+      createdAt: row.created_at,
+    };
+  });
+}

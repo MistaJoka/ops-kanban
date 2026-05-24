@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
 
 import { Sidebar, useSidebarCollapsed } from '@/components/workspace/Sidebar';
+import { NotificationsBell } from '@/components/ai/NotificationsBell';
 import { ThemeSync } from '@/components/workspace/ThemeToggle';
 import { WorkspaceShortcutsProvider } from '@/components/workspace/WorkspaceShortcutsProvider';
 
@@ -69,6 +70,9 @@ export function AppShell({
               <span className="truncate text-sm font-semibold text-[var(--text-primary)]">
                 OpsBoard
               </span>
+              <div className="ml-auto">
+                <NotificationsBell />
+              </div>
             </div>
             {children}
           </div>

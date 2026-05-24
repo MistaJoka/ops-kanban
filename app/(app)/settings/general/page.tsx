@@ -4,93 +4,86 @@ import { useEffect, useState } from 'react';
 
 import { SettingsPageHeader } from '@/components/settings/SettingsPageHeader';
 import { DevWorkspaceSection } from '@/components/settings/DevWorkspaceSection';
+import {
+  useSettingsAiMemory,
+  useSettingsOrganization,
+} from '@/components/settings/hooks/useSettingsHooks';
 import { cn } from '@/lib/utils';
 
-type OrgSettings = {
-  name: string;
-  pipelineMode: 'compact' | 'full';
-  role: string;
-};
-
 export default function GeneralSettingsPage() {
-  const [settings, setSettings] = useState<OrgSettings | null>(null);
+  const org = useSettingsOrganization();
+  const aiMemory = useSettingsAiMemory();
   const [name, setName] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [brandVoice, setBrandVoice] = useState('');
   const [savingName, setSavingName] = useState(false);
   const [savingMode, setSavingMode] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [savingVoice, setSavingVoice] = useState(false);
   const [nameSaved, setNameSaved] = useState(false);
-
-  const canEdit = settings ? settings.role === 'owner' || settings.role === 'manager' : false;
-
-  const load = async () => {
-    setLoading(true);
-    setError(null);
-    const response = await fetch('/api/settings/organization');
-    const payload = await response.json();
-    if (!response.ok) {
-      setError(payload.error ?? 'Failed to load settings.');
-      setLoading(false);
-      return;
-    }
-    setSettings(payload.data);
-    setName(payload.data.name);
-    setLoading(false);
-  };
+  const [voiceSaved, setVoiceSaved] = useState(false);
 
   useEffect(() => {
-    void load();
-  }, []);
+    if (org.data) setName(org.data.name);
+  }, [org.data]);
+
+  useEffect(() => {
+    if (aiMemory.data) setBrandVoice(aiMemory.data.brandVoice);
+  }, [aiMemory.data]);
+
+  const canEdit = org.data ? org.data.role === 'owner' || org.data.role === 'manager' : false;
+  const error = org.error ?? aiMemory.error;
+  const loading = org.loading || aiMemory.loading;
 
   const saveName = async () => {
     if (!canEdit || !name.trim()) {
-      setError('Organization name is required.');
+      org.setError('Organization name is required.');
       return;
     }
     setSavingName(true);
-    setError(null);
+    org.setError(null);
     setNameSaved(false);
-    const response = await fetch('/api/settings/organization', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name.trim() }),
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-      setError(payload.error ?? 'Failed to save organization name.');
+    try {
+      await org.save({ name: name.trim() });
+      setNameSaved(true);
+    } catch (saveError) {
+      org.setError(saveError instanceof Error ? saveError.message : 'Failed to save.');
+    } finally {
       setSavingName(false);
-      return;
     }
-    setSettings(payload.data);
-    setName(payload.data.name);
-    setNameSaved(true);
-    setSavingName(false);
   };
 
   const setPipelineMode = async (pipelineMode: 'compact' | 'full') => {
-    if (!canEdit || settings?.pipelineMode === pipelineMode) return;
+    if (!canEdit || org.data?.pipelineMode === pipelineMode) return;
     setSavingMode(true);
-    setError(null);
-    const response = await fetch('/api/settings/organization', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pipelineMode }),
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-      setError(payload.error ?? 'Failed to update pipeline mode.');
+    org.setError(null);
+    try {
+      await org.save({ pipelineMode });
+    } catch (saveError) {
+      org.setError(saveError instanceof Error ? saveError.message : 'Failed to update pipeline mode.');
+    } finally {
       setSavingMode(false);
-      return;
     }
-    setSettings(payload.data);
-    setSavingMode(false);
+  };
+
+  const saveBrandVoice = async () => {
+    if (!canEdit) return;
+    setSavingVoice(true);
+    aiMemory.setError(null);
+    setVoiceSaved(false);
+    try {
+      await aiMemory.save({ brandVoice });
+      setVoiceSaved(true);
+    } catch (saveError) {
+      aiMemory.setError(saveError instanceof Error ? saveError.message : 'Failed to save brand voice.');
+    } finally {
+      setSavingVoice(false);
+    }
   };
 
   return (
     <div className="ops-page-shell max-w-3xl">
       <SettingsPageHeader
         title="General"
-        description="Organization identity and how your job pipeline is displayed on the board."
+        description="Organization identity, pipeline display, and AI brand voice."
       />
 
       {error ? (
@@ -99,7 +92,7 @@ export default function GeneralSettingsPage() {
         </p>
       ) : null}
 
-      {loading || !settings ? (
+      {loading || !org.data ? (
         <p className="mt-8 text-sm text-[var(--text-secondary)]">Loading…</p>
       ) : (
         <div className="mt-8 space-y-6">
@@ -130,7 +123,7 @@ export default function GeneralSettingsPage() {
               {canEdit ? (
                 <button
                   type="button"
-                  disabled={savingName || name.trim() === settings.name}
+                  disabled={savingName || name.trim() === org.data.name}
                   onClick={() => void saveName()}
                   className="ops-btn-primary"
                 >
@@ -166,7 +159,7 @@ export default function GeneralSettingsPage() {
                   onClick={() => void setPipelineMode(mode)}
                   className={cn(
                     'rounded-md px-4 py-2 text-sm font-medium transition-colors',
-                    settings.pipelineMode === mode
+                    org.data?.pipelineMode === mode
                       ? 'bg-[var(--accent)] text-white shadow-sm'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
                   )}
@@ -177,6 +170,40 @@ export default function GeneralSettingsPage() {
             </div>
             {savingMode ? (
               <p className="text-xs text-[var(--text-secondary)]">Updating pipeline…</p>
+            ) : null}
+          </section>
+
+          <section className="ops-section-card space-y-4">
+            <div>
+              <p className="ops-field-label">AI brand voice</p>
+              <p className="mt-1 text-xs text-[var(--text-secondary)]">
+                Tone guidance for customer-facing AI drafts. Do not include customer names, phone
+                numbers, or other PII.
+              </p>
+            </div>
+            <textarea
+              value={brandVoice}
+              onChange={(event) => {
+                setBrandVoice(event.target.value);
+                setVoiceSaved(false);
+              }}
+              disabled={!canEdit || savingVoice}
+              rows={4}
+              className="field-input w-full resize-y"
+              placeholder="Friendly, professional, local lawn-care expert. Use plain language."
+            />
+            {canEdit ? (
+              <button
+                type="button"
+                disabled={savingVoice}
+                onClick={() => void saveBrandVoice()}
+                className="ops-btn-primary"
+              >
+                {savingVoice ? 'Saving…' : 'Save brand voice'}
+              </button>
+            ) : null}
+            {voiceSaved ? (
+              <p className="text-xs font-medium text-[var(--paid)]">Brand voice saved.</p>
             ) : null}
           </section>
 

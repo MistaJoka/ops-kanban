@@ -7,6 +7,65 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ---
 
+---
+
+### LOG-2026-05-24-03 — Gemini suggestNextAction + pilot UAT
+
+| Field      | Value |
+| ---------- | ----- |
+| **Phase**  | AI-P5 follow-up |
+| **Tasks**  | Gemini-powered next_action, browser UAT |
+| **Author** | agent |
+| **Type**   | enhancement |
+
+**Summary:** `suggestNextActionWithGemini` uses card context (comments, activities, dates, brand voice) with static fallback. Browser UAT: pipeline loads, `AI approvals` bell present, card panel shows `Suggest next step` and `Analyze`.
+
+**Progress:** `lib/ai/suggest-next-action.ts`; `boardTools.suggestNextAction` wired; `tests/unit/suggest-next-action.test.ts`.
+
+**Verify:** typecheck ✅; unit 124/124 ✅; `GET /api/ai/pending` ✅; browser UAT ✅.
+
+---
+
+### LOG-2026-05-24-02 — Settings hooks + AI unit tests + doc sync
+
+| Field      | Value |
+| ---------- | ----- |
+| **Phase**  | P14 B5 + AI-P5 follow-up |
+| **Tasks**  | Settings hook migration (7/7), UNIT-AI-MEM, doc sync |
+| **Author** | agent |
+| **Type**   | refactor |
+
+**Summary:** Migrated remaining settings pages (overview, integrations, templates, automations, contracts) to shared `useSettings*` hooks with `useSettingsCollection` for POST/DELETE. Added unit tests for `ai_memories` helpers and registry coverage for `analyzeAttachment` / `suggestNextAction`. Synced stale bell/slop references in UI_MASTER_FORMULA, AI_SLOP_BASELINE_AUDIT, PROGRESS, P15 audit.
+
+**Progress:** `components/settings/hooks/useSettingsHooks.ts` (+collection helpers); settings pages refactored; `tests/unit/ai-memories.test.ts`; `tests/unit/ai.test.ts` UNIT-AI-007/008.
+
+**Verify:** `check:slop-health` ✅; typecheck ✅; unit tests ✅.
+
+---
+
+### LOG-2026-05-24-01 — AI gaps + slop debt backlog
+
+| Field      | Value |
+| ---------- | ----- |
+| **Phase**  | AI-P5 + P14 remediation |
+| **Tasks**  | TASK-AI-P5-002/005, Phase B bell, slop splits, migration 018 |
+| **Author** | agent |
+| **Type**   | enhancement |
+
+**Summary:** Closed AI-P5 deferred items (inline next_action, vision on attachments, notifications bell, ai_memories brand voice). Eliminated all slop allowlist entries via toolCalls category split, useBoardState sync extraction, and kanban controller hook splits.
+
+**Progress:** `lib/domain/ai/tools/*`; `GET /api/ai/pending`; `NotificationsBell`; `analyzeAttachment` + Files tab; migration `018_ai_memories.sql`; `useSettings*` hooks; `AI_IMPLEMENTATION.md` surface matrix.
+
+**Troubles:** `useCardMutations` briefly exceeded 600 lines after AI hook — extracted `useCardAiMutations.ts`.
+
+**Fix:** Slop allowlist now empty; PRB-SLOP-003/004 resolved.
+
+**Learning:** LEARN-019 pattern reused for board + kanban splits.
+
+**Verify:** `check:slop-health` ✅ (0 allowlisted); unit 114/114 ✅; typecheck ✅.
+
+---
+
 ### LOG-2026-05-23-04 — Premium product polish (P15)
 
 | Field      | Value            |

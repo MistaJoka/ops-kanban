@@ -81,6 +81,7 @@ Bootstrap must insert **zero cards** — `NO_MOCK_DATA_POLICY.md`.
 | Method | Path              | Body                      | Purpose                                        |
 | ------ | ----------------- | ------------------------- | ---------------------------------------------- |
 | POST   | `/api/ai/command` | `{ command, context }`    | Intent + tool proposal                         |
+| GET    | `/api/ai/pending` | —                         | Pending approval count + items for bell UI     |
 | POST   | `/api/ai/approve` | `{ toolCallId }`          | Execute approved tool — see `APPROVAL_FLOW.md` |
 | POST   | `/api/ai/reject`  | `{ toolCallId, reason? }` | Reject pending tool                            |
 

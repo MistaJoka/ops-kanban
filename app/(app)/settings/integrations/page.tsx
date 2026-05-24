@@ -1,17 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
 import { SettingsPageHeader } from '@/components/settings/SettingsPageHeader';
-
-type IntegrationStatus = {
-  stripe: { configured: boolean; status: string; errorMessage?: string | null };
-  twilio: { configured: boolean; status: string; errorMessage?: string | null };
-  resend: { configured: boolean };
-  nativeAccounting: { enabled: boolean };
-  nativeSigning: { enabled: boolean };
-  bookingPageUrl: string | null;
-};
+import { useSettingsIntegrations } from '@/components/settings/hooks/useSettingsHooks';
 
 function StatusBadge({ status }: { status: string }) {
   return (
@@ -22,39 +12,14 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function IntegrationsSettingsPage() {
-  const [status, setStatus] = useState<IntegrationStatus | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const load = async () => {
-    setLoading(true);
-    const response = await fetch('/api/integrations');
-    const payload = await response.json();
-    if (!response.ok) {
-      setError(payload.error ?? 'Failed to load integrations.');
-      setLoading(false);
-      return;
-    }
-    setStatus(payload.data);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    void load();
-  }, []);
+  const { data: status, loading, error, setError, save } = useSettingsIntegrations();
 
   const patch = async (body: Record<string, string>) => {
-    const response = await fetch('/api/integrations', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-      setError(payload.error ?? 'Failed to update integration.');
-      return;
+    try {
+      await save(body);
+    } catch (patchError) {
+      setError(patchError instanceof Error ? patchError.message : 'Failed to update integration.');
     }
-    setStatus(payload.data);
   };
 
   return (

@@ -7,11 +7,17 @@
 
 ## MVP surfaces
 
-- Job Pipeline — bottom AI dock (`page: 'board'`)
-- Card detail — right rail copilot (`page: 'card'`)
-- Approval queue — bell / modal for medium & high risk
+| Component | Where | Role |
+| --------- | ----- | ---- |
+| `AiCommandDock` | Pipeline bottom bar | Collapse/expand shell; persists open state in `sessionStorage`; wraps `AiDock` with `variant="dock"` |
+| `AiDock` | Core copilot UI | Modes, chips, SSE streaming, voice input, approval modal trigger; variants: `default`, `dock`, `rail` |
+| `AiRail` | Card panel right rail | Export alias of `AiDock` with `variant="rail"` and compact layout |
+| `AiPageCopilot` | Dashboard, calendar, customers, reports | Floating chip that opens dock context for secondary pages |
+| `NotificationsBell` | Pipeline toolbar + mobile shell | Polls `GET /api/ai/pending`; opens `ApprovalModal` for queued medium/high tools |
 
-Dashboard, customers, calendar, reports: post-MVP (same copilot, richer context).
+**Rule:** Pipeline canonical entry is `AiCommandDock` → `AiDock`. Card detail uses `AiRail`. Do not mount raw `AiDock` on the pipeline page without the command dock shell.
+
+Dashboard, customers, calendar, and reports use `AiPageCopilot` (same tool stack, page-specific context).
 
 ## Identity
 

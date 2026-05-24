@@ -189,7 +189,7 @@ File: `tests/e2e/p15-visual.spec.ts` (@visual tag)
 ## Out of scope (intentional)
 
 - Dashboard chart polish
-- Notifications bell (Phase B)
+- Notifications bell — shipped (AI-P5; `NotificationsBell` + pending API)
 - New design system / non-`ops-*` classes
 - Mock/demo cards
 - Core product model changes

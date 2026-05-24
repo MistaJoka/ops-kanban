@@ -1,26 +1,23 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { SettingsPageHeader } from '@/components/settings/SettingsPageHeader';
-
-type Automation = {
-  id: string;
-  name: string;
-  triggerType: string;
-  triggerStateKey: string | null;
-  actionType: string;
-  actionConfig: Record<string, unknown>;
-  active: boolean;
-};
-
-type Template = { id: string; name: string; channel: string };
+import {
+  useSettingsAutomations,
+  useSettingsMessageTemplates,
+} from '@/components/settings/hooks/useSettingsHooks';
 
 export default function AutomationsSettingsPage() {
-  const [automations, setAutomations] = useState<Automation[]>([]);
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const automations = useSettingsAutomations();
+  const templates = useSettingsMessageTemplates();
+  const loading = automations.loading || templates.loading;
+
+  const smsTemplates = useMemo(
+    () => templates.items.filter((template) => template.channel === 'sms'),
+    [templates.items],
+  );
+
   const [name, setName] = useState('');
   const [triggerType, setTriggerType] = useState<'column_enter' | 'invoice_paid'>('column_enter');
   const [triggerStateKey, setTriggerStateKey] = useState('scheduled');
@@ -33,27 +30,11 @@ export default function AutomationsSettingsPage() {
   const [reviewUrl, setReviewUrl] = useState('https://g.page/r/your-business/review');
   const [saving, setSaving] = useState(false);
 
-  const load = async () => {
-    setLoading(true);
-    const [autoResponse, templateResponse] = await Promise.all([
-      fetch('/api/automations'),
-      fetch('/api/message-templates'),
-    ]);
-    const autoPayload = await autoResponse.json();
-    const templatePayload = await templateResponse.json();
-    if (!autoResponse.ok) {
-      setError(autoPayload.error ?? 'Failed to load automations.');
-      setLoading(false);
-      return;
-    }
-    setAutomations(autoPayload.data ?? []);
-    setTemplates((templatePayload.data ?? []).filter((t: Template) => t.channel === 'sms'));
-    setLoading(false);
+  const error = automations.error ?? templates.error;
+  const setError = (message: string | null) => {
+    automations.setError(message);
+    templates.setError(null);
   };
-
-  useEffect(() => {
-    void load();
-  }, []);
 
   const create = async () => {
     if (!name.trim()) {
@@ -80,37 +61,28 @@ export default function AutomationsSettingsPage() {
       actionConfig = { reviewUrl: reviewUrl.trim() };
     }
 
-    const response = await fetch('/api/automations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    try {
+      await automations.create({
         name: name.trim(),
         triggerType,
         triggerStateKey: triggerType === 'column_enter' ? triggerStateKey : null,
         actionType,
         actionConfig,
-      }),
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-      setError(payload.error ?? 'Failed to create automation.');
+      });
+      setName('');
+    } catch (createError) {
+      setError(createError instanceof Error ? createError.message : 'Failed to create automation.');
+    } finally {
       setSaving(false);
-      return;
     }
-
-    setName('');
-    setSaving(false);
-    await load();
   };
 
   const remove = async (id: string) => {
-    const response = await fetch(`/api/automations/${id}`, { method: 'DELETE' });
-    if (!response.ok) {
-      const payload = await response.json();
-      setError(payload.error ?? 'Failed to delete automation.');
-      return;
+    try {
+      await automations.remove(id);
+    } catch (removeError) {
+      setError(removeError instanceof Error ? removeError.message : 'Failed to delete automation.');
     }
-    await load();
   };
 
   return (
@@ -199,7 +171,7 @@ export default function AutomationsSettingsPage() {
               className="field-input w-full"
             >
               <option value="">Select SMS template</option>
-              {templates.map((template) => (
+              {smsTemplates.map((template) => (
                 <option key={template.id} value={template.id}>
                   {template.name}
                 </option>
@@ -229,9 +201,9 @@ export default function AutomationsSettingsPage() {
         <h2 className="font-semibold text-[var(--text-primary)]">Active rules</h2>
         {loading ? (
           <p className="mt-4 text-sm text-[var(--text-secondary)]">Loading…</p>
-        ) : automations.length ? (
+        ) : automations.items.length ? (
           <ul className="mt-4 space-y-3">
-            {automations.map((automation) => (
+            {automations.items.map((automation) => (
               <li
                 key={automation.id}
                 className="flex items-start justify-between gap-4 rounded-lg border p-3"

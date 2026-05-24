@@ -1,60 +1,29 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { ArrowRight, ChevronRight } from 'lucide-react';
 
 import { SettingsPageHeader } from '@/components/settings/SettingsPageHeader';
+import {
+  summarizeIntegrations,
+  useSettingsIntegrations,
+  useSettingsMembers,
+} from '@/components/settings/hooks/useSettingsHooks';
 import { SETTINGS_OVERVIEW_ITEMS } from '@/lib/settings/nav';
 
-type OverviewStats = {
-  memberCount: number;
-  integrationsSummary: string | null;
-};
-
 export default function SettingsOverviewPage() {
-  const [stats, setStats] = useState<OverviewStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const members = useSettingsMembers();
+  const integrations = useSettingsIntegrations();
+  const loading = members.loading || integrations.loading;
 
-  useEffect(() => {
-    void (async () => {
-      setLoading(true);
-      let memberCount = 0;
-      let integrationsSummary: string | null = null;
-
-      try {
-        const [membersRes, integrationsRes] = await Promise.all([
-          fetch('/api/members'),
-          fetch('/api/integrations'),
-        ]);
-        const membersPayload = await membersRes.json();
-        const integrationsPayload = await integrationsRes.json();
-
-        if (membersRes.ok && Array.isArray(membersPayload.data)) {
-          memberCount = membersPayload.data.length;
-        }
-
-        if (integrationsRes.ok && integrationsPayload.data) {
-          const status = integrationsPayload.data as {
-            stripe: { configured: boolean; status: string };
-            twilio: { configured: boolean; status: string };
-            resend: { configured: boolean };
-          };
-          const connected: string[] = [];
-          if (status.stripe.status === 'active') connected.push('Stripe');
-          if (status.twilio.status === 'active') connected.push('SMS');
-          if (status.resend.configured) connected.push('Email');
-          integrationsSummary =
-            connected.length > 0 ? `${connected.join(', ')} connected` : 'Native modules on';
-        }
-      } catch {
-        /* optional stats */
-      }
-
-      setStats({ memberCount, integrationsSummary });
-      setLoading(false);
-    })();
-  }, []);
+  const stats = useMemo(
+    () => ({
+      memberCount: members.data?.length ?? 0,
+      integrationsSummary: summarizeIntegrations(integrations.data),
+    }),
+    [integrations.data, members.data],
+  );
 
   return (
     <div className="ops-page-shell max-w-4xl">
@@ -67,7 +36,7 @@ export default function SettingsOverviewPage() {
         {SETTINGS_OVERVIEW_ITEMS.filter((item) => item.href !== '/settings').map((item) => {
           const Icon = item.icon;
           let meta: string | null = null;
-          if (!loading && stats) {
+          if (!loading) {
             if (item.href === '/settings/team' && stats.memberCount > 0) {
               meta = `${stats.memberCount} member${stats.memberCount === 1 ? '' : 's'}`;
             }

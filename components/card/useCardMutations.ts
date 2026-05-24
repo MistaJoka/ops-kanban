@@ -14,6 +14,7 @@ import {
 } from '@/components/pipeline/useOutboundSync';
 import { applyDetailPatch } from '@/components/card/cardPatchUtils';
 import { useCardMoneyMutations } from '@/components/card/useCardMoneyMutations';
+import { useCardAiMutations } from '@/components/card/useCardAiMutations';
 import type { CardPayload } from '@/components/card/useCardDetail';
 
 type TabKey =
@@ -166,6 +167,13 @@ export function useCardMutations({
       boardSync.endOutboundSync(false, message);
     }
   };
+
+  const cardAi = useCardAiMutations({
+    aiContext,
+    setError,
+    setAiApproval,
+    patchCard,
+  });
 
   const saveCustomer = async (form: FormData) => {
     if (!payload) {
@@ -550,6 +558,8 @@ export function useCardMutations({
     aiApproval,
     setAiApproval,
     aiDraftLoading,
+    suggestNextActionLoading: cardAi.suggestNextActionLoading,
+    suggestNextActionFromAi: cardAi.suggestNextActionFromAi,
     confirmAction,
     setConfirmAction,
     sendEstimateOpen,

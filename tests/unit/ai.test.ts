@@ -139,6 +139,16 @@ describe('UNIT-AI risk & tools', () => {
       }),
     ).toThrow();
   });
+
+  it('UNIT-AI-007: analyzeAttachment is registered as low risk', () => {
+    expect(getToolDefinition('analyzeAttachment')).toBeDefined();
+    expect(classifyToolRisk('analyzeAttachment')).toBe('low');
+  });
+
+  it('UNIT-AI-008: suggestNextAction is registered as low risk', () => {
+    expect(getToolDefinition('suggestNextAction')).toBeDefined();
+    expect(classifyToolRisk('suggestNextAction')).toBe('low');
+  });
 });
 
 describe('AI-INJ prompt injection guards', () => {

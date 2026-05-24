@@ -102,6 +102,16 @@ export const toolRegistry: ToolDefinition[] = [
     requiredRoles: ['owner', 'manager', 'worker'],
   },
   {
+    name: 'analyzeAttachment',
+    description: 'Analyze a job photo for scope notes and estimate hints.',
+    schema: z.object({
+      cardId: z.string().uuid(),
+      attachmentId: z.string().uuid(),
+    }),
+    riskLevel: classifyToolRisk('analyzeAttachment'),
+    requiredRoles: ['owner', 'manager', 'worker'],
+  },
+  {
     name: 'getPipelineMetrics',
     description: 'Count jobs and revenue by pipeline column.',
     schema: z.object({}),

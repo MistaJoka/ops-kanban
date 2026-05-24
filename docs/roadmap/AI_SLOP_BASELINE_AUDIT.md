@@ -50,8 +50,8 @@
 | ------------ | --------------------------------- | ------------------------ |
 | PRB-SLOP-001 | KanbanBoard god component         | resolved → split P14-004 |
 | PRB-SLOP-002 | useCardMutations mega-hook        | resolved → split P14-005 |
-| PRB-SLOP-003 | useBoardState orchestration bloat | open                     |
-| PRB-SLOP-004 | toolCalls.ts size                 | open (allowlisted)       |
+| PRB-SLOP-003 | useBoardState orchestration bloat | resolved → split sync mutations |
+| PRB-SLOP-004 | toolCalls.ts size                 | resolved → category tool modules |
 
 ---
 
@@ -61,4 +61,4 @@ After **10** LOG entries or **2026-06-23**:
 
 1. `npm run check:slop-health`
 2. Re-score table above
-3. Remove allowlist entries for any split file still listed
+3. Remove allowlist entries for any split file still listed — **allowlist empty (2026-05-24)**

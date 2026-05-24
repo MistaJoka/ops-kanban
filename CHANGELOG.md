@@ -6,6 +6,18 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- **AI-P5 complete:** Inline empty `next_action` suggest on Overview; `NotificationsBell` + `GET /api/ai/pending`; vision `analyzeAttachment` on Files tab; org `ai_memories` brand voice (migration 018).
+- **Slop debt cleared:** `toolCalls.ts` split into category modules; `useBoardState` sync extraction; `useKanbanBoardController` bulk/drag/card hooks; slop allowlist empty.
+- **Gemini next action:** `suggestNextActionWithGemini` uses comments, activity, dates, and brand voice with static fallback.
+- **Settings hooks:** All seven settings pages on shared `useSettings*` / `useSettingsCollection` hooks.
+
+### Changed
+
+- Settings General + Team use `useSettings*` hooks; `AI_IMPLEMENTATION.md` documents `AiCommandDock` vs `AiDock`.
+- Unit tests: `ai_memories`, `suggestNextAction` static fallback, `analyzeAttachment` registry (124 total).
+
 ---
 
 ## [0.6.0] — 2026-05-23

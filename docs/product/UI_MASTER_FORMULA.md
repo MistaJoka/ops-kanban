@@ -225,7 +225,7 @@ E2E IDs: `E2E-WORKSPACE-001` … `E2E-WORKSPACE-005`, `CSS-002`.
 | Pipeline mini-map                | Post-MVP  | WORKSPACE_DESIGN §4                     |
 | Collapsible column groups        | Post-MVP  | Vertical labels only today              |
 | `og.png` marketing               | Deferred  | Brand folder                            |
-| Notifications bell + pending API | Phase B   | Inline approval during AI actions works |
+| Notifications bell + pending API | Shipped   | `NotificationsBell` in toolbar + mobile bar; `GET /api/ai/pending` |
 | Skip-to-content link             | Deferred  | a11y enhancement                        |
 | Bottom dock on secondary pages   | By design | `AiPageCopilot` floating chip           |
 

@@ -2,9 +2,9 @@
 
 **AI agents: read this file first every session; update it last.**
 
-`last_updated`: 2026-05-23T07:00:00Z  
-`current_phase`: Premium product polish (P15)  
-`current_task`: — (P15 complete)  
+`last_updated`: 2026-05-24T02:00:00Z  
+`current_phase`: AI-P5 complete + slop debt cleared  
+`current_task`: —  
 `mvp_status`: `pilot_staging_ready`
 
 ---
@@ -61,21 +61,23 @@
 
 ## Next recommended tasks
 
-1. Pilot UAT on `/pipeline` premium polish (board scan, mobile stage nav, command toolbar)
-2. Run `npm run test:e2e -- --grep @visual` in CI when snapshots are stable
-3. Apply migration **017** (`column_entered_at`) via `npm run db:migrate` if not yet applied
-4. Deploy v0.6.0 to Vercel staging with `DISABLE_AUTH=false`
-5. (Stretch) Phase B notifications bell + `GET /api/ai/pending`
+1. Apply migration **018** (`ai_memories`) via `npm run db:migrate`
+2. Pilot UAT: next_action suggest, notifications bell, photo analyze on Files tab
+3. Run `npm run test:e2e -- --grep @visual` in CI when snapshots are stable
+4. Deploy v0.7.0 to Vercel staging with `DISABLE_AUTH=false`
+5. Settings pages — all seven on `useSettings*` hooks (LOG-2026-05-24-02)
 
 ---
 
 ## Session notes (latest)
 
-**Premium product polish (P15) — v0.6.0 shipped.** Command toolbar with board health chips (jobs · overdue · unassigned · due); scroll fade affordance; mobile stage nav; stuck-card signal (5d+); card/panel skeletons; Playwright VIS-P15-001–008 screenshots. Audit: `docs/qa/P15_PREMIUM_POLISH_AUDIT.md`. Smoke 17/17, a11y 3/3, unit 114/114, build ✅.
+**Premium product polish (P15) — v0.6.0 shipped.** Command toolbar with board health chips (jobs · overdue · unassigned · due); scroll fade affordance; mobile stage nav; stuck-card signal (5d+); card/panel skeletons; Playwright VIS-P15-001–008 screenshots. Audit: `docs/qa/P15_PREMIUM_POLISH_AUDIT.md`. Smoke 17/17, a11y 3/3, unit 121/121, build ✅.
 
 **Optimistic background sync (P13) — v0.5.0 shipped.** Domain `outboundSyncQueue` with per-card FIFO, PATCH coalesce, and retry; `useOutboundSync` hook; board/panel/money fire-and-forget mutations; instant panel stub from board cache; sync pill queue depth + Retry. UNIT-SYNC-_ + E2E-SYNC-_.
 
-**UI master formula alignment (P12) — v0.4.0 shipped.** Canonical `UI_MASTER_FORMULA.md`; pipeline bottom `AiCommandDock` replaces popover; `PipelineGroupJump` + topo board surface; global `WorkspaceShortcutsProvider` with modal; brand SVGs + sidebar mark. E2E-WORKSPACE-001–005, CSS-002, unit `pickActiveGroup`. Notifications bell deferred (Phase B).
+**UI master formula alignment (P12) — v0.4.0 shipped.** Canonical `UI_MASTER_FORMULA.md`; pipeline bottom `AiCommandDock` replaces popover; `PipelineGroupJump` + topo board surface; global `WorkspaceShortcutsProvider` with modal; brand SVGs + sidebar mark. E2E-WORKSPACE-001–005, CSS-002, unit `pickActiveGroup`. Notifications bell shipped in AI-P5 (LOG-2026-05-24-01).
+
+**AI gaps + settings hooks (follow-up) — done (LOG-2026-05-24-02).** All seven settings pages on `useSettings*` hooks; unit tests for `ai_memories` + registry tools; doc sync for bell/slop status. Migration 018 pending `SUPABASE_DB_URL`.
 
 **CSS dev cache guardrails.** “CSS keeps breaking” traced to poisoned `.next` (build + dev mix → `layout.css` 404), not Tailwind regressions. Added `npm run check:css-health`, `predev`/`postbuild` warnings, Playwright CSS globalSetup + `CSS-001 @smoke`, `docs/testing/CSS_DEV_GUARDRAILS.md`, LEARN-015.
 

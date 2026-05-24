@@ -327,7 +327,7 @@ QA runs parallel from P1 onward.
 | TASK-AI-P4-006 | Search / create customer                           | done     | —           |
 | TASK-AI-P4-007 | Multi-page copilot (dashboard, customers, reports) | done     | —           |
 | TASK-AI-P5-001 | Voice input (Web Speech API)                       | done     | —           |
-| TASK-AI-P5-002 | Empty next_action suggest                          | deferred | —           |
+| TASK-AI-P5-002 | Empty next_action suggest                          | done     | Overview CTA |
 | TASK-AI-P5-003 | App context API (`GET /api/app/context`)           | done     | —           |
 | TASK-AI-P5-004 | Streaming responses (SSE)                          | done     | AI-SSE-\*   |
-| TASK-AI-P5-005 | Vision on attachments                              | deferred | —           |
+| TASK-AI-P5-005 | Vision on attachments                              | done     | analyzeAttachment |

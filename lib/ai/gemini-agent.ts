@@ -66,6 +66,7 @@ export async function runGeminiAgent(params: {
   mode?: AiMode;
   history?: ConversationTurn[];
   onDelta?: (text: string) => void;
+  orgMemoryPrompt?: string | null;
 }): Promise<GeminiAgentResult> {
   if (!hasGeminiAgent()) {
     return { type: 'unavailable' };
@@ -75,8 +76,11 @@ export async function runGeminiAgent(params: {
     const declarations = getGeminiDeclarationsForRole(params.role);
     const model = getGeminiModel();
 
+    const memoryBlock = params.orgMemoryPrompt ? `\n\n${params.orgMemoryPrompt}` : '';
+
     const request = {
       systemInstruction: `${OPERATIONAL_COPILOT_SYSTEM_PROMPT}
+${memoryBlock}
 
 Current mode: ${params.mode ?? 'ask'}
 ${buildModeInstruction(params.mode)}
