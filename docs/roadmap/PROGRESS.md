@@ -66,6 +66,7 @@
 3. Run `npm run test:e2e -- --grep @visual` in CI when snapshots are stable
 4. Deploy v0.7.0 to Vercel staging with `DISABLE_AUTH=false`
 5. Settings pages — all seven on `useSettings*` hooks (LOG-2026-05-24-02)
+6. **TASK-P2-013** full pipeline toggle — done; `E2E-PIPE-001` (collapsible groups waived Post-MVP)
 
 ---
 

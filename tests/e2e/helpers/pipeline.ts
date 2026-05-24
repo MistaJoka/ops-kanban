@@ -13,6 +13,46 @@ export async function gotoPipeline(page: Page) {
   await expect(page.getByRole('heading', { name: 'Job Pipeline' })).toBeVisible();
 }
 
+export async function setPipelineMode(page: Page, mode: 'compact' | 'full') {
+  await gotoPipeline(page);
+
+  const compactButton = page.getByRole('button', { name: 'Compact' });
+  const fullButton = page.getByRole('button', { name: 'Full (19)' });
+  const alreadyFull = await compactButton.isVisible();
+  const alreadyCompact = await fullButton.isVisible();
+
+  if (mode === 'full' && alreadyFull) {
+    return;
+  }
+  if (mode === 'compact' && alreadyCompact) {
+    return;
+  }
+
+  const patchResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/settings/pipeline-mode') &&
+      response.request().method() === 'PATCH' &&
+      response.ok(),
+  );
+
+  if (mode === 'full') {
+    await fullButton.click();
+  } else {
+    await compactButton.click();
+  }
+
+  await patchResponse;
+  await expect(page.getByText(mode === 'full' ? 'Full view' : 'Compact')).toBeVisible();
+}
+
+export async function enableFullPipelineMode(page: Page) {
+  await setPipelineMode(page, 'full');
+}
+
+export async function enableCompactPipelineMode(page: Page) {
+  await setPipelineMode(page, 'compact');
+}
+
 /** Sortable cards expose role=button in the a11y tree; target the board card surface. */
 export function boardCardByTitle(page: Page, title: string) {
   return page.locator('.ops-board-card').filter({

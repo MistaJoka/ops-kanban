@@ -12,6 +12,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 - **Slop debt cleared:** `toolCalls.ts` split into category modules; `useBoardState` sync extraction; `useKanbanBoardController` bulk/drag/card hooks; slop allowlist empty.
 - **Gemini next action:** `suggestNextActionWithGemini` uses comments, activity, dates, and brand voice with static fallback.
 - **Settings hooks:** All seven settings pages on shared `useSettings*` / `useSettingsCollection` hooks.
+- **E2E-PIPE-001:** Full pipeline toggle regression (`tests/e2e/pipeline-mode.spec.ts`).
 
 ### Changed
 

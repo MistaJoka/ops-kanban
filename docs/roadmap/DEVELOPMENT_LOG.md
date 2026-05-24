@@ -9,6 +9,23 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ---
 
+---
+
+### LOG-2026-05-24-04 — TASK-P2-013 closed + E2E-PIPE-001
+
+| Field      | Value |
+| ---------- | ----- |
+| **Phase**  | P2 closure / R1 regression |
+| **Tasks**  | TASK-P2-013 → done; E2E-PIPE-001 |
+| **Author** | agent |
+| **Type**   | test + docs |
+
+**Summary:** Reconciled stale `blocked` status on full pipeline toggle. Task marked done with waiver: collapsible column groups remain Post-MVP (`UI_MASTER_FORMULA` §14). Added `tests/e2e/pipeline-mode.spec.ts` (E2E-PIPE-001/001b) and shared `setPipelineMode` helper.
+
+**Verify:** E2E-PIPE-001 + 001b ✅ (2/2).
+
+---
+
 ### LOG-2026-05-24-03 — Gemini suggestNextAction + pilot UAT
 
 | Field      | Value |

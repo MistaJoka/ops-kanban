@@ -76,7 +76,7 @@
 | TASK-P2-010 | Filters + search                                                  | done    | UAT-08             | P2-004 |
 | TASK-P2-011 | Activity log on create/move                                       | done    | INT-CARD-002       | P2-008 |
 | TASK-P2-012 | Realtime subscription (or waiver)                                 | done    | INT-RT-001 waiver  | P2-004 |
-| TASK-P2-013 | Full pipeline toggle (19 col)                                     | blocked | E2E-PIPE-001 defer | P2-005 |
+| TASK-P2-013 | Full pipeline toggle (19 col)                                     | done    | E2E-PIPE-001       | P2-005 |
 | TASK-P2-014 | Brand assets: real SVG or text-only mark (no lorem, no mock jobs) | done    | —                  | P0-002 |
 
 ---

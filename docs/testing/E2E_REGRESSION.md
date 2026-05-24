@@ -28,7 +28,7 @@
 
 | ID           | Case                                 | P   |
 | ------------ | ------------------------------------ | --- |
-| E2E-PIPE-001 | Toggle full → 19 columns in 4 groups | P1  |
+| E2E-PIPE-001 | Toggle full → 19 columns in 4 groups | P1  | `tests/e2e/pipeline-mode.spec.ts` |
 | E2E-PIPE-002 | Collapse sales group → cards hidden  | P2  |
 
 ## Suite R2 — Regression extended (P1, pre-release)
