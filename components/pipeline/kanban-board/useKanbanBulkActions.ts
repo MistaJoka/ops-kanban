@@ -68,6 +68,27 @@ export function useKanbanBulkActions({
     setBulkDeleteConfirm({ cardIds: [...cardIds] });
   }, []);
 
+  const requestBulkDelete = useCallback((cardIds: string[]) => {
+    if (cardIds.length === 0) return;
+    setBulkDeleteConfirm({ cardIds: [...cardIds] });
+  }, []);
+
+  const clearSelection = useCallback(() => {
+    setSelectedCardIds(new Set());
+  }, []);
+
+  const selectAllVisible = useCallback((cardIds: string[]) => {
+    setSelectedCardIds(new Set(cardIds));
+  }, []);
+
+  const deselectAllVisible = useCallback((cardIds: string[]) => {
+    setSelectedCardIds((current) => {
+      const next = new Set(current);
+      for (const id of cardIds) next.delete(id);
+      return next;
+    });
+  }, []);
+
   const confirmBulkDelete = useCallback(async () => {
     if (!bulkDeleteConfirm || bulkDeleteConfirm.cardIds.length === 0) return;
 
@@ -128,6 +149,10 @@ export function useKanbanBulkActions({
     toggleCardSelection,
     selectAllInColumn,
     requestDeleteSelectedInColumn,
+    requestBulkDelete,
+    clearSelection,
+    selectAllVisible,
+    deselectAllVisible,
     confirmBulkDelete,
   };
 }

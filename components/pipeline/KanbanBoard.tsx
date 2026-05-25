@@ -9,6 +9,8 @@ import { KanbanBoardAiChrome } from '@/components/pipeline/kanban-board/KanbanBo
 import { KanbanBoardModals } from '@/components/pipeline/kanban-board/KanbanBoardModals';
 import { KanbanBoardDndArea } from '@/components/pipeline/kanban-board/KanbanBoardDndArea';
 import { useKanbanBoardController } from '@/components/pipeline/kanban-board/useKanbanBoardController';
+import { BoardBulkActionBar } from '@/components/pipeline/BoardBulkActionBar';
+import { cn } from '@/lib/utils';
 
 export function KanbanBoard(props: {
   initialBoard: BoardView;
@@ -41,7 +43,12 @@ function KanbanBoardContent({
   const selectionEnabled = canDeleteCard(orgRole);
 
   return (
-    <div className="ops-pipeline-root">
+    <div
+      className={cn(
+        'ops-pipeline-root',
+        ctrl.selectionActive && 'ops-pipeline-root--selecting',
+      )}
+    >
       <KanbanBoardToolbar
         health={ctrl.boardHealth}
         syncStatus={syncStatus}
@@ -121,11 +128,23 @@ function KanbanBoardContent({
         onArchiveCard={ctrl.handleArchiveCard}
         dragOverColumnId={ctrl.dragOverColumnId}
         selectionEnabled={selectionEnabled}
+        selectionActive={ctrl.selectionActive}
         selectedCardIds={ctrl.selectedCardIds}
         onToggleSelect={ctrl.toggleCardSelection}
-        onSelectAllInColumn={ctrl.selectAllInColumn}
-        onDeleteSelectedInColumn={ctrl.requestDeleteSelectedInColumn}
       />
+
+      {selectionEnabled ? (
+        <BoardBulkActionBar
+          selectedCount={ctrl.selectedCardIds.size}
+          visibleCount={ctrl.selectableVisibleIds.length}
+          allVisibleSelected={ctrl.allVisibleSelected}
+          pending={ctrl.bulkDeletePending}
+          onDelete={() => ctrl.requestBulkDelete([...ctrl.selectedCardIds])}
+          onClear={ctrl.clearSelection}
+          onSelectAllVisible={() => ctrl.selectAllVisible(ctrl.selectableVisibleIds)}
+          onDeselectAllVisible={() => ctrl.deselectAllVisible(ctrl.selectableVisibleIds)}
+        />
+      ) : null}
 
       <KanbanBoardModals
         board={ctrl.board}

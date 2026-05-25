@@ -57,10 +57,9 @@ type Props = {
   onArchiveCard: (cardId: string) => void;
   dragOverColumnId: string | null;
   selectionEnabled: boolean;
+  selectionActive: boolean;
   selectedCardIds: Set<string>;
   onToggleSelect: (cardId: string) => void;
-  onSelectAllInColumn: (columnId: string, cardIds: string[]) => void;
-  onDeleteSelectedInColumn: (columnId: string, cardIds: string[]) => void;
 };
 
 export function KanbanBoardDndArea({
@@ -90,10 +89,9 @@ export function KanbanBoardDndArea({
   onArchiveCard,
   dragOverColumnId,
   selectionEnabled,
+  selectionActive,
   selectedCardIds,
   onToggleSelect,
-  onSelectAllInColumn,
-  onDeleteSelectedInColumn,
 }: Props) {
   const visibleColumns = columnGroups.flatMap((group) => group.columns);
   const [mobileActiveColumnId, setMobileActiveColumnId] = useState<string | null>(
@@ -196,10 +194,9 @@ export function KanbanBoardDndArea({
                         onArchiveCard={onArchiveCard}
                         isDragTarget={dragOverColumnId === column.id}
                         selectionEnabled={selectionEnabled}
+                        selectionActive={selectionActive}
                         selectedCardIds={selectedCardIds}
                         onToggleSelect={onToggleSelect}
-                        onSelectAllInColumn={onSelectAllInColumn}
-                        onDeleteSelectedInColumn={onDeleteSelectedInColumn}
                       />
                     ))}
                   </div>

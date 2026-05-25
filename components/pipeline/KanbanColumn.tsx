@@ -3,14 +3,12 @@
 import { memo } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 import type { BoardColumnView } from '@/lib/domain/board/getBoard';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
-import { isTempCardId } from '@/lib/domain/board/boardOptimistic';
 import { COLUMN_CATEGORY } from '@/lib/domain/pipeline/types';
 import { BoardCard } from '@/components/pipeline/BoardCard';
-import { BoardCardSelectCheckbox } from '@/components/pipeline/BoardCardSelectCheckbox';
 import type { BoardCardPatch } from '@/components/pipeline/BoardCardMenu';
 import type { OrgRole } from '@/lib/domain/auth/roles';
 import type { OrgMemberView } from '@/lib/domain/organization/listMembers';
@@ -34,10 +32,9 @@ export const KanbanColumn = memo(function KanbanColumn({
   onArchiveCard,
   isDragTarget,
   selectionEnabled = false,
+  selectionActive = false,
   selectedCardIds,
   onToggleSelect,
-  onSelectAllInColumn,
-  onDeleteSelectedInColumn,
 }: {
   column: BoardColumnView;
   columns: BoardColumnView[];
@@ -52,19 +49,12 @@ export const KanbanColumn = memo(function KanbanColumn({
   onArchiveCard: (cardId: string) => void | Promise<void>;
   isDragTarget: boolean;
   selectionEnabled?: boolean;
+  selectionActive?: boolean;
   selectedCardIds?: ReadonlySet<string>;
   onToggleSelect?: (cardId: string) => void;
-  onSelectAllInColumn?: (columnId: string, cardIds: string[]) => void;
-  onDeleteSelectedInColumn?: (columnId: string, cardIds: string[]) => void;
 }) {
   const isAnyDragging = activeCardId !== null;
   const cardIds = cards.map((card) => card.id);
-  const selectableCards = cards.filter((card) => !isTempCardId(card.id));
-  const selectableIds = selectableCards.map((card) => card.id);
-  const selectedInColumn = selectableIds.filter((id) => selectedCardIds?.has(id) ?? false);
-  const showBulkSelect = selectionEnabled && selectedInColumn.length > 0;
-  const allSelected = selectableIds.length > 0 && selectedInColumn.length === selectableIds.length;
-  const someSelected = selectedInColumn.length > 0 && !allSelected;
   const category = COLUMN_CATEGORY[column.stateKey] ?? 'sales';
 
   const { setNodeRef, isOver } = useDroppable({
@@ -134,35 +124,6 @@ export const KanbanColumn = memo(function KanbanColumn({
           </div>
         ) : (
           <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
-            {showBulkSelect ? (
-              <div className="ops-column__bulk-select">
-                <label className="ops-column__bulk-select-all">
-                  <BoardCardSelectCheckbox
-                    checked={allSelected}
-                    indeterminate={someSelected}
-                    onChange={() => onSelectAllInColumn?.(column.id, selectableIds)}
-                    label={
-                      allSelected
-                        ? `Deselect all jobs in ${column.name}`
-                        : `Select all jobs in ${column.name}`
-                    }
-                    className="ops-board-card__select--bulk"
-                  />
-                  <span>All</span>
-                </label>
-                <button
-                  type="button"
-                  className="ops-column__bulk-delete"
-                  aria-label={`Delete ${selectedInColumn.length} selected job${
-                    selectedInColumn.length === 1 ? '' : 's'
-                  }`}
-                  title={`Delete ${selectedInColumn.length} selected`}
-                  onClick={() => onDeleteSelectedInColumn?.(column.id, selectedInColumn)}
-                >
-                  <Trash2 className="size-3.5" strokeWidth={2.25} />
-                </button>
-              </div>
-            ) : null}
             {showDropTarget ? <div className="ops-drop-indicator" aria-hidden /> : null}
             {cards.map((card) => (
               <BoardCard
@@ -177,6 +138,7 @@ export const KanbanColumn = memo(function KanbanColumn({
                 onArchive={() => onArchiveCard(card.id)}
                 isDimmed={isAnyDragging && activeCardId !== card.id}
                 selectionEnabled={selectionEnabled}
+                selectionActive={selectionActive}
                 isSelected={selectedCardIds?.has(card.id) ?? false}
                 onToggleSelect={onToggleSelect}
               />

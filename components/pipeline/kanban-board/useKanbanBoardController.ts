@@ -6,6 +6,7 @@ import { useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
 
 import type { BoardView } from '@/lib/domain/board/getBoard';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
+import { isTempCardId } from '@/lib/domain/board/boardOptimistic';
 import {
   filterBoardCards,
   getAdvancedFilterLabel,
@@ -510,5 +511,18 @@ export function useKanbanBoardController(
     toggleCardSelection: bulk.toggleCardSelection,
     selectAllInColumn: bulk.selectAllInColumn,
     requestDeleteSelectedInColumn: bulk.requestDeleteSelectedInColumn,
+    requestBulkDelete: bulk.requestBulkDelete,
+    clearSelection: bulk.clearSelection,
+    selectAllVisible: bulk.selectAllVisible,
+    deselectAllVisible: bulk.deselectAllVisible,
+    selectionActive: bulk.selectedCardIds.size > 0,
+    selectableVisibleIds: filteredCards
+      .filter((card) => !isTempCardId(card.id))
+      .map((card) => card.id),
+    allVisibleSelected:
+      filteredCards.filter((card) => !isTempCardId(card.id)).length > 0 &&
+      filteredCards
+        .filter((card) => !isTempCardId(card.id))
+        .every((card) => bulk.selectedCardIds.has(card.id)),
   };
 }

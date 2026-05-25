@@ -608,54 +608,104 @@
   }
 
   .ops-board-card--selected {
-    border-color: color-mix(in srgb, var(--accent) 45%, var(--topbar-border));
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--topbar-border));
     box-shadow:
       var(--shadow-card),
-      0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+      0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
   }
 
-  .ops-board-card__select {
-    @apply size-3.5 shrink-0 cursor-pointer appearance-none rounded border transition-colors;
-    border-color: color-mix(in srgb, var(--text-tertiary) 70%, var(--topbar-border));
-    background: transparent;
+  .ops-board-card--selecting:not(.ops-board-card--selected):not(.ops-board-card--source):not(.ops-board-card--dragging) {
+    cursor: pointer;
   }
 
-  .ops-board-card__select:checked {
+  .ops-board-card__select-toggle {
+    @apply absolute z-[4] inline-flex size-5 items-center justify-center rounded border transition-all;
+    top: 9px;
+    left: 9px;
+    border-color: color-mix(in srgb, var(--text-tertiary) 65%, var(--topbar-border));
+    background: color-mix(in srgb, var(--surface-card) 92%, transparent);
+    color: white;
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  .ops-board-card--selectable:hover .ops-board-card__select-toggle,
+  .ops-board-card__select-toggle--visible,
+  .ops-board-card__select-toggle:focus-visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .ops-board-card__select-toggle--checked {
     border-color: var(--accent);
-    background: var(--accent)
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 6l2.5 2.5 4.5-5' stroke='white' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
-      center/10px 10px no-repeat;
+    background: var(--accent);
+    opacity: 1;
+    transform: scale(1);
   }
 
-  .ops-board-card__select:focus-visible {
+  .ops-board-card__select-toggle:hover {
+    border-color: var(--accent);
+  }
+
+  .ops-board-card__select-toggle:focus-visible {
     outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
     outline-offset: 1px;
   }
 
-  .ops-board-card__select--bulk {
-    @apply size-3.5;
+  .ops-bulk-bar {
+    @apply pointer-events-auto mx-auto flex w-fit max-w-[min(100%,42rem)] items-center justify-between gap-4 rounded-xl border px-4 py-2.5 shadow-[var(--shadow-lift)];
+    position: sticky;
+    bottom: 0.75rem;
+    z-index: 30;
+    margin-top: -3rem;
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--topbar-border));
+    background: color-mix(in srgb, var(--surface-card) 96%, var(--accent-muted));
+    backdrop-filter: blur(8px);
   }
 
-  .ops-column__bulk-select {
-    @apply sticky top-0 z-[1] flex items-center justify-between gap-2 rounded-lg border px-2 py-1.5;
-    border-color: color-mix(in srgb, var(--accent) 25%, var(--topbar-border));
-    background: color-mix(in srgb, var(--accent) 6%, var(--surface-card));
+  .ops-bulk-bar__summary {
+    @apply flex min-w-0 items-center gap-2;
   }
 
-  .ops-column__bulk-select-all {
-    @apply inline-flex min-w-0 items-center gap-1.5 text-[11px] font-medium text-[var(--text-secondary)];
+  .ops-bulk-bar__count {
+    @apply inline-flex min-w-[1.5rem] items-center justify-center rounded-md px-1.5 py-0.5 text-xs font-bold tabular-nums;
+    background: var(--accent);
+    color: white;
   }
 
-  .ops-column__bulk-delete {
-    @apply inline-flex size-6 shrink-0 items-center justify-center rounded-md border transition-colors;
+  .ops-bulk-bar__label {
+    @apply text-sm font-medium text-[var(--text-primary)];
+  }
+
+  .ops-bulk-bar__actions {
+    @apply flex shrink-0 items-center gap-1.5;
+  }
+
+  .ops-bulk-bar__btn {
+    @apply inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors;
+    border-color: var(--border-subtle);
+    background: var(--control-bg);
+    color: var(--text-secondary);
+  }
+
+  .ops-bulk-bar__btn:hover:not(:disabled) {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+
+  .ops-bulk-bar__btn--danger {
     border-color: color-mix(in srgb, var(--urgent) 35%, var(--topbar-border));
     color: var(--urgent);
     background: color-mix(in srgb, var(--urgent) 8%, var(--surface-card));
   }
 
-  .ops-column__bulk-delete:hover:not(:disabled) {
+  .ops-bulk-bar__btn--danger:hover:not(:disabled) {
     border-color: var(--urgent);
     background: color-mix(in srgb, var(--urgent) 14%, var(--surface-card));
+  }
+
+  .ops-bulk-bar__btn--icon {
+    @apply px-2;
   }
 
   .ops-board-card__grip {
@@ -668,14 +718,40 @@
   }
 
   .ops-board-card__header {
-    @apply flex items-start justify-between gap-2;
+    @apply relative;
+  }
+
+  .ops-board-card__header-row {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .ops-board-card__header--editing .ops-board-card__header-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ops-board-card__header-controls {
+    @apply flex min-w-0 items-center justify-end gap-0.5 transition-opacity;
+  }
+
+  @media (hover: hover) {
+    .group\/card:hover .ops-board-card__header-controls {
+      opacity: 0;
+      pointer-events: none;
+    }
   }
 
   .ops-board-card__title {
-    @apply line-clamp-2 font-sans font-semibold leading-[1.25];
+    @apply min-w-0 truncate font-sans font-semibold leading-snug;
     font-size: var(--card-title-size);
     letter-spacing: -0.015em;
     color: var(--text-primary);
+  }
+
+  .ops-board-card__title-input {
+    width: 100%;
   }
 
   .ops-board-card__property {
@@ -1070,7 +1146,7 @@
   }
 
   .ops-board-card__quick-actions {
-    @apply flex items-center gap-0.5 opacity-0 transition-opacity;
+    @apply absolute right-0 top-0 z-[2] flex items-center gap-0.5 opacity-0 transition-opacity;
   }
 
   .group\/card:hover .ops-board-card__quick-actions,
