@@ -16,6 +16,8 @@ These decisions should not be reopened during normal implementation unless the u
 | Dashboard role  | Dashboard supports the board; it does not replace it |
 | AI role         | Operational copilot with reviewable actions          |
 | Data posture    | Real data paths over fake production placeholders    |
+| Terminal column | **`archived`** only — not `closed`                   |
+| Customer intake | Unified via `processIntake()` (web form, SMS, booking) |
 
 ## Technical decisions
 
@@ -29,6 +31,10 @@ These decisions should not be reopened during normal implementation unless the u
 | Security     | Supabase RLS stays aligned with migrations             |
 | Architecture | Business logic belongs in domain layers where possible |
 | AI writes    | AI follows the designed tool/approval flow             |
+| Accounting   | Native ledger + CSV export — no QuickBooks API         |
+| E-sign       | Native portal approve — no DocuSign adapter            |
+| Idempotency  | Claim-first on `client_mutations` and `inquiry_requests` |
+| API errors   | All routes wrapped; `DomainError` + JSON envelope      |
 
 ## Documentation decisions
 

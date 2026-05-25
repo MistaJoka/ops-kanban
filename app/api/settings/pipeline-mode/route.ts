@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
+import { parseJsonBody } from '@/lib/api/parseJsonBody';
 import { jsonData, jsonError } from '@/lib/api/response';
-import { getHandlerContext, isHandlerContext } from '@/lib/domain/api/handlerContext';
+import { withApiRoute } from '@/lib/api/withApiRoute';
 import { canManageMoney } from '@/lib/domain/auth/roles';
 import { setOrganizationPipelineMode } from '@/lib/domain/board/syncFullPipeline';
 
@@ -10,38 +11,25 @@ const bodySchema = z.object({
 });
 
 export async function PATCH(request: Request) {
-  const context = await getHandlerContext();
-  if (!isHandlerContext(context)) return context;
+  return withApiRoute(
+    request,
+    async (context, req) => {
+      if (!canManageMoney(context.role)) {
+        return jsonError('Your role cannot change pipeline mode.', 403, 'FORBIDDEN');
+      }
 
-  if (!canManageMoney(context.role)) {
-    return jsonError('Your role cannot change pipeline mode.', 403, 'FORBIDDEN');
-  }
+      const parsed = await parseJsonBody(req, bodySchema);
+      if (!parsed.ok) {
+        return parsed.response;
+      }
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400, 'VALIDATION_ERROR');
-  }
-
-  const parsed = bodySchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError(
-      parsed.error.issues[0]?.message ?? 'Invalid request.',
-      400,
-      'VALIDATION_ERROR',
-    );
-  }
-
-  try {
-    const pipelineMode = await setOrganizationPipelineMode(
-      context.client,
-      context.organizationId,
-      parsed.data.pipelineMode,
-    );
-    return jsonData({ pipelineMode });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to update pipeline mode.';
-    return jsonError(message, 500);
-  }
+      const pipelineMode = await setOrganizationPipelineMode(
+        context.client,
+        context.organizationId,
+        parsed.data.pipelineMode,
+      );
+      return jsonData({ pipelineMode });
+    },
+    { route: '/api/settings/pipeline-mode' },
+  );
 }

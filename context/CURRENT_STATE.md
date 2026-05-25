@@ -2,50 +2,39 @@
 
 ## Repo state
 
-This repository is a runnable Next.js app plus a detailed operations blueprint.
+**Runnable Next.js app** at **pilot staging ready** (`mvp_status: pilot_staging_ready`).
 
-The documentation system is already large and structured. Use `context/` only as a short orientation layer.
+- **Current phase:** P17 — backend reliability complete
+- **Active task:** Apply migrations **020–021** on staging; pilot UAT for inquiry intake
+- **Migrations on disk:** `001` through `021`
 
-## What already exists
+Use `context/` for fast orientation; use `docs/` for canonical truth.
 
-- Product blueprint for a landscaping operations Kanban
-- Roadmap and phase task system
-- AI build protocol
-- Progress tracking
-- Problem registry
-- Build knowledge log
-- Product docs
-- AI docs
-- API docs
-- Database docs
-- Testing docs
-- Cursor docs
-- Supabase migration sequence
-- Starter source patterns
+## What exists
 
-## Current canonical entry points
+- Full Job Pipeline workspace with deep card panel, money, AI copilot, calendar, customers, reports
+- Public intake: `/inquiry/{slug}`, booking: `/book/{slug}`, customer portal: `/p/{token}`
+- Native accounting ledger, e-sign, booking (no QuickBooks/DocuSign adapters)
+- 49 wrapped API routes; claim-first idempotency; public rate limits
+- Supabase migrations through `021_atomic_intake.sql`
 
-- `AGENTS.md`
-- `docs/roadmap/DOC_INDEX.md`
-- `docs/roadmap/PROGRESS.md`
-- `docs/roadmap/PHASE_TASKS.md`
-- `docs/roadmap/DEVELOPMENT_ROADMAP.md`
-- `docs/roadmap/DEFINITION_OF_DONE.md`
+## Canonical entry points
+
+- [`AGENTS.md`](../AGENTS.md)
+- [`docs/roadmap/DOC_INDEX.md`](../docs/roadmap/DOC_INDEX.md)
+- [`docs/roadmap/PROGRESS.md`](../docs/roadmap/PROGRESS.md)
+- [`docs/roadmap/PHASE_TASKS.md`](../docs/roadmap/PHASE_TASKS.md)
 
 ## Main risk
 
-The repo has enough documentation that an AI agent may create duplicate plans, conflicting docs, or new abstractions instead of following the existing system.
-
-## Correct behavior
-
-Use this folder to quickly understand the mission, then defer to the canonical docs.
+Documentation volume can drift from code. Run `npm run check:doc-sync` after behavior changes. Session truth (`PROGRESS`, `LEARN`, `API_CONTRACTS` inventory) should match canonical specs.
 
 ## Check before work
 
 ```txt
 Am I extending the existing system?
-Am I following the current task list?
+Am I following PROGRESS next tasks?
 Am I preserving the board/card model?
 Am I avoiding mock production data?
-Am I updating progress/log files after changes?
+Am I updating progress/log docs after changes?
 ```

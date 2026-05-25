@@ -1,5 +1,9 @@
 'use client';
 
+import { useEffect } from 'react';
+
+import { captureClientError } from '@/lib/ops/captureError';
+
 export default function AppError({
   error,
   reset,
@@ -7,6 +11,10 @@ export default function AppError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    captureClientError(error, { surface: 'app-error' });
+  }, [error]);
+
   return (
     <main className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-6 text-center">
       <h1 className="text-xl font-semibold text-[var(--text-primary)]">Something went wrong</h1>

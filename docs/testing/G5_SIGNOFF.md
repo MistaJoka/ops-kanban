@@ -1,5 +1,7 @@
 # Gate G5 sign-off — Wave 3: Documents
 
+> **Historical sign-off context:** G5 approved native e-sign + attachments. DocuSign adapter was later **removed**; native portal approve is the supported path. Evidence rows below reflect sign-off-at-time.
+
 **Status:** ✅ **APPROVED for staging** — 2025-05-21  
 **Build:** v0.4.0-wave3  
 **Sign-off:** Code complete; apply migrations 011–012 before enabling file uploads and DocuSign on staging.

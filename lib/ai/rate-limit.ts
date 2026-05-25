@@ -1,26 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { checkMemoryRateLimit } from '@/lib/api/publicRateLimit';
+
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS = 30;
-
-const memoryBuckets = new Map<string, { count: number; resetAt: number }>();
-
-function checkMemoryRateLimit(key: string): { allowed: boolean; retryAfterMs?: number } {
-  const now = Date.now();
-  const bucket = memoryBuckets.get(key);
-
-  if (!bucket || now >= bucket.resetAt) {
-    memoryBuckets.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return { allowed: true };
-  }
-
-  if (bucket.count >= MAX_REQUESTS) {
-    return { allowed: false, retryAfterMs: bucket.resetAt - now };
-  }
-
-  bucket.count += 1;
-  return { allowed: true };
-}
 
 export async function checkRateLimit(
   key: string,
@@ -40,5 +23,5 @@ export async function checkRateLimit(
     }
   }
 
-  return checkMemoryRateLimit(key);
+  return checkMemoryRateLimit(key, MAX_REQUESTS, WINDOW_MS);
 }

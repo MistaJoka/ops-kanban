@@ -119,12 +119,12 @@ export async function expectCardInColumn(page: Page, title: string, columnName: 
 }
 
 export async function waitForSyncPill(page: Page, label: 'Saving' | 'Synced') {
-  const pill = page.locator('.ops-sync-status__label');
+  const gauge = page.locator('.ops-sync-gauge');
   if (label === 'Saving') {
-    await expect(pill).toContainText(/Saving/i, { timeout: 5_000 });
+    await expect(gauge).toContainText(/Saving/i, { timeout: 5_000 });
     return;
   }
-  await expect(pill).toContainText(/^Synced/i, { timeout: 30_000 });
+  await expect(gauge).toContainText(/^Synced/i, { timeout: 30_000 });
 }
 
 export async function openJobPanel(page: Page, title: string) {
@@ -242,7 +242,15 @@ export async function saveEstimateLine(page: Page, description: string, unitPric
   await panel.getByPlaceholder('Description').first().fill(description);
   await panel.getByLabel('Quantity').first().fill('1');
   await panel.getByLabel('Unit price').first().fill(unitPrice);
+
+  const saveResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/cards/') &&
+      (response.request().method() === 'PATCH' || response.url().includes('/quotes')),
+  );
   await panel.getByRole('button', { name: 'Save estimate' }).click();
+  const response = await saveResponse;
+  expect(response.ok()).toBeTruthy();
 }
 
 export async function setScheduleDate(page: Page) {

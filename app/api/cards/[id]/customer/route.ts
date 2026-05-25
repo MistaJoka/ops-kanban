@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
+import { parseJsonBody } from '@/lib/api/parseJsonBody';
 import { jsonData, jsonError } from '@/lib/api/response';
-import { getHandlerContext, isHandlerContext } from '@/lib/domain/api/handlerContext';
+import { withApiRoute } from '@/lib/api/withApiRoute';
 import { canEditCardCustomer } from '@/lib/domain/cards/authorizeCardMutation';
 import { upsertCustomerForCard } from '@/lib/domain/customers/upsertCustomer';
 import { getCardDetail } from '@/lib/domain/cards/cardDetail';
@@ -15,48 +16,40 @@ const customerSchema = z.object({
 });
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const context = await getHandlerContext();
-  if (!isHandlerContext(context)) return context;
+  return withApiRoute(
+    request,
+    async (context, req) => {
+      const { id } = await params;
 
-  const { id } = await params;
+      if (!canEditCardCustomer(context.role)) {
+        return jsonError('Your role cannot edit customer records.', 403, 'FORBIDDEN');
+      }
 
-  if (!canEditCardCustomer(context.role)) {
-    return jsonError('Your role cannot edit customer records.', 403, 'FORBIDDEN');
-  }
+      const parsed = await parseJsonBody(req, customerSchema);
+      if (!parsed.ok) {
+        return parsed.response;
+      }
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400, 'VALIDATION_ERROR');
-  }
+      try {
+        await upsertCustomerForCard(
+          context.client,
+          context.organizationId,
+          id,
+          context.userId,
+          parsed.data,
+        );
 
-  const parsed = customerSchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError(
-      parsed.error.issues[0]?.message ?? 'Invalid request.',
-      400,
-      'VALIDATION_ERROR',
-    );
-  }
+        const card = await getCardDetail(context.client, context.organizationId, id);
+        if (!card) {
+          return jsonError('Card not found.', 404, 'NOT_FOUND');
+        }
 
-  try {
-    await upsertCustomerForCard(
-      context.client,
-      context.organizationId,
-      id,
-      context.userId,
-      parsed.data,
-    );
-
-    const card = await getCardDetail(context.client, context.organizationId, id);
-    if (!card) {
-      return jsonError('Card not found.', 404, 'NOT_FOUND');
-    }
-
-    return jsonData(card);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to save customer.';
-    return jsonError(message, 400, 'VALIDATION_ERROR');
-  }
+        return jsonData(card);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Failed to save customer.';
+        return jsonError(message, 400, 'VALIDATION_ERROR');
+      }
+    },
+    { route: '/api/cards/[id]/customer' },
+  );
 }

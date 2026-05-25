@@ -161,7 +161,8 @@ export type OutboundQueueEvents = {
 const PATCH_KINDS = new Set<OutboundMutation['kind']>(['patchCard', 'patchDetail']);
 const MAX_CROSS_CARD_CONCURRENCY = 3;
 const PATCH_DEBOUNCE_MS = 300;
-const RETRY_BACKOFF_MS = 500;
+const MAX_RETRY_ATTEMPTS = 2;
+const RETRY_BACKOFF_MS = [500, 1500];
 
 function mutationCardId(mutation: OutboundMutation): string {
   if (mutation.kind === 'createCard') {
@@ -327,6 +328,17 @@ export class OutboundSyncQueue {
     return this.getQueuedCount() > 0 || this.inFlightCount > 0;
   }
 
+  hasPendingForCard(cardId: string): boolean {
+    const resolvedId = this.resolveCardId(cardId);
+    if (this.inFlightByCard.has(resolvedId) || this.inFlightByCard.has(cardId)) {
+      return true;
+    }
+    if (this.patchBuffers.has(resolvedId) || this.patchBuffers.has(cardId)) {
+      return true;
+    }
+    return this.pending.some((job) => mutationCardId(job) === resolvedId || mutationCardId(job) === cardId);
+  }
+
   private enqueuePatchDebounced(
     mutation: OutboundMutation & { kind: 'patchCard' | 'patchDetail' },
   ) {
@@ -425,9 +437,11 @@ export class OutboundSyncQueue {
     try {
       const result = await this.executor(job);
 
-      if (!result.ok && result.retryable && attempt === 0) {
+      if (!result.ok && result.retryable && attempt < MAX_RETRY_ATTEMPTS) {
         retrying = true;
-        await new Promise((resolve) => setTimeout(resolve, RETRY_BACKOFF_MS));
+        await new Promise((resolve) =>
+          setTimeout(resolve, RETRY_BACKOFF_MS[attempt] ?? RETRY_BACKOFF_MS.at(-1) ?? 1500),
+        );
         await this.runJob(job, attempt + 1);
         return;
       }
@@ -443,9 +457,11 @@ export class OutboundSyncQueue {
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Sync failed.';
-      if (attempt === 0) {
+      if (attempt < MAX_RETRY_ATTEMPTS) {
         retrying = true;
-        await new Promise((resolve) => setTimeout(resolve, RETRY_BACKOFF_MS));
+        await new Promise((resolve) =>
+          setTimeout(resolve, RETRY_BACKOFF_MS[attempt] ?? RETRY_BACKOFF_MS.at(-1) ?? 1500),
+        );
         await this.runJob(job, attempt + 1);
         return;
       }

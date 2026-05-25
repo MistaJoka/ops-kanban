@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { logActivity } from '@/lib/domain/activities/logActivity';
 import { canCreateCard, type OrgRole } from '@/lib/domain/auth/roles';
+import { DomainError } from '@/lib/domain/errors';
 
 export type CreateCustomerInput = {
   organizationId: string;
@@ -28,12 +29,12 @@ export async function createCustomer(
   input: CreateCustomerInput,
 ): Promise<CustomerRecord> {
   if (!canCreateCard(input.role)) {
-    throw new Error('Your role cannot create customers.');
+    throw new DomainError('Your role cannot create customers.', 'FORBIDDEN');
   }
 
   const name = input.name.trim();
   if (!name) {
-    throw new Error('Customer name is required.');
+    throw new DomainError('Customer name is required.', 'VALIDATION_ERROR');
   }
 
   const { data, error } = await client

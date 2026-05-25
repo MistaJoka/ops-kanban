@@ -123,6 +123,8 @@ export type IntegrationStatus = {
   nativeAccounting: { enabled: boolean };
   nativeSigning: { enabled: boolean };
   bookingPageUrl: string | null;
+  inquiryPageUrl: string | null;
+  inquiryLinkPresets: Array<{ label: string; url: string }>;
 };
 
 export type MessageTemplate = {

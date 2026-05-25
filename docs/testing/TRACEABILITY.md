@@ -26,6 +26,8 @@ Links **product requirements** → **risk** → **tests**. Update when adding fe
 | REQ-18 | API_ROUTES + APPROVAL_FLOW        | R-02 | F-12      | INT-API-\*                                  |
 | REQ-19 | DESIGN_TOKENS / Field ledger UI   | —    | —         | visual review, UI-MASTER-001, CSS-002       |
 | REQ-20 | Optimistic background sync queue  | —    | —         | UNIT-SYNC-_, E2E-SYNC-_                     |
+| REQ-21 | P16 app stability (wrappers, boundaries, idempotency 019) | — | — | INT-API-500, INT-IDEM-001, UNIT-ERR-_, REL/E2E-RT-001 |
+| REQ-22 | P17 backend reliability (claim-first idempotency, atomic intake, public rate limits) | — | — | INT-IDEM-002/003, INT-API-PUB-001, api-contracts.test.ts, WH-INQ-* |
 
 ## Wave 1+ (placeholder)
 

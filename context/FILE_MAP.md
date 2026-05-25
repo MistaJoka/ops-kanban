@@ -59,8 +59,13 @@ Fast navigation for AI-assisted coding sessions.
 | Need             | File                                |
 | ---------------- | ----------------------------------- |
 | API routes       | `docs/api/API_ROUTES.md`            |
+| API patterns     | `docs/api/API_PATTERNS.md`          |
+| Route inventory  | `docs/testing/API_CONTRACTS.md`     |
 | AI approval flow | `docs/api/APPROVAL_FLOW.md`         |
 | MVP schema       | `docs/database/MVP_SCHEMA.md`       |
+| Schema changelog | `docs/database/SCHEMA_CHANGELOG.md` |
+| Inquiry runbook  | `docs/ops/INQUIRY_INTAKE.md`        |
+| Pilot day-one    | `docs/ops/PILOT_DAY_ONE.md`         |
 | Signup bootstrap | `docs/database/SIGNUP_BOOTSTRAP.md` |
 | Migrations       | `supabase/migrations/`              |
 

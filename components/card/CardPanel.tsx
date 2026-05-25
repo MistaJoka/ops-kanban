@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
 import type { BoardColumnView } from '@/lib/domain/board/getBoard';
@@ -10,35 +10,15 @@ import { CardPanelSkeleton } from '@/components/card/CardPanelSkeleton';
 import { CardPanelHeader } from '@/components/card/CardPanelHeader';
 import { CardPanelBody } from '@/components/card/CardPanelBody';
 import { CardPanelModals } from '@/components/card/CardPanelModals';
+import {
+  CardPanelTabBar,
+  getTabBadges,
+  type PanelTabKey,
+} from '@/components/card/CardPanelTabBar';
 import { useCardDetail } from '@/components/card/useCardDetail';
 import { useCardMutations } from '@/components/card/useCardMutations';
 import { getCardPropertyLabel } from '@/components/pipeline/board-card-primitives';
-import { cn } from '@/lib/utils';
-
-type TabKey =
-  | 'overview'
-  | 'property'
-  | 'scope'
-  | 'schedule'
-  | 'comments'
-  | 'checklist'
-  | 'estimate'
-  | 'money'
-  | 'comms'
-  | 'files';
-
-const TABS: Array<{ key: TabKey; label: string }> = [
-  { key: 'overview', label: 'Overview' },
-  { key: 'property', label: 'Property' },
-  { key: 'scope', label: 'Scope' },
-  { key: 'schedule', label: 'Schedule' },
-  { key: 'comments', label: 'Comments' },
-  { key: 'checklist', label: 'Checklist' },
-  { key: 'estimate', label: 'Estimate' },
-  { key: 'money', label: 'Money' },
-  { key: 'comms', label: 'Comms' },
-  { key: 'files', label: 'Files' },
-];
+import { defaultPanelTabForState } from '@/lib/domain/cards/defaultPanelTab';
 
 export function CardPanel({
   cardId,
@@ -66,7 +46,8 @@ export function CardPanel({
   ) => Promise<MoveCardResult>;
   initialBoardCard?: BoardCardView;
 }) {
-  const [tab, setTab] = useState<TabKey>('overview');
+  const [tab, setTab] = useState<PanelTabKey>('overview');
+  const openedCardRef = useRef<string | null>(null);
 
   const detail = useCardDetail(cardId, boardSync, initialBoardCard);
   const mutations = useCardMutations({
@@ -94,11 +75,34 @@ export function CardPanel({
   }, [onClose]);
 
   const card = detail.payload?.card;
+
+  useEffect(() => {
+    openedCardRef.current = null;
+  }, [cardId]);
+
+  useEffect(() => {
+    if (!card || openedCardRef.current === cardId) {
+      return;
+    }
+
+    openedCardRef.current = cardId;
+    setTab(defaultPanelTabForState(card.stateKey));
+  }, [card, cardId]);
+
   const currentColumn = columns.find((column) => column.id === card?.columnId);
   const propertyLabel = card
     ? getCardPropertyLabel(card.customer?.address, card.customer?.name, card.jobType)
     : null;
   const canManageMoney = role === 'owner' || role === 'manager';
+
+  const tabBadges =
+    detail.payload && card
+      ? getTabBadges({
+          quote: detail.payload.quote,
+          invoice: detail.payload.invoice,
+          commentCount: detail.payload.comments?.length ?? 0,
+        })
+      : {};
 
   return (
     <>
@@ -148,20 +152,7 @@ export function CardPanel({
               onDelete={() => void mutations.deleteJob()}
             />
 
-            <div className="ops-tab-bar">
-              <div className="flex gap-0.5 py-1.5">
-                {TABS.map((item) => (
-                  <button
-                    key={item.key}
-                    type="button"
-                    onClick={() => setTab(item.key)}
-                    className={cn('ops-tab', tab === item.key && 'ops-tab--active')}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <CardPanelTabBar tab={tab} onTabChange={setTab} badges={tabBadges} />
 
             {detail.error ? <p className="ops-alert-error mx-4 mt-3">{detail.error}</p> : null}
 

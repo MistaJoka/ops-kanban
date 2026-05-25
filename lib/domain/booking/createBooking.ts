@@ -4,8 +4,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { logActivity } from '@/lib/domain/activities/logActivity';
 import { bookingIdempotencyKey } from '@/lib/domain/booking/bookingPages';
-import { upsertCustomerForCard } from '@/lib/domain/customers/upsertCustomer';
 import { getPrimaryBoard } from '@/lib/domain/board/getBoard';
+import { claimBookingRequest } from '@/lib/domain/mutations/idempotency';
 
 export type CreateBookingInput = {
   organizationId: string;
@@ -59,75 +59,43 @@ export async function createBooking(
       serviceKey: input.serviceKey,
     });
 
-  const { data: existingRequest } = await client
-    .from('booking_requests')
-    .select('card_id')
-    .eq('organization_id', input.organizationId)
-    .eq('idempotency_key', idempotencyKey)
-    .maybeSingle();
-
-  if (existingRequest?.card_id) {
-    return { cardId: existingRequest.card_id, idempotent: true };
+  const claim = await claimBookingRequest(client, input.organizationId, idempotencyKey);
+  if (claim.status === 'cached') {
+    return { cardId: claim.cardId, idempotent: true };
   }
 
   const board = await getPrimaryBoard(client, input.organizationId, true);
   const columnId = await resolveColumnId(client, input.organizationId, board.id, 'site_visit');
   const title = `${input.serviceLabel} — ${input.customerName.trim()}`;
 
-  const { data: card, error: cardError } = await client
-    .from('cards')
-    .insert({
-      organization_id: input.organizationId,
-      board_id: board.id,
-      column_id: columnId,
-      title,
-      description: input.notes?.trim() || null,
-      job_type: input.serviceKey === 'consultation' ? 'other' : 'maintenance',
-      priority: 'medium',
-      scheduled_start: input.scheduledStart,
-      next_action: 'Confirm visit details with customer',
-    })
-    .select('id')
-    .single();
+  const { data: cardId, error: rpcError } = await client.rpc('create_booking_atomic', {
+    p_organization_id: input.organizationId,
+    p_board_id: board.id,
+    p_column_id: columnId,
+    p_idempotency_key: idempotencyKey,
+    p_title: title,
+    p_description: input.notes?.trim() || null,
+    p_job_type: input.serviceKey === 'consultation' ? 'other' : 'maintenance',
+    p_scheduled_start: input.scheduledStart,
+    p_next_action: 'Confirm visit details with customer',
+    p_customer_name: input.customerName.trim(),
+    p_customer_email: input.customerEmail.trim(),
+    p_customer_phone: input.customerPhone?.trim() || '',
+    p_customer_address: input.customerAddress?.trim() || '',
+    p_customer_notes: input.notes?.trim() || '',
+    p_service_key: input.serviceKey,
+    p_service_label: input.serviceLabel,
+  });
 
-  if (cardError || !card) {
-    throw new Error(cardError?.message ?? 'Failed to create booking card.');
+  if (rpcError || !cardId) {
+    throw new Error(rpcError?.message ?? 'Atomic booking create failed.');
   }
-
-  await upsertCustomerForCard(client, input.organizationId, card.id, null, {
-    name: input.customerName.trim(),
-    email: input.customerEmail.trim(),
-    phone: input.customerPhone?.trim() || null,
-    address: input.customerAddress?.trim() || null,
-    notes: input.notes?.trim() || null,
-  });
-
-  await client.from('booking_requests').insert({
-    organization_id: input.organizationId,
-    idempotency_key: idempotencyKey,
-    card_id: card.id,
-  });
-
-  await client.from('integration_events').insert({
-    organization_id: input.organizationId,
-    provider: 'native',
-    event_type: 'booking.created',
-    external_id: idempotencyKey,
-    payload_json: {
-      service_key: input.serviceKey,
-      scheduled_start: input.scheduledStart,
-      customer_email: input.customerEmail,
-    },
-    process_status: 'processed',
-    card_id: card.id,
-    processed_at: new Date().toISOString(),
-  });
 
   await logActivity(client, {
     organizationId: input.organizationId,
     actorId: null,
     entityType: 'card',
-    entityId: card.id,
+    entityId: cardId as string,
     action: 'booking.created',
     summary: `Online booking: ${title}`,
     metadata: {
@@ -136,5 +104,5 @@ export async function createBooking(
     },
   });
 
-  return { cardId: card.id, idempotent: false };
+  return { cardId: cardId as string, idempotent: false };
 }

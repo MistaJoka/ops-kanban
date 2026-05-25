@@ -75,6 +75,21 @@ export async function hasWave4MigrationsApplied(): Promise<boolean> {
   }
 }
 
+export async function hasInquiryMigrationsApplied(): Promise<boolean> {
+  try {
+    const service = createServiceClient();
+    const { error } = await service.from('inquiry_pages').select('id').limit(1);
+
+    if (!error) {
+      return true;
+    }
+
+    return !error.message.includes('schema cache') && !error.message.includes('does not exist');
+  } catch {
+    return false;
+  }
+}
+
 export async function hasNativeAccountingMigrationsApplied(): Promise<boolean> {
   try {
     const service = createServiceClient();

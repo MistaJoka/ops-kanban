@@ -1,5 +1,7 @@
 # Repository completeness audit
 
+> **Historical — pre-P0 snapshot (2025-05-21).** The repo is now a runnable Next.js app through P17. For current status see [`PROGRESS.md`](./PROGRESS.md). Do not extend this audit.
+
 **Date:** 2025-05-21 (updated after corrections)  
 **Repo type:** Pre-build blueprint (not a runnable application)  
 **Pipeline terminal `state_key`:** **`archived`** (compact + full)

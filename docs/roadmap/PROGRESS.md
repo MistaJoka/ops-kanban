@@ -2,9 +2,9 @@
 
 **AI agents: read this file first every session; update it last.**
 
-`last_updated`: 2026-05-24T02:00:00Z  
-`current_phase`: AI-P5 complete + slop debt cleared  
-`current_task`: —  
+`last_updated`: 2026-05-25T06:45:00Z  
+`current_phase`: P17 — backend reliability complete (local verification done)  
+`current_task`: — (staging deploy + auth-on UAT)  
 `mvp_status`: `pilot_staging_ready`
 
 ---
@@ -29,6 +29,8 @@
 | P13   | Optimistic background sync | complete | 100 | DONE-13 |
 | P14   | AI slop detection          | complete | 100 | —       |
 | P15   | Premium product polish     | complete | 100 | DONE-15 |
+| P16   | App stability hardening    | complete | 100 | DONE-16 |
+| P17   | Backend reliability        | complete | 100 | DONE-17 |
 
 **Status values:** `not_started` | `in_progress` | `blocked` | `complete`
 
@@ -52,7 +54,7 @@
 | TASK-P12-001                 | 2026-05-22 | LOG-2026-05-22-25 |
 | TASK-P11-001–P11-011         | 2026-05-22 | LOG-2026-05-22-01 |
 | TASK-P0-002, TASK-QA-001–004 | 2025-05-22 | LOG-2025-05-22-02 |
-| TASK-P10-001–P10-005         | 2025-05-21 | LOG-2025-05-21-18 |
+| TASK-P10-001–P10-006         | 2026-05-25 | LOG-2026-05-25-02 |
 | TASK-P9-001–P9-003           | 2025-05-21 | LOG-2025-05-21-17 |
 | TASK-P8-001–P8-006           | 2025-05-21 | LOG-2025-05-21-16 |
 | TASK-P7-001–P7-008           | 2025-05-21 | LOG-2025-05-21-15 |
@@ -61,16 +63,29 @@
 
 ## Next recommended tasks
 
-1. Apply migration **018** (`ai_memories`) via `npm run db:migrate`
-2. Pilot UAT: next_action suggest, notifications bell, photo analyze on Files tab
-3. Run `npm run test:e2e -- --grep @visual` in CI when snapshots are stable
-4. Deploy v0.7.0 to Vercel staging with `DISABLE_AUTH=false`
-5. Settings pages — all seven on `useSettings*` hooks (LOG-2026-05-24-02)
-6. **TASK-P2-013** full pipeline toggle — done; `E2E-PIPE-001` (collapsible groups waived Post-MVP)
+1. Deploy **staging** on Vercel with production env vars (`DISABLE_AUTH=false`)
+2. Run preview smoke: `PLAYWRIGHT_BASE_URL=<preview-url> npm run test:e2e:smoke`
+3. Set `SENTRY_DSN` on staging and verify one captured error
+4. Pilot UAT with real auth: UAT-01 signup, UAT-10 tenancy isolation
+5. Share inquiry URL from Settings → Integrations on pilot customer site
 
 ---
 
 ## Session notes (latest)
+
+**Local bidirectional verification (LOG-2026-05-25-07).** Preconditions: `.env.local` (6 vars incl. `SUPABASE_DB_PASSWORD`), migrations **001→021** applied. Automated gate: typecheck, no-mock, slop-health, unit **150**, AI **35**, integration **43**, security **4**. E2E smoke **17/17**; reliability **3/3** (REL-001 alert selector + client refresh; REL-003 Create menu; E2E-SYNC-003 preview total). Manual UAT: pipeline, card open, schedule validation, search focus, inquiry dedupe (curl + board). Mobile UAT-09 **390×844** pass. E2E flake: `E2E-JOB-006` on dirty dev org when `r0-critical` serial. Next: staging deploy (`DISABLE_AUTH=false`, `SENTRY_DSN`), preview E2E, real-auth UAT-01/10.
+
+**Bidirectional doc sync (LOG-2026-05-25-06).** Reconciled entry points with code: `API_PATTERNS.md`, `SCHEMA_CHANGELOG.md`, ops runbooks, refreshed `README`/`context/`/`PAGES`/`lib/domain/README`. Historical banners on pre-build docs; REQ-21/22. `npm run check:doc-sync` in `test:release`. LEARN-024.
+
+**Card L&F trim (LOG-2026-05-25-05).** Removed lowest-ROI additions: keyboard nav (J/K/Enter), column mini-metrics, compact density toggle, calendar board-signal parity. Retained signal picker (2 slots), meta/footer polish, quick actions, panel tabs, filter chips, column category tint.
+
+**Card L&F + features (LOG-2026-05-25-04).** Full ROI plan shipped before trim; see LOG-2026-05-25-05 for scope reduction.
+
+**Backend reliability completion (P17).** Full route wrapper rollout (49/49); `parseJsonBody`, `withPublicRoute`, `withWebhookRoute`; `DomainError` taxonomy; claim-first idempotency (INT-IDEM-002/003); atomic intake/booking RPC (migration 021); public rate limits (INT-API-PUB-001); API contract tests; health endpoint hygiene. LOG-2026-05-25-03, LEARN-022.
+
+**Unified customer intake (TASK-P10-006).** Public `/inquiry/{slug}` quote form with `?src=` tracking for QR/website; `processIntake` domain engine (dedup, attach-to-open-card, automations on create); SMS unknown-phone path refactored; Settings inquiry URL + preset links. Migration `020_inquiry_intake.sql`. LOG-2026-05-25-02, LEARN-021.
+
+**App stability hardening (P16) — v0.7.0 prep.** Error boundaries (global, public, card panel, AI chrome); `withApiRoute` + Supabase error classifier; `apiFetch` + session guard; realtime reconnect/catch-up; outbound sync idempotency (migration 019); Sentry optional via `SENTRY_DSN`. Tests: UNIT-ERR, INT-API-500, REL/E2E-RT-001. LOG-2026-05-25-01, LEARN-020.
 
 **Premium product polish (P15) — v0.6.0 shipped.** Command toolbar with board health chips (jobs · overdue · unassigned · due); scroll fade affordance; mobile stage nav; stuck-card signal (5d+); card/panel skeletons; Playwright VIS-P15-001–008 screenshots. Audit: `docs/qa/P15_PREMIUM_POLISH_AUDIT.md`. Smoke 17/17, a11y 3/3, unit 121/121, build ✅.
 
@@ -114,8 +129,8 @@
 | ------------------------------ | ---------------------------------- |
 | Tasks done / total P0–P11 + QA | 104 / 104                          |
 | Open PRBs                      | 0                                  |
-| LEARN entries                  | 14                                 |
-| Unit tests                     | 88/88                              |
+| LEARN entries                  | 24                                 |
+| Unit tests                     | 130/130                            |
 | AI tests                       | 24/24                              |
 | Integration tests              | 13/13 (+ Wave tests when migrated) |
 | E2E + a11y                     | 21/21 (+ VIS-P15 @visual)          |

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { FileText, Users } from 'lucide-react';
 
+import { apiFetch } from '@/lib/client/apiFetch';
+
 type Customer = {
   id: string;
   name: string;
@@ -23,14 +25,13 @@ export default function CustomersPage() {
   useEffect(() => {
     void (async () => {
       setLoading(true);
-      const response = await fetch('/api/customers');
-      const payload = await response.json();
-      if (!response.ok) {
-        setError(payload.error ?? 'Failed to load customers.');
+      const result = await apiFetch<Customer[]>('/api/customers');
+      if (!result.ok) {
+        setError(result.error);
         setLoading(false);
         return;
       }
-      setCustomers(payload.data ?? []);
+      setCustomers(result.data ?? []);
       setLoading(false);
     })();
   }, []);

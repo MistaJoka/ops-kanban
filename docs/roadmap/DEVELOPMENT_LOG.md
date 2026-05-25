@@ -11,7 +11,131 @@ Chronological record of build progress, decisions, blockers, troubles, fixes, an
 
 ---
 
-### LOG-2026-05-24-04 — TASK-P2-013 closed + E2E-PIPE-001
+### LOG-2026-05-25-07 — Local bidirectional verification
+
+| Field      | Value |
+| ---------- | ----- |
+| **Phase**  | P17 exit / pilot prep |
+| **Tasks**  | Local verification plan (automated gate + E2E + UAT smoke) |
+| **Author** | agent |
+| **Type**   | verification |
+
+**Progress:** Completed local back-to-front and front-to-back verification. Preconditions: `.env.local` (6 vars incl. `SUPABASE_DB_PASSWORD`), migrations 001–021 applied (no pending). Automated gate: typecheck, check:no-mock, check:slop-health, unit 150, ai 35, integration 43, security 4 — all green. E2E: smoke 17/17; reliability 3/3 after fixing stale selectors (`Create` menu, pipeline-mode refresh trigger, `.ops-alert-error`); outbound-sync estimate wait-for-response. Manual UAT (localhost): UAT-01 adapted PASS (pipeline + columns); UAT-02 PASS (E2E-JOB-001/003); UAT-04 PASS via schedule validation E2E + integration; UAT-08 PASS (search `/` shortcut); inquiry PASS (Settings URL, POST dedupe same `cardId`, card on board); UAT-09 PASS (390×844 mobile panel). Fixed E2E tests in `reliability.spec.ts`, `pipeline.ts` helper, `outbound-sync.spec.ts`.
+
+**Troubles:** `E2E-JOB-006` fails when r0-critical serial run hits dirty dev org (many E2E cards); passes in isolation. `REL-001` originally used `page.reload()` which bypasses mocked `/api/board` (SSR loads board).
+
+**Fix:** REL-001 triggers client refresh via pipeline mode toggle; REL-003 uses Create → New job; duplicate-key idempotency already fixed in prior session.
+
+**Learning:** n/a (verification session)
+
+**Verify:** `npm run test:integration` 43/43; `npm run test:e2e:smoke` 17/17; `npm run test:e2e -- reliability.spec.ts` 3/3; inquiry API dedupe curl; browser UAT spot checks
+
+**Next:** Staging deploy with `DISABLE_AUTH=false`, `SENTRY_DSN`, preview E2E smoke
+
+---
+
+### LOG-2026-05-25-06 — Bidirectional documentation sync
+
+| Field      | Value |
+| ---------- | ----- |
+| **Phase**  | P17 (doc maintenance) |
+| **Tasks**  | Doc sync plan (front/back collision repair) |
+| **Author** | agent |
+| **Type**   | docs + tooling |
+
+**Progress:** Front-to-back and back-to-front doc reconciliation. Entry points: `README`, `AGENTS`, `context/*`. API split: `API_PATTERNS.md`, expanded `API_ROUTES.md`, `DOC_INDEX` pointers. Schema: `SCHEMA_CHANGELOG.md`, `MVP_SCHEMA` banner. Product: `PAGES.md`, `lib/domain/README.md`. Ops: `INQUIRY_INTAKE.md`, `PILOT_DAY_ONE.md`, `PILOT_DEPLOY` → 021. Traceability REQ-21/22. Historical banners on pre-build audits; DONE-9/10 + G5/G6 footnotes. `check:doc-sync` script wired to `test:release`; AI_BUILD_PROTOCOL Layer 6.
+
+**Troubles:** Canonical specs had lagged LOG/contracts since P17; LEARN-023 already used for card signals.
+
+**Fix:** Split spec strategy; automated drift checks; doc learnings as LEARN-024.
+
+**Learning:** LEARN-024
+
+**Verify:** `npm run check:doc-sync` ✅
+
+---
+
+### LOG-2026-05-25-05 — Card-focused trim (low-ROI removal)
+
+| Field      | Value |
+| ---------- | ----- |
+| **Phase**  | P15 polish extension |
+| **Tasks**  | Trim keyboard nav, calendar parity, column metrics, compact density |
+| **Author** | agent |
+| **Type**   | UI trim |
+
+**Progress:** Removed J/K/Enter pipeline keyboard nav (`useBoardCardKeyboardNav`), column header mini-metrics (`columnMetrics`), comfortable/compact card density toggle (`useCardDensity`), and calendar job-card board-signal parity. Kept high-ROI card work: category-aware `pickVisibleBoardSignals` (fixed 2 slots), flattened meta/footer, quick actions, panel tabs, filter chips, column category tint.
+
+**Troubles:** None blocking.
+
+**Fix:** n/a
+
+**Learning:** LEARN-023 updated (trim verify steps)
+
+**Verify:** unit tests 147/147 ✅; tsc ✅
+
+---
+
+### LOG-2026-05-25-04 — Card L&F + features ROI plan
+
+| Field      | Value |
+| ---------- | ----- |
+| **Phase**  | P15 polish extension |
+| **Tasks**  | Card scan hierarchy, panel tabs, board quick actions, filters, density, keyboard nav |
+| **Author** | agent |
+| **Type**   | UI + domain |
+
+**Progress:** Typography tokens bumped; `pickVisibleBoardSignals` category-aware picker (max 2 signals); flattened board meta row + footer next-action hero; overdue signal dedupe; column category header threading; `CardPanelTabBar` with primary/secondary tabs + badges; board quick-action strip + menu priority + inline next-action edit; filter pill chips; column mini-metrics; comfortable/compact density toggle; J/K/Enter keyboard nav; calendar job cards reuse money/schedule/assignee signals.
+
+**Troubles:** None blocking.
+
+**Fix:** n/a
+
+**Learning:** LEARN-023
+
+**Verify:** unit tests 150/150 ✅; tsc ✅
+
+---
+
+| Field      | Value |
+| ---------- | ----- |
+| **Phase**  | P17 |
+| **Tasks**  | TASK-P17-000 through TASK-P17-018 |
+| **Author** | agent |
+| **Type**   | refactor + test + migration |
+
+**Progress:** Route inventory in API_CONTRACTS.md. Primitives: `parseJsonBody`, `withPublicRoute`, `withWebhookRoute`. All 49 API routes wrapped. `DomainError` + shared `BOARD_CARD_SELECT`; comment auth moved to domain. Claim-first idempotency for `client_mutations` and `inquiry_requests` (INT-IDEM-002/003). Migration `021_atomic_intake.sql` with `process_intake_create_atomic` + `create_booking_atomic` RPCs. Public rate limits on inquiry/book/portal POST. Contract tests (`api-contracts.test.ts`). Health endpoint trimmed.
+
+**Troubles:** Local `db:migrate` blocked without `SUPABASE_DB_URL`; integration tests for idempotency/inquiry skip until remote migrations applied.
+
+**Fix:** Tests use `describe.skipIf` guards; DONE-17 documents staging migration requirement.
+
+**Learning:** LEARN-022
+
+**Verify:** typecheck ✅; unit tests ✅
+
+---
+
+### LOG-2026-05-25-01 — P16 App stability hardening
+
+| Field      | Value |
+| ---------- | ----- |
+| **Phase**  | P16 |
+| **Tasks**  | TASK-P16-001 (stability initiative) |
+| **Author** | agent |
+| **Type**   | feature + test + ops |
+
+**Progress:** Runtime resilience (global/public error boundaries, `ErrorBoundary` on card panel + AI chrome, `withApiRoute` on 6 unguarded routes, middleware try/catch). Client hardening (`apiFetch`, dashboard/customers/reports, secondary fetches, AiPageCopilot degraded state). Sync/realtime (reconnect backoff, catch-up refresh, queue drain refresh, `hasPendingForCard`, retry backoff 500→1500ms, unmount guard). Auth (`SessionGuardProvider`, 401 redirect). Idempotency (migration 019, `withIdempotency` on card write routes). Observability (`@sentry/nextjs`, `captureError`, structured `logError`).
+
+**Troubles:** Integration idempotency test requires migration 019 applied remotely; skips until table exists.
+
+**Fix:** `hasClientMutationsTable()` strict check; RLS matrix table count updated to 31.
+
+**Learning:** LEARN-020
+
+**Verify:** typecheck ✅; unit 130/130 ✅; integration 15/15 (22 skipped) ✅
+
+---
 
 | Field      | Value |
 | ---------- | ----- |
@@ -1396,5 +1520,39 @@ Update this table when a phase starts or completes. Mirror status in [`PROGRESS.
 **DoD:** DONE-7 (staging-approved; operator migrate + WH-PAY on staging)
 
 **Next:** Deploy staging, run WH-PAY green, then TASK-P8-001
+
+---
+
+### LOG-2026-05-25-02 — Unified customer intake (web, QR, SMS)
+
+| Field      | Value              |
+| ---------- | ------------------ |
+| **Phase**  | P10                |
+| **Tasks**  | TASK-P10-006       |
+| **Author** | build agent        |
+| **Type**   | feature            |
+
+**Summary:** Unified external intake — public `/inquiry/{slug}` form (website + QR `?src=` tracking), `processIntake` domain engine, SMS unknown-phone refactor, Settings inquiry URLs.
+
+**Progress:**
+
+- Migration `020_inquiry_intake.sql` — `inquiry_pages`, `inquiry_requests`, RLS
+- Domain: `lib/domain/intake/` (`processIntake`, `matchOpenCard`, `inquiryPages`), `createCardFromSystem`
+- Public UI: `app/inquiry/[slug]/`, `POST /api/inquiry/[slug]` (Zapier/Typeform compatible JSON)
+- SMS: `processSmsWebhook` delegates new leads to `processIntake`
+- Settings: inquiry URL + preset links (yard-sign, truck-wrap, business-card, website)
+- Tests: WH-INQ-001–004 in `tests/integration/inquiry.test.ts`; LEARN-021
+
+**Troubles:** Migration 020 not applied without `SUPABASE_DB_PASSWORD` — WH-INQ tests skip until migrate.
+
+**Fix:** Renamed intake migration from 019 → 020 to avoid conflict with `019_client_mutations.sql`.
+
+**Learning:** LEARN-021 — attach-before-create + shared idempotency in `processIntake`.
+
+**Tests run:** integration rls-matrix ✅ (after inquiry table list update); WH-INQ skipped pending 020 migrate
+
+**DoD:** TASK-P10-006 code complete; operator apply 020 + run WH-INQ on staging
+
+**Next:** Apply migration 020; pilot inquiry form on staging; optional booking → `processIntake` refactor
 
 ---

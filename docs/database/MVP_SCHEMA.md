@@ -1,6 +1,8 @@
 # MVP database schema
 
-Tables **implemented** in `supabase/migrations/001_core_schema.sql`. Everything else in `DATABASE_SCHEMA.md` is **future**.
+> **Wave 0 core only.** Post-MVP tables and RPCs (migrations `007`–`021`) are documented in [`SCHEMA_CHANGELOG.md`](./SCHEMA_CHANGELOG.md).
+
+Tables **implemented** in `supabase/migrations/001_core_schema.sql`. Long-term reference for deferred items: `DATABASE_SCHEMA.md` (legacy banner).
 
 ## MVP tables
 
@@ -23,19 +25,26 @@ ai_action_approvals
 
 Migrations: `001` core → `002` auth FK → `003` extensions → `004` RLS → `005` indexes → `006` triggers.
 
+**Extensions:** See [`SCHEMA_CHANGELOG.md`](./SCHEMA_CHANGELOG.md) for `007`–`021`.
+
 ## Pipeline terminal state
 
 Compact and full pipelines end at **`archived`** (`state_key`). See `DEFAULT_PIPELINE.md`.
 
-## Not in MVP migration (defer)
+## Not in MVP migration (defer or moved to changelog)
 
 ```txt
-checklists, checklist_items, attachments
-invoice_items, payments
-schedules, work_orders
-notifications
-automations, automation_runs
-ai_conversations, ai_messages, ai_memories, ai_summaries, ai_insights, ai_automation_suggestions
+checklists, checklist_items          — still defer (use checklist_json on cards)
+invoice_items, payments              — → SCHEMA_CHANGELOG 007
+schedules, work_orders               — → SCHEMA_CHANGELOG 009 (schedule_events)
+notifications                        — still defer (inline UI)
+automations, automation_runs         — → SCHEMA_CHANGELOG 013
+attachments, signatures, envelopes   — → SCHEMA_CHANGELOG 011
+ai_conversations, ai_messages        — still defer
+ai_memories                          — → SCHEMA_CHANGELOG 018
+ai_summaries, ai_insights            — still defer
+client_mutations, inquiry_*          — → SCHEMA_CHANGELOG 019–021
+accounting_transactions              — → SCHEMA_CHANGELOG 016
 ```
 
 ## Auth linkage (required before production)
@@ -83,3 +92,4 @@ customers (organization_id, name)
 | `invoice.drafted`  | Invoice created                                           |
 | `invoice.paid`     | Marked paid                                               |
 | `ai.tool_executed` | Approved tool ran                                         |
+| `inquiry.received` | Intake attached or new inquiry card (see SCHEMA_CHANGELOG) |

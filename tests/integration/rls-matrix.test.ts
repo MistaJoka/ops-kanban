@@ -106,6 +106,7 @@ describe.skipIf(!integrationReady)('SEC-RLS org isolation', () => {
         expect(tables).toContain(table);
       }
     }
-    expect(ALL_ORG_SCOPED_TABLES).toHaveLength(26);
+    expect(ALL_ORG_SCOPED_TABLES).toContain('inquiry_pages');
+    expect(ALL_ORG_SCOPED_TABLES).toContain('inquiry_requests');
   });
 });

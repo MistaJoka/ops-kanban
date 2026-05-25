@@ -1,9 +1,11 @@
 # MVP capture — frozen Wave 0 scope
 
+> **Frozen Wave 0 intent** — implementation through **P17** exceeds this capture (Waves 1–4, intake, reliability). Do not relitigate Wave 0 scope here; see [`PROGRESS.md`](./PROGRESS.md) and [`SCHEMA_CHANGELOG.md`](../database/SCHEMA_CHANGELOG.md).
+
 **Version:** 0.1.0-planning  
 **Vertical:** Landscaping / lawn-care SMB  
 **Codename:** OpsBoard AI  
-**Status:** Pre-build blueprint (this document locks intent before code)
+**Status:** Pre-build blueprint (this document locks intent before code) — **historical label; app is built**
 
 ---
 

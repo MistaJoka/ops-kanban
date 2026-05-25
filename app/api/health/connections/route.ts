@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { withPublicRoute } from '@/lib/api/withApiRoute';
 import { getGeminiModel } from '@/lib/ai/gemini-client';
 import { createClient as createBrowserServerClient } from '@/lib/db/supabase/server';
 import { createServiceClient } from '@/lib/db/supabase/service';
@@ -121,27 +122,33 @@ async function runChecks(): Promise<{ ok: boolean; checks: CheckResult[] }> {
   };
 }
 
-export async function GET() {
-  try {
-    const result = await runChecks();
+export async function GET(request: Request) {
+  return withPublicRoute(
+    request,
+    async () => {
+      try {
+        const result = await runChecks();
 
-    return NextResponse.json(
-      {
-        ok: result.ok,
-        timestamp: new Date().toISOString(),
-        checks: result.checks,
-      },
-      { status: result.ok ? 200 : 503 },
-    );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Connection probe failed';
+        return NextResponse.json(
+          {
+            ok: result.ok,
+            timestamp: new Date().toISOString(),
+            checks: result.checks,
+          },
+          { status: result.ok ? 200 : 503 },
+        );
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Connection probe failed';
 
-    return NextResponse.json(
-      {
-        ok: false,
-        error: message,
-      },
-      { status: 500 },
-    );
-  }
+        return NextResponse.json(
+          {
+            ok: false,
+            error: message,
+          },
+          { status: 500 },
+        );
+      }
+    },
+    { route: '/api/health/connections' },
+  );
 }

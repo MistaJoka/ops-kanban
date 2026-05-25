@@ -1,24 +1,22 @@
 import { jsonData, jsonError } from '@/lib/api/response';
-import { getHandlerContext, isHandlerContext } from '@/lib/domain/api/handlerContext';
+import { withApiRoute } from '@/lib/api/withApiRoute';
 import { listScheduledCards } from '@/lib/domain/scheduling/listScheduledCards';
 
 export async function GET(request: Request) {
-  const context = await getHandlerContext();
-  if (!isHandlerContext(context)) return context;
+  return withApiRoute(
+    request,
+    async (context, req) => {
+      const url = new URL(req.url);
+      const start = url.searchParams.get('start');
+      const end = url.searchParams.get('end');
 
-  const url = new URL(request.url);
-  const start = url.searchParams.get('start');
-  const end = url.searchParams.get('end');
+      if (!start || !end) {
+        return jsonError('start and end query params are required.', 400, 'VALIDATION_ERROR');
+      }
 
-  if (!start || !end) {
-    return jsonError('start and end query params are required.', 400, 'VALIDATION_ERROR');
-  }
-
-  try {
-    const cards = await listScheduledCards(context.client, context.organizationId, { start, end });
-    return jsonData(cards);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to load calendar.';
-    return jsonError(message, 500);
-  }
+      const cards = await listScheduledCards(context.client, context.organizationId, { start, end });
+      return jsonData(cards);
+    },
+    { route: '/api/calendar' },
+  );
 }

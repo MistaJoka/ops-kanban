@@ -8,6 +8,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import type { BoardColumnView } from '@/lib/domain/board/getBoard';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
 import { isTempCardId } from '@/lib/domain/board/boardOptimistic';
+import { COLUMN_CATEGORY } from '@/lib/domain/pipeline/types';
 import { BoardCard } from '@/components/pipeline/BoardCard';
 import { BoardCardSelectCheckbox } from '@/components/pipeline/BoardCardSelectCheckbox';
 import type { BoardCardPatch } from '@/components/pipeline/BoardCardMenu';
@@ -64,6 +65,7 @@ export const KanbanColumn = memo(function KanbanColumn({
   const showBulkSelect = selectionEnabled && selectedInColumn.length > 0;
   const allSelected = selectableIds.length > 0 && selectedInColumn.length === selectableIds.length;
   const someSelected = selectedInColumn.length > 0 && !allSelected;
+  const category = COLUMN_CATEGORY[column.stateKey] ?? 'sales';
 
   const { setNodeRef, isOver } = useDroppable({
     id: columnDroppableId(column.id),
@@ -78,9 +80,9 @@ export const KanbanColumn = memo(function KanbanColumn({
   return (
     <section
       data-column-id={column.id}
-      className={cn('ops-column', showDropTarget && 'ops-column--drop-target')}
+      className={cn('ops-column', `ops-column--${category}`, showDropTarget && 'ops-column--drop-target')}
     >
-      <header className="rounded-t-xl border-b border-[var(--border-subtle)] bg-[var(--group-header-bg)] px-3 py-2.5">
+      <header className="ops-column__header">
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
             <h2 className="truncate text-[13px] font-semibold tracking-tight text-[var(--group-header-text)]">

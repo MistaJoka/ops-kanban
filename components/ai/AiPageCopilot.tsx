@@ -5,6 +5,7 @@ import { Sparkles } from 'lucide-react';
 
 import { AiCopilotPopover } from '@/components/ai/AiCopilotPopover';
 import type { AiClientContext } from '@/components/ai/AiDock';
+import { apiFetch } from '@/lib/client/apiFetch';
 
 const PAGE_CHIPS: Record<AiClientContext['page'], string[]> = {
   board: ['Daily brief', 'Show overdue jobs'],
@@ -29,28 +30,50 @@ export function AiPageCopilot({
 }) {
   const [open, setOpen] = useState(false);
   const [context, setContext] = useState<AiClientContext | null>(null);
+  const [contextError, setContextError] = useState<string | null>(null);
 
   useEffect(() => {
-    void fetch('/api/app/context')
-      .then((response) => response.json())
-      .then((payload) => {
-        if (!payload.data?.userId) return;
-        setContext({
-          page,
-          organizationId: payload.data.organizationId,
-          userId: payload.data.userId,
-          role: payload.data.role,
-          selectedCustomerId,
-          calendarRange,
-        });
-      })
-      .catch(() => undefined);
+    void apiFetch<{
+      organizationId: string;
+      userId: string | null;
+      role: string;
+    }>('/api/app/context').then((result) => {
+      if (!result.ok) {
+        setContextError(result.error);
+        return;
+      }
+      if (!result.data.userId) {
+        setContextError('Copilot unavailable for this session.');
+        return;
+      }
+      setContextError(null);
+      setContext({
+        page,
+        organizationId: result.data.organizationId,
+        userId: result.data.userId,
+        role: result.data.role,
+        selectedCustomerId,
+        calendarRange,
+      });
+    });
   }, [page, selectedCustomerId, calendarRange?.start, calendarRange?.end]);
 
   const chips = PAGE_CHIPS[page] ?? [];
 
   if (!context) {
-    return null;
+    return (
+      <button
+        type="button"
+        disabled
+        className="fixed bottom-5 right-5 z-[60] inline-flex items-center gap-2 rounded-full border bg-[var(--surface-rail)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] opacity-70 shadow-none"
+        style={{ borderColor: 'var(--topbar-border)' }}
+        aria-label="Ops copilot unavailable"
+        title={contextError ?? 'Loading copilot context…'}
+      >
+        <Sparkles className="size-4" strokeWidth={2.25} />
+        Ops copilot
+      </button>
+    );
   }
 
   return (

@@ -1,6 +1,7 @@
 'use client';
 
 import { CardPanel } from '@/components/card/CardPanel';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { NewJobModal, type NewJobFormValues } from '@/components/pipeline/NewJobModal';
 import type { BoardView } from '@/lib/domain/board/getBoard';
@@ -79,19 +80,21 @@ export function KanbanBoardModals({
       ) : null}
 
       {selectedCardId ? (
-        <CardPanel
-          cardId={selectedCardId}
-          columns={board.columns}
-          role={role}
-          organizationId={organizationId}
-          userId={userId}
-          onClose={onCloseCard}
-          boardSync={boardSync}
-          onMoveCard={onMoveCard}
-          initialBoardCard={
-            board.cards.find((card) => card.id === selectedCardId) as BoardCardView | undefined
-          }
-        />
+        <ErrorBoundary surface="card-panel" onReset={onCloseCard}>
+          <CardPanel
+            cardId={selectedCardId}
+            columns={board.columns}
+            role={role}
+            organizationId={organizationId}
+            userId={userId}
+            onClose={onCloseCard}
+            boardSync={boardSync}
+            onMoveCard={onMoveCard}
+            initialBoardCard={
+              board.cards.find((card) => card.id === selectedCardId) as BoardCardView | undefined
+            }
+          />
+        </ErrorBoundary>
       ) : null}
     </>
   );

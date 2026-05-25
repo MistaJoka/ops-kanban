@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
+import { parseJsonBody } from '@/lib/api/parseJsonBody';
 import { jsonData, jsonError } from '@/lib/api/response';
+import { withPublicRoute } from '@/lib/api/withApiRoute';
 import {
   approveEstimateViaPortal,
   verifyPortalToken,
@@ -13,53 +15,52 @@ const bodySchema = z.object({
 
 export async function POST(request: Request, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  const service = createServiceClient();
-  const portal = await verifyPortalToken(service, token);
 
-  if (!portal) {
-    return jsonError('Invalid or expired portal link.', 404, 'NOT_FOUND');
-  }
+  return withPublicRoute(
+    request,
+    async (req) => {
+      const service = createServiceClient();
+      const portal = await verifyPortalToken(service, token);
 
-  if (!portal.scopes.includes('approve')) {
-    return jsonError('This link cannot approve estimates.', 403, 'FORBIDDEN');
-  }
+      if (!portal) {
+        return jsonError('Invalid or expired portal link.', 404, 'NOT_FOUND');
+      }
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400, 'VALIDATION_ERROR');
-  }
+      if (!portal.scopes.includes('approve')) {
+        return jsonError('This link cannot approve estimates.', 403, 'FORBIDDEN');
+      }
 
-  const parsed = bodySchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError(
-      parsed.error.issues[0]?.message ?? 'Signer name is required.',
-      400,
-      'VALIDATION_ERROR',
-    );
-  }
+      const parsed = await parseJsonBody(req, bodySchema);
+      if (!parsed.ok) {
+        return parsed.response;
+      }
 
-  const signerIp =
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    request.headers.get('x-real-ip') ??
-    null;
+      const signerIp =
+        req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+        req.headers.get('x-real-ip') ??
+        null;
 
-  try {
-    const result = await approveEstimateViaPortal(service, {
-      organizationId: portal.organizationId,
-      cardId: portal.cardId,
-      tokenId: portal.id,
-      signerName: parsed.data.signerName.trim(),
-      signerIp,
-    });
+      try {
+        const result = await approveEstimateViaPortal(service, {
+          organizationId: portal.organizationId,
+          cardId: portal.cardId,
+          tokenId: portal.id,
+          signerName: parsed.data.signerName.trim(),
+          signerIp,
+        });
 
-    return jsonData({
-      message: 'Estimate approved. Thank you!',
-      total: result.total,
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Approval failed.';
-    return jsonError(message, 400, 'VALIDATION_ERROR');
-  }
+        return jsonData({
+          message: 'Estimate approved. Thank you!',
+          total: result.total,
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Approval failed.';
+        return jsonError(message, 400, 'VALIDATION_ERROR');
+      }
+    },
+    {
+      route: '/api/portal/[token]/approve',
+      rateLimit: { routeKey: 'portal-post', slug: token.slice(0, 8), limit: 5 },
+    },
+  );
 }

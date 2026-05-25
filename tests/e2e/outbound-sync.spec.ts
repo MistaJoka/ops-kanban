@@ -57,6 +57,7 @@ test.describe('Outbound sync @smoke', () => {
     await saveEstimateLine(page, 'Mulch bed refresh', '350');
 
     const panel = page.getByRole('dialog', { name: 'Job detail panel' });
+    await expect(panel.getByText('Preview total')).toBeVisible({ timeout: 15_000 });
     await expect(panel.getByText('$350.00').first()).toBeVisible({ timeout: 15_000 });
   });
 });

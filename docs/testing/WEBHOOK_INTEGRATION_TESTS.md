@@ -42,6 +42,17 @@
 | ----------- | --------------- | -------------------- | --- |
 | WH-BOOK-001 | invitee.created | card in `site_visit` | P1  |
 
+## WH-INQ — Public inquiry (Wave 4+)
+
+| ID          | Event                         | Expected                              | P   |
+| ----------- | ----------------------------- | ------------------------------------- | --- |
+| WH-INQ-001  | Web form submit               | card in `inquiry` + customer          | P0  |
+| WH-INQ-002  | Duplicate idempotency key     | same card, idempotent                 | P0  |
+| WH-INQ-003  | Known email + open card       | attach message, no duplicate card     | P1  |
+| WH-INQ-004  | Source/campaign in POST       | activity metadata records source      | P1  |
+
+Run: `npm run test:integration -- inquiry.test`
+
 ## Modular run
 
 Wave 1 release gate: **WH-PAY-\* all P0 pass** before enabling prod keys.

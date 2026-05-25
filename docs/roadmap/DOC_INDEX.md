@@ -17,9 +17,10 @@ Single map to avoid duplicate plans and drift. **Do not add a second roadmap.**
 | **MVP checklist (detailed)** | [`MVP_SCOPE.md`](../product/MVP_SCOPE.md)                                         | Duplicates capture — cross-linked                  |
 | **9-column pipeline**        | [`DEFAULT_PIPELINE.md`](../product/DEFAULT_PIPELINE.md)                           | `landscaping-default-columns.ts` (code mirror)     |
 | **19-column pipeline**       | [`FULL_PIPELINE.md`](../product/FULL_PIPELINE.md)                                 | `END_TO_END_WORKFLOWS.md` (narrative only)         |
-| **DB for MVP**               | [`MVP_SCHEMA.md`](../database/MVP_SCHEMA.md) + `supabase/migrations/`             | `DATABASE_SCHEMA.md` (legacy)                      |
+| **DB for MVP**               | [`MVP_SCHEMA.md`](../database/MVP_SCHEMA.md) + [`SCHEMA_CHANGELOG.md`](../database/SCHEMA_CHANGELOG.md) + `supabase/migrations/` | `DATABASE_SCHEMA.md` (legacy)                      |
 | **Column seed at signup**    | [`SIGNUP_BOOTSTRAP.md`](../database/SIGNUP_BOOTSTRAP.md)                          | `supabase/seed/*.sql` (commented reference)        |
-| **API shapes**               | [`API_ROUTES.md`](../api/API_ROUTES.md)                                           | `API_CONTRACTS.md` (tests only)                    |
+| **API shapes**               | [`API_ROUTES.md`](../api/API_ROUTES.md) + [`API_PATTERNS.md`](../api/API_PATTERNS.md) | `API_CONTRACTS.md` (tests + route inventory)       |
+| **Route inventory (tests)**  | [`API_CONTRACTS.md`](../testing/API_CONTRACTS.md) § Route inventory                   | —                                                  |
 | **Layering rules**           | [`ARCHITECTURE_PRINCIPLES.md`](./ARCHITECTURE_PRINCIPLES.md)                      | `SYSTEM_ARCHITECTURE.md` (diagram)                 |
 | **AI build phases**          | [`AI_PHASES.md`](../ai/AI_PHASES.md)                                              | Waves A–D → AI-P2–P5                               |
 | **AI product behavior**      | [`AI_UTILIZATION.md`](../ai/AI_UTILIZATION.md)                                    | —                                                  |

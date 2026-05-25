@@ -40,6 +40,6 @@ where created_at > now() - interval '7 days';
 | Auth failures  | spike 3× baseline | Check Supabase status    |
 | AI reject rate | > 40%             | Review prompt chips / UX |
 
-**Configured:** documented — enable Sentry + Vercel alerts on first prod deploy.
+**Configured:** Sentry SDK wired (`SENTRY_DSN` optional); enable Vercel alerts on first prod deploy.
 
 See `PILOT_DEPLOY_CHECKLIST.md` for the deploy sequence.

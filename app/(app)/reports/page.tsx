@@ -1,6 +1,7 @@
 'use client';
 
 import { AiPageCopilot } from '@/components/ai/AiPageCopilot';
+import { apiFetch } from '@/lib/client/apiFetch';
 import { useCallback, useEffect, useState } from 'react';
 
 type ReportsSummary = {
@@ -57,34 +58,38 @@ export default function ReportsPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (dateFrom) params.set('dateFrom', `${dateFrom}T00:00:00.000Z`);
-    if (dateTo) params.set('dateTo', `${dateTo}T23:59:59.999Z`);
+    setError(null);
 
-    const query = params.toString();
-    const [reportsResponse, accountingResponse] = await Promise.all([
-      fetch(`/api/reports?${query}`),
-      fetch(`/api/accounting?${query}`),
-    ]);
+    try {
+      const params = new URLSearchParams();
+      if (dateFrom) params.set('dateFrom', `${dateFrom}T00:00:00.000Z`);
+      if (dateTo) params.set('dateTo', `${dateTo}T23:59:59.999Z`);
 
-    const reportsPayload = await reportsResponse.json();
-    const accountingPayload = await accountingResponse.json();
+      const query = params.toString();
+      const [reportsResult, accountingResult] = await Promise.all([
+        apiFetch<ReportsSummary>(`/api/reports?${query}`),
+        apiFetch<AccountingData>(`/api/accounting?${query}`),
+      ]);
 
-    if (!reportsResponse.ok) {
-      setError(reportsPayload.error ?? 'Failed to load reports.');
+      if (!reportsResult.ok) {
+        setError(reportsResult.error);
+        setLoading(false);
+        return;
+      }
+
+      if (!accountingResult.ok) {
+        setError(accountingResult.error);
+        setLoading(false);
+        return;
+      }
+
+      setSummary(reportsResult.data);
+      setAccounting(accountingResult.data);
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : 'Failed to load reports.');
+    } finally {
       setLoading(false);
-      return;
     }
-
-    if (!accountingResponse.ok) {
-      setError(accountingPayload.error ?? 'Failed to load accounting data.');
-      setLoading(false);
-      return;
-    }
-
-    setSummary(reportsPayload.data);
-    setAccounting(accountingPayload.data);
-    setLoading(false);
   }, [dateFrom, dateTo]);
 
   useEffect(() => {

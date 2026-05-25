@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
+import { parseJsonBody } from '@/lib/api/parseJsonBody';
 import { jsonData, jsonError } from '@/lib/api/response';
-import { getHandlerContext, isHandlerContext } from '@/lib/domain/api/handlerContext';
+import { withApiRoute } from '@/lib/api/withApiRoute';
 import { getToolCall, markToolCallRejected } from '@/lib/domain/ai/persistToolCall';
 
 const bodySchema = z.object({
@@ -10,39 +11,31 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const context = await getHandlerContext();
-  if (!isHandlerContext(context)) return context;
+  return withApiRoute(
+    request,
+    async (context, req) => {
+      const parsed = await parseJsonBody(req, bodySchema);
+      if (!parsed.ok) {
+        return parsed.response;
+      }
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError('Invalid JSON body.', 400, 'VALIDATION_ERROR');
-  }
+      const toolCall = await getToolCall(
+        context.client,
+        context.organizationId,
+        parsed.data.toolCallId,
+      );
+      if (!toolCall) {
+        return jsonError('Tool call not found.', 404, 'NOT_FOUND');
+      }
 
-  const parsed = bodySchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError(
-      parsed.error.issues[0]?.message ?? 'Invalid request.',
-      400,
-      'VALIDATION_ERROR',
-    );
-  }
+      if (toolCall.status !== 'pending') {
+        return jsonError('Tool call is not pending.', 400, 'VALIDATION_ERROR');
+      }
 
-  const toolCall = await getToolCall(
-    context.client,
-    context.organizationId,
-    parsed.data.toolCallId,
+      await markToolCallRejected(context.client, parsed.data.toolCallId, context.organizationId);
+
+      return jsonData({ status: 'rejected', toolCallId: parsed.data.toolCallId });
+    },
+    { route: '/api/ai/reject' },
   );
-  if (!toolCall) {
-    return jsonError('Tool call not found.', 404, 'NOT_FOUND');
-  }
-
-  if (toolCall.status !== 'pending') {
-    return jsonError('Tool call is not pending.', 400, 'VALIDATION_ERROR');
-  }
-
-  await markToolCallRejected(context.client, parsed.data.toolCallId, context.organizationId);
-
-  return jsonData({ status: 'rejected', toolCallId: parsed.data.toolCallId });
 }

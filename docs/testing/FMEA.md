@@ -23,7 +23,7 @@
 | F-10 | RLS read              | Policy missing on table       | Data leak               | 10  | 2   | 8   | 160 | CI matrix all tables            | SEC-RLS-\*                 |
 | F-11 | Context loader        | Full DB in prompt             | PII leak + cost         | 7   | 2   | 6   | 84  | Cap cards at 40                 | AI-CTX-002                 |
 | F-12 | Approval bypass       | Client calls executor direct  | Unauthorized write      | 9   | 2   | 5   | 90  | Server-only execute             | INT-API-020, SEC-API-\*    |
-| F-13 | Realtime              | Missed update                 | Two users conflict      | 5   | 4   | 6   | 120 | Merge by id                     | E2E-RT-001                 |
+| F-13 | Realtime              | Missed update                 | Two users conflict      | 5   | 4   | 6   | 120 | Reconnect catch-up + queue drain refresh | E2E-RT-001                 |
 | F-14 | Signup                | Profile not linked auth.users | Orphan user             | 7   | 3   | 4   | 84  | FK + trigger                    | INT-BOOT-002               |
 
 ## 3. RPN &gt; 100 — required actions
@@ -34,7 +34,7 @@
 | F-04 | Block estimate_sent if total=0 | Dev   | E2E-JOB-004         |
 | F-05 | Optimistic rollback            | Dev   | E2E-JOB-002         |
 | F-10 | RLS on every MVP table         | Dev   | SEC-RLS full matrix |
-| F-13 | Realtime integration test      | Dev   | E2E-RT-001          |
+| F-13 | Realtime reconnect + catch-up on queue drain | Dev   | E2E-RT-001          |
 
 ## 4. FMEA ↔ regression
 

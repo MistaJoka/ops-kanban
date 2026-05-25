@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, ArrowRight, CalendarDays, DollarSign, Kanban } from 'lucide-react';
 
 import { AiPageCopilot } from '@/components/ai/AiPageCopilot';
+import { apiFetch } from '@/lib/client/apiFetch';
 import { CATEGORY_ACCENT, COLUMN_CATEGORY } from '@/lib/domain/pipeline/types';
 import { cn } from '@/lib/utils';
 
@@ -23,14 +24,13 @@ export default function DashboardPage() {
   useEffect(() => {
     void (async () => {
       setLoading(true);
-      const response = await fetch('/api/dashboard/summary');
-      const payload = await response.json();
-      if (!response.ok) {
-        setError(payload.error ?? 'Failed to load dashboard.');
+      const result = await apiFetch<DashboardSummary>('/api/dashboard/summary');
+      if (!result.ok) {
+        setError(result.error);
         setLoading(false);
         return;
       }
-      setSummary(payload.data);
+      setSummary(result.data);
       setLoading(false);
     })();
   }, []);

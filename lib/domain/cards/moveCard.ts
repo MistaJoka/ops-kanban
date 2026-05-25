@@ -4,6 +4,7 @@ import { logActivity } from '@/lib/domain/activities/logActivity';
 import { runAutomationsForColumnEnter } from '@/lib/domain/automations/runAutomations';
 import type { OrgRole } from '@/lib/domain/auth/roles';
 import { mapCardRowToBoardView, type BoardCardView } from '@/lib/domain/cards/boardCard';
+import { BOARD_CARD_SELECT } from '@/lib/domain/cards/cardSelect';
 import { computeInsertPosition } from '@/lib/domain/cards/cardPosition';
 import { validateMove } from '@/lib/domain/pipeline/validateMove';
 
@@ -27,24 +28,13 @@ export class MoveCardError extends Error {
   }
 }
 
-const CARD_SELECT = `
-  id, title, column_id, priority, job_type, position, due_date,
-  scheduled_start, next_action, updated_at, column_entered_at, customer_id,
-  assigned_to, archived_at,
-  columns!inner(state_key),
-  customers(name, address),
-  profiles:assigned_to(full_name),
-  quotes(status, total, quote_items(id)),
-  invoices(status, balance_due)
-`;
-
 export async function moveCard(
   client: SupabaseClient,
   input: MoveCardInput,
 ): Promise<BoardCardView> {
   const { data: card, error: cardError } = await client
     .from('cards')
-    .select(CARD_SELECT)
+    .select(BOARD_CARD_SELECT)
     .eq('id', input.cardId)
     .eq('organization_id', input.organizationId)
     .single();
@@ -164,7 +154,7 @@ export async function moveCard(
     .update(updatePayload)
     .eq('id', input.cardId)
     .eq('organization_id', input.organizationId)
-    .select(CARD_SELECT)
+    .select(BOARD_CARD_SELECT)
     .single();
 
   if (updateError || !updated) {

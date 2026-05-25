@@ -9,6 +9,7 @@ import type { BoardCardView } from '@/lib/domain/cards/boardCard';
 import {
   filterBoardCards,
   getAdvancedFilterLabel,
+  isScheduledThisWeek,
   BOARD_JOB_TYPES,
   type AdvancedFilterKey,
 } from '@/lib/domain/board/boardFilters';
@@ -17,6 +18,7 @@ import { nextGroupKey, pickActiveGroup } from '@/lib/domain/pipeline/pickActiveG
 import { PIPELINE_GROUP_LABELS, type PipelineGroupKey } from '@/lib/landscaping-full-pipeline';
 import type { NewJobFormValues } from '@/components/pipeline/NewJobModal';
 import { usePipelineSearch } from '@/components/pipeline/PipelineSearchProvider';
+import { apiFetch } from '@/lib/client/apiFetch';
 import { useBoardRealtime } from '@/components/pipeline/useBoardRealtime';
 import type { BoardSyncHandlers } from '@/components/pipeline/useBoardState';
 import { useWorkspaceShortcutsOptional } from '@/components/workspace/WorkspaceShortcutsProvider';
@@ -49,6 +51,7 @@ type BoardStateSlice = {
   boardSync: BoardSyncHandlers;
   hasPendingMutations: () => boolean;
   setLiveConnected: (connected: boolean) => void;
+  markPendingCatchUp: () => void;
 };
 
 export function useKanbanBoardController(
@@ -68,6 +71,7 @@ export function useKanbanBoardController(
     boardSync,
     hasPendingMutations,
     setLiveConnected,
+    markPendingCatchUp,
   } = boardState;
 
   const [members, setMembers] = useState<OrgMemberView[]>([]);
@@ -121,16 +125,15 @@ export function useKanbanBoardController(
   }, [includeArchived, refreshBoard]);
 
   useEffect(() => {
-    void fetch('/api/members')
-      .then((response) => response.json())
-      .then((payload) => {
-        if (payload.data) setMembers(payload.data);
-      });
+    void apiFetch<OrgMemberView[]>('/api/members').then((result) => {
+      if (result.ok) setMembers(result.data);
+    });
   }, []);
 
   useBoardRealtime(organizationId, () => void refreshBoard(includeArchived), {
     shouldSkip: hasPendingMutations,
     onConnectionChange: (status) => setLiveConnected(status === 'connected'),
+    onMissedEvent: markPendingCatchUp,
   });
 
   const visibleColumns = useMemo(
@@ -422,19 +425,25 @@ export function useKanbanBoardController(
   const showEmptyBoard = activeCardCount === 0 && filterKey === 'all' && !search.trim();
   const filterLabel = getAdvancedFilterLabel(advancedFilter).toLowerCase();
 
-  const boardHealth = useMemo(
-    () => ({
+  const boardHealth = useMemo(() => {
+    const activeCards = board.cards.filter((card) => card.stateKey !== 'archived');
+
+    return {
       jobCount: filteredCards.length,
-      overdueCount: filteredCards.filter((card) => card.isOverdue).length,
-      unassignedCount: filteredCards.filter(
-        (card) => !card.assigneeInitials && card.stateKey !== 'archived',
+      totalActiveCount: activeCards.length,
+      overdueCount: activeCards.filter((card) => card.isOverdue).length,
+      unassignedCount: activeCards.filter((card) => !card.assigneeInitials).length,
+      balanceDueCount: activeCards.filter((card) => card.moneyBadge === 'balance_due').length,
+      assignedToMeCount: userId
+        ? activeCards.filter((card) => card.assignedTo === userId).length
+        : 0,
+      scheduledThisWeekCount: activeCards.filter((card) =>
+        isScheduledThisWeek(card.scheduledStart),
       ).length,
-      balanceDueCount: filteredCards.filter((card) => card.moneyBadge === 'balance_due').length,
       stageCount: visibleColumns.length,
       pipelineMode: board.pipelineMode,
-    }),
-    [filteredCards, visibleColumns.length, board.pipelineMode],
-  );
+    };
+  }, [filteredCards.length, board.cards, visibleColumns.length, board.pipelineMode, userId]);
 
   return {
     error,

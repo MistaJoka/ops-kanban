@@ -4,6 +4,8 @@ import { logActivity } from '@/lib/domain/activities/logActivity';
 import type { OrgRole } from '@/lib/domain/auth/roles';
 import { canCreateCard } from '@/lib/domain/auth/roles';
 import { mapCardRowToBoardView, type BoardCardView } from '@/lib/domain/cards/boardCard';
+import { BOARD_CARD_SELECT } from '@/lib/domain/cards/cardSelect';
+import { DomainError } from '@/lib/domain/errors';
 
 export type CreateCardInput = {
   organizationId: string;
@@ -12,18 +14,33 @@ export type CreateCardInput = {
   title: string;
   description?: string;
   jobType?: string;
+  nextAction?: string;
   actorId: string | null;
   role: OrgRole;
 };
 
-export async function createCard(
-  client: SupabaseClient,
-  input: CreateCardInput,
-): Promise<BoardCardView> {
-  if (!canCreateCard(input.role)) {
-    throw new Error('Your role cannot create cards.');
-  }
+export type CreateCardFromSystemInput = {
+  organizationId: string;
+  boardId: string;
+  columnId: string;
+  title: string;
+  description?: string;
+  jobType?: string;
+  nextAction?: string;
+};
 
+async function insertCardRow(
+  client: SupabaseClient,
+  input: {
+    organizationId: string;
+    boardId: string;
+    columnId: string;
+    title: string;
+    description?: string;
+    jobType?: string;
+    nextAction?: string;
+  },
+) {
   const { data: column, error: columnError } = await client
     .from('columns')
     .select('id, board_id, state_key')
@@ -45,25 +62,51 @@ export async function createCard(
       title: input.title.trim(),
       description: input.description?.trim() || null,
       job_type: input.jobType ?? null,
+      next_action: input.nextAction?.trim() || null,
       priority: 'medium',
     })
-    .select(
-      `
-      id, title, column_id, priority, job_type, position, due_date,
-      scheduled_start, next_action, updated_at, column_entered_at, customer_id,
-      assigned_to,
-      columns!inner(state_key),
-      customers(name, address),
-      profiles:assigned_to(full_name),
-      quotes(status, total),
-      invoices(status, balance_due)
-    `,
-    )
+    .select(BOARD_CARD_SELECT)
     .single();
 
   if (error || !card) {
     throw new Error(error?.message ?? 'Failed to create card.');
   }
+
+  return { card, column };
+}
+
+export async function createCardFromSystem(
+  client: SupabaseClient,
+  input: CreateCardFromSystemInput,
+): Promise<BoardCardView> {
+  const { card, column } = await insertCardRow(client, input);
+
+  await logActivity(client, {
+    organizationId: input.organizationId,
+    actorId: null,
+    entityType: 'card',
+    entityId: card.id,
+    action: 'card.created',
+    summary: `Created job "${input.title.trim()}" in ${column.state_key.replace('_', ' ')}`,
+    metadata: {
+      column_id: input.columnId,
+      state_key: column.state_key,
+      source: 'system',
+    },
+  });
+
+  return mapCardRowToBoardView(card as Parameters<typeof mapCardRowToBoardView>[0]);
+}
+
+export async function createCard(
+  client: SupabaseClient,
+  input: CreateCardInput,
+): Promise<BoardCardView> {
+  if (!canCreateCard(input.role)) {
+    throw new DomainError('Your role cannot create cards.', 'FORBIDDEN');
+  }
+
+  const { card, column } = await insertCardRow(client, input);
 
   await logActivity(client, {
     organizationId: input.organizationId,

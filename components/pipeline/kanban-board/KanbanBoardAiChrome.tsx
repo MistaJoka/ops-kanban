@@ -1,5 +1,6 @@
 'use client';
 
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AiCommandDock } from '@/components/ai/AiCommandDock';
 import { AiCopilotPopover } from '@/components/ai/AiCopilotPopover';
 import { AiInlineBanner } from '@/components/ai/AiInlineBanner';
@@ -57,23 +58,27 @@ export function KanbanBoardAiChrome({
       ) : null}
 
       {toolbarAiContext ? (
-        <AiCopilotPopover
-          open={aiCopilotOpen}
-          onClose={onCloseCopilot}
-          context={toolbarAiContext}
-          onRefresh={onRefresh}
-          suggestedChips={['Daily brief', 'Show overdue jobs', 'Create job from notes']}
-          autoFocus
-        />
+        <ErrorBoundary surface="ai-copilot-popover">
+          <AiCopilotPopover
+            open={aiCopilotOpen}
+            onClose={onCloseCopilot}
+            context={toolbarAiContext}
+            onRefresh={onRefresh}
+            suggestedChips={['Daily brief', 'Show overdue jobs', 'Create job from notes']}
+            autoFocus
+          />
+        </ErrorBoundary>
       ) : null}
 
       {aiContext ? (
-        <AiCommandDock
-          context={aiContext}
-          expanded={aiDockExpanded}
-          onExpandedChange={onAiDockExpandedChange}
-          onRefresh={onRefresh}
-        />
+        <ErrorBoundary surface="ai-command-dock">
+          <AiCommandDock
+            context={aiContext}
+            expanded={aiDockExpanded}
+            onExpandedChange={onAiDockExpandedChange}
+            onRefresh={onRefresh}
+          />
+        </ErrorBoundary>
       ) : null}
     </>
   );

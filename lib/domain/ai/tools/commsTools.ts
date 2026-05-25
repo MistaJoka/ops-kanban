@@ -8,15 +8,15 @@ import { type ToolHandler } from './toolHelpers';
 
 export const commsToolHandlers: Record<string, ToolHandler> = {
   createInternalNote: async (input, ctx, _boardCtx) => {
-    const { client, organizationId, userId } = ctx;
+    const { client, organizationId, userId, role } = ctx;
     const cardId = String(input.cardId);
-    const comment = await createCardComment(
-      client,
+    const comment = await createCardComment(client, {
       organizationId,
       cardId,
-      userId,
-      String(input.body),
-    );
+      authorId: userId,
+      role,
+      body: String(input.body),
+    });
 
     return {
       message: 'Internal note added to the job timeline.',

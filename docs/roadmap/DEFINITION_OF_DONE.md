@@ -156,6 +156,8 @@ A phase is **complete** only when **all** mandatory items below pass. Tasks refe
 
 ## DONE-9 — Wave 3: Documents
 
+> **Historical note:** DONE-9.2 originally allowed DocuSign. Production path is **native portal e-sign** only (DocuSign adapter removed — see DEVELOPMENT_LOG native integrations refactor).
+
 | #   | Criterion                             |
 | --- | ------------------------------------- |
 | 9.1 | Attachments on card                   |
@@ -166,12 +168,30 @@ A phase is **complete** only when **all** mandatory items below pass. Tasks refe
 
 ## DONE-10 — Wave 4: Scale
 
+> **Historical note:** DONE-10.2 originally required QuickBooks sync. Production path is **native accounting ledger** (`accounting_transactions`, migration 016) — QB adapter removed.
+
 | #    | Criterion                                    |
 | ---- | -------------------------------------------- |
 | 10.1 | Full portal                                  |
 | 10.2 | QuickBooks sync                              |
 | 10.3 | Automations + reports                        |
 | 10.4 | One business end-to-end without external CRM |
+
+---
+
+## DONE-17 — Phase 17: Backend reliability completion
+
+| #    | Criterion                                                         | Verify                          |
+| ---- | ----------------------------------------------------------------- | ------------------------------- |
+| 17.1 | All API routes use `withApiRoute` / `withPublicRoute` / `withWebhookRoute` | grep route inventory          |
+| 17.2 | `DomainError` + `mapDomainError` for typed domain failures        | UNIT-ERR-005                    |
+| 17.3 | Idempotency claim-first (`client_mutations`, `inquiry_requests`)  | INT-IDEM-002, INT-IDEM-003      |
+| 17.4 | Atomic intake/booking RPC (migration 021)                         | WH-INQ-*, booking.test          |
+| 17.5 | Public POST rate limits (inquiry, book, portal)                   | INT-API-PUB-001, UNIT-RATE-001  |
+| 17.6 | Core API contract tests backfilled                                | api-contracts.test.ts           |
+| 17.7 | Health endpoint does not leak env key shape                       | manual `/api/health`            |
+
+**Phase exit:** Full unit gate green; integration tests pass when Supabase env available.
 
 ---
 

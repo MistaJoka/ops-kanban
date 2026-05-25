@@ -1,18 +1,21 @@
 import { jsonData } from '@/lib/api/response';
-import { getHandlerContext, isHandlerContext } from '@/lib/domain/api/handlerContext';
+import { withApiRoute } from '@/lib/api/withApiRoute';
 import { getReportsSummary } from '@/lib/domain/reports/getReports';
 
 export async function GET(request: Request) {
-  const context = await getHandlerContext();
-  if (!isHandlerContext(context)) return context;
+  return withApiRoute(
+    request,
+    async (context, req) => {
+      const url = new URL(req.url);
+      const dateFrom = url.searchParams.get('dateFrom');
+      const dateTo = url.searchParams.get('dateTo');
 
-  const url = new URL(request.url);
-  const dateFrom = url.searchParams.get('dateFrom');
-  const dateTo = url.searchParams.get('dateTo');
-
-  const summary = await getReportsSummary(context.client, context.organizationId, {
-    dateFrom,
-    dateTo,
-  });
-  return jsonData(summary);
+      const summary = await getReportsSummary(context.client, context.organizationId, {
+        dateFrom,
+        dateTo,
+      });
+      return jsonData(summary);
+    },
+    { route: '/api/reports' },
+  );
 }

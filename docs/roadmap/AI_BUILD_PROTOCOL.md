@@ -50,6 +50,14 @@ Trigger every **10** `DEVELOPMENT_LOG` entries or **monthly**:
 3. Ask: _Would we build the touched hotspots the same way today?_
 4. If no → PRB-SLOP-\* or split task; shrink allowlist in `scripts/check-slop-health.mjs`
 
+### 1c. Doc drift review (Layer 6)
+
+Trigger when changing API routes, migrations, or canonical specs; also every **10** LOG entries or **monthly**:
+
+1. `npm run check:doc-sync`
+2. If fail → update `API_ROUTES.md`, `API_CONTRACTS.md` inventory, `SCHEMA_CHANGELOG.md`, entry points (`README`, `context/CURRENT_STATE`), or runbooks
+3. Re-run until green before claiming doc work done
+
 ---
 
 ## 2. AI phases (what to do when)

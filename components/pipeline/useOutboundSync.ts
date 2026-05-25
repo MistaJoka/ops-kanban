@@ -5,6 +5,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
 import type { CardDetailView } from '@/lib/domain/cards/cardDetail';
 import { boardCardFromDetail } from '@/lib/domain/board/boardOptimistic';
+import { apiFetch } from '@/lib/client/apiFetch';
+import { captureSyncFailure } from '@/lib/ops/captureError';
 import {
   createClientMutationId,
   OutboundSyncQueue,
@@ -31,6 +33,7 @@ export type OutboundSyncApi = {
   queuedCount: number;
   inFlightCount: number;
   hasWork: () => boolean;
+  hasPendingForCard: (cardId: string) => boolean;
   subscribeFailures: (listener: (event: SyncFailureEvent) => void) => () => void;
 };
 
@@ -38,8 +41,31 @@ export function isOutboundQueueEnabled(): boolean {
   return process.env.NEXT_PUBLIC_OUTBOUND_QUEUE !== '0';
 }
 
-export function createOutboundExecutor(): OutboundExecutor {
+function mapSyncResult<T>(
+  result: Awaited<ReturnType<typeof apiFetch<T>>>,
+  fallbackError: string,
+): OutboundExecutorResult & { data?: T } {
+  if (result.ok) {
+    return { ok: true, data: result.data };
+  }
+
+  return {
+    ok: false,
+    message:
+      result.code === 'UNAUTHORIZED'
+        ? 'Session expired. Please sign in again.'
+        : result.error || fallbackError,
+    code: result.code,
+    retryable: result.status >= 500 || result.status === 0,
+  };
+}
+
+export function createOutboundExecutor(isDisposed?: () => boolean): OutboundExecutor {
   return async (mutation): Promise<OutboundExecutorResult> => {
+    if (isDisposed?.()) {
+      return { ok: false, message: 'Sync cancelled.', retryable: false };
+    }
+
     const headers = {
       'Content-Type': 'application/json',
       'X-Client-Mutation-Id': mutation.clientMutationId,
@@ -48,261 +74,177 @@ export function createOutboundExecutor(): OutboundExecutor {
     try {
       switch (mutation.kind) {
         case 'createCard': {
-          const response = await fetch('/api/cards', {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({
-              title: mutation.body.title,
-              columnId: mutation.body.columnId,
-              ...(mutation.body.jobType ? { jobType: mutation.body.jobType } : {}),
-            }),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to create card.',
-              retryable: response.status >= 500,
-            };
-          }
-
-          let createdCard = payload.data as BoardCardView;
-
-          if (mutation.body.customerName?.trim()) {
-            const customerResponse = await fetch(`/api/cards/${createdCard.id}/customer`, {
-              method: 'PUT',
+          const result = mapSyncResult(
+            await apiFetch<BoardCardView>('/api/cards', {
+              method: 'POST',
               headers,
               body: JSON.stringify({
-                name: mutation.body.customerName.trim(),
-                address: mutation.body.customerAddress?.trim() || null,
+                title: mutation.body.title,
+                columnId: mutation.body.columnId,
+                ...(mutation.body.jobType ? { jobType: mutation.body.jobType } : {}),
               }),
-            });
-            const customerPayload = await customerResponse.json();
-            if (customerResponse.ok) {
-              createdCard = boardCardFromDetail(
-                customerPayload.data as CardDetailView,
-                createdCard,
-              );
+            }),
+            'Failed to create card.',
+          );
+          if (!result.ok) return result;
+
+          let createdCard = result.data as BoardCardView;
+
+          if (mutation.body.customerName?.trim()) {
+            const customerResult = mapSyncResult(
+              await apiFetch<CardDetailView>(`/api/cards/${createdCard.id}/customer`, {
+                method: 'PUT',
+                headers,
+                body: JSON.stringify({
+                  name: mutation.body.customerName.trim(),
+                  address: mutation.body.customerAddress?.trim() || null,
+                }),
+              }),
+              'Failed to save customer.',
+            );
+            if (customerResult.ok && customerResult.data) {
+              createdCard = boardCardFromDetail(customerResult.data, createdCard);
             }
           }
 
           return { ok: true, data: createdCard, realCardId: createdCard.id };
         }
         case 'moveCard': {
-          const response = await fetch(`/api/cards/${mutation.cardId}/move`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({
-              targetColumnId: mutation.targetColumnId,
-              reason: mutation.reason,
+          return mapSyncResult(
+            await apiFetch<BoardCardView>(`/api/cards/${mutation.cardId}/move`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({
+                targetColumnId: mutation.targetColumnId,
+                reason: mutation.reason,
+              }),
             }),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              code: payload.code as string | undefined,
-              message: payload.error ?? 'Failed to move card.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+            'Failed to move card.',
+          );
         }
         case 'reorderCard': {
-          const response = await fetch(`/api/cards/${mutation.cardId}/reorder`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({
-              ...(mutation.crossColumn ? { targetColumnId: mutation.targetColumnId } : {}),
-              insertIndex: mutation.insertIndex,
-              reason: mutation.reason,
+          return mapSyncResult(
+            await apiFetch<BoardCardView>(`/api/cards/${mutation.cardId}/reorder`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({
+                ...(mutation.crossColumn ? { targetColumnId: mutation.targetColumnId } : {}),
+                insertIndex: mutation.insertIndex,
+                reason: mutation.reason,
+              }),
             }),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              code: payload.code as string | undefined,
-              message: payload.error ?? 'Failed to reorder card.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+            'Failed to reorder card.',
+          );
         }
         case 'patchCard':
         case 'patchDetail': {
-          const response = await fetch(`/api/cards/${mutation.cardId}`, {
-            method: 'PATCH',
-            headers,
-            body: JSON.stringify(mutation.patch),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to save.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data as CardDetailView };
+          const result = mapSyncResult(
+            await apiFetch<CardDetailView>(`/api/cards/${mutation.cardId}`, {
+              method: 'PATCH',
+              headers,
+              body: JSON.stringify(mutation.patch),
+            }),
+            'Failed to save.',
+          );
+          return result;
         }
         case 'saveCustomer': {
-          const response = await fetch(`/api/cards/${mutation.cardId}/customer`, {
-            method: 'PUT',
-            headers,
-            body: JSON.stringify(mutation.body),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to save customer.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+          return mapSyncResult(
+            await apiFetch(`/api/cards/${mutation.cardId}/customer`, {
+              method: 'PUT',
+              headers,
+              body: JSON.stringify(mutation.body),
+            }),
+            'Failed to save customer.',
+          );
         }
         case 'saveQuote': {
-          const response = await fetch(`/api/cards/${mutation.cardId}/quotes`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ lineItems: mutation.lineItems }),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to save estimate.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+          return mapSyncResult(
+            await apiFetch(`/api/cards/${mutation.cardId}/quotes`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({ lineItems: mutation.lineItems }),
+            }),
+            'Failed to save estimate.',
+          );
         }
         case 'markQuoteSent': {
-          const response = await fetch(`/api/cards/${mutation.cardId}/quotes`, {
-            method: 'PATCH',
-            headers,
-            body: JSON.stringify({ status: 'sent' }),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to mark estimate sent.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+          return mapSyncResult(
+            await apiFetch(`/api/cards/${mutation.cardId}/quotes`, {
+              method: 'PATCH',
+              headers,
+              body: JSON.stringify({ status: 'sent' }),
+            }),
+            'Failed to mark estimate sent.',
+          );
         }
         case 'sendEstimate': {
-          const response = await fetch(`/api/cards/${mutation.cardId}/quotes/send`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ email: mutation.email }),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to send estimate.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+          return mapSyncResult(
+            await apiFetch(`/api/cards/${mutation.cardId}/quotes/send`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({ email: mutation.email }),
+            }),
+            'Failed to send estimate.',
+          );
         }
         case 'createInvoice': {
-          const response = await fetch(`/api/cards/${mutation.cardId}/invoices`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ fromQuoteId: mutation.fromQuoteId }),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to create invoice.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+          return mapSyncResult(
+            await apiFetch(`/api/cards/${mutation.cardId}/invoices`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({ fromQuoteId: mutation.fromQuoteId }),
+            }),
+            'Failed to create invoice.',
+          );
         }
         case 'markPaid': {
-          const response = await fetch(`/api/invoices/${mutation.invoiceId}/mark-paid`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ method: 'manual' }),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to mark paid.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+          return mapSyncResult(
+            await apiFetch(`/api/invoices/${mutation.invoiceId}/mark-paid`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({ method: 'manual' }),
+            }),
+            'Failed to mark paid.',
+          );
         }
         case 'createPaymentLink': {
-          const response = await fetch(`/api/invoices/${mutation.invoiceId}/payment-link`, {
-            method: 'POST',
-            headers,
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to create payment link.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+          return mapSyncResult(
+            await apiFetch(`/api/invoices/${mutation.invoiceId}/payment-link`, {
+              method: 'POST',
+              headers,
+            }),
+            'Failed to create payment link.',
+          );
         }
         case 'createChangeOrder': {
-          const response = await fetch(`/api/cards/${mutation.cardId}/change-orders`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ title: mutation.title }),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to create change order.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+          return mapSyncResult(
+            await apiFetch(`/api/cards/${mutation.cardId}/change-orders`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({ title: mutation.title }),
+            }),
+            'Failed to create change order.',
+          );
         }
         case 'addComment': {
-          const response = await fetch(`/api/cards/${mutation.cardId}/comments`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ body: mutation.body }),
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to add comment.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+          return mapSyncResult(
+            await apiFetch(`/api/cards/${mutation.cardId}/comments`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({ body: mutation.body }),
+            }),
+            'Failed to add comment.',
+          );
         }
         case 'deleteCard': {
-          const response = await fetch(`/api/cards/${mutation.cardId}`, {
-            method: 'DELETE',
-            headers,
-          });
-          const payload = await response.json();
-          if (!response.ok) {
-            return {
-              ok: false,
-              message: payload.error ?? 'Failed to delete job.',
-              retryable: response.status >= 500,
-            };
-          }
-          return { ok: true, data: payload.data };
+          return mapSyncResult(
+            await apiFetch(`/api/cards/${mutation.cardId}`, {
+              method: 'DELETE',
+              headers,
+            }),
+            'Failed to delete job.',
+          );
         }
         default:
           return { ok: false, message: 'Unknown mutation kind.' };
@@ -325,23 +267,31 @@ export function useOutboundSync(handlers: {
   reapplyFailedMutation?: (mutation: OutboundMutation) => void;
   onSyncSuccess: () => void;
   onSyncFailure: (message: string) => void;
+  onDrain?: () => void;
 }): OutboundSyncApi {
   const [queuedCount, setQueuedCount] = useState(0);
   const [inFlightCount, setInFlightCount] = useState(0);
   const sidecarsRef = useRef(new Map<string, EnqueueSidecar>());
   const failureListenersRef = useRef(new Set<(event: SyncFailureEvent) => void>());
   const queueRef = useRef<OutboundSyncQueue | null>(null);
+  const disposedRef = useRef(false);
   const handlersRef = useRef(handlers);
   handlersRef.current = handlers;
 
   useEffect(() => {
-    const queue = new OutboundSyncQueue(createOutboundExecutor(), {
+    disposedRef.current = false;
+    const queue = new OutboundSyncQueue(createOutboundExecutor(() => disposedRef.current), {
       onPendingCountChange: ({ queued, inFlight }) => {
+        if (disposedRef.current) return;
         setQueuedCount(queued);
         setInFlightCount(inFlight);
       },
+      onDrain: () => {
+        if (disposedRef.current) return;
+        handlersRef.current.onDrain?.();
+      },
       onSuccess: (mutation, result) => {
-        if (!result.ok) {
+        if (disposedRef.current || !result.ok) {
           return;
         }
 
@@ -370,6 +320,8 @@ export function useOutboundSync(handlers: {
         handlersRef.current.onSyncSuccess();
       },
       onFailure: (mutation, result) => {
+        if (disposedRef.current) return;
+
         const sidecar = sidecarsRef.current.get(mutation.clientMutationId);
         sidecarsRef.current.delete(mutation.clientMutationId);
 
@@ -399,11 +351,15 @@ export function useOutboundSync(handlers: {
         }
 
         handlersRef.current.onSyncFailure(event.message);
+        if (!result.ok) {
+          captureSyncFailure(event.message, { surface: `outbound-sync:${mutation.kind}` });
+        }
       },
     });
 
     queueRef.current = queue;
     return () => {
+      disposedRef.current = true;
       queueRef.current = null;
     };
   }, []);
@@ -435,6 +391,11 @@ export function useOutboundSync(handlers: {
 
   const hasWork = useCallback(() => queueRef.current?.hasWork() ?? false, []);
 
+  const hasPendingForCard = useCallback(
+    (cardId: string) => queueRef.current?.hasPendingForCard(cardId) ?? false,
+    [],
+  );
+
   const subscribeFailures = useCallback((listener: (event: SyncFailureEvent) => void) => {
     failureListenersRef.current.add(listener);
     return () => {
@@ -449,6 +410,7 @@ export function useOutboundSync(handlers: {
     queuedCount,
     inFlightCount,
     hasWork,
+    hasPendingForCard,
     subscribeFailures,
   };
 }

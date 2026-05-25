@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { detailStubFromBoardCard } from '@/lib/domain/board/boardOptimistic';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
@@ -15,6 +15,7 @@ import type { InvoiceView } from '@/lib/domain/money/invoices';
 import type { QuoteView } from '@/lib/domain/money/quotes';
 import type { CardIntegrationSummary } from '@/lib/domain/integrations/cardIntegrationSummary';
 import type { BoardSyncHandlers } from '@/components/pipeline/useBoardState';
+import { apiFetch } from '@/lib/client/apiFetch';
 
 export type CardPayload = {
   card: CardDetailView;
@@ -37,9 +38,24 @@ function buildStubPayload(card: BoardCardView): CardPayload {
   };
 }
 
-function mergePayload(server: CardPayload, local: CardPayload | null): CardPayload {
+function mergePayload(
+  server: CardPayload,
+  local: CardPayload | null,
+  hasPendingLocalChanges: boolean,
+): CardPayload {
   if (!local) {
     return server;
+  }
+
+  if (hasPendingLocalChanges) {
+    return {
+      ...server,
+      card: {
+        ...server.card,
+        ...local.card,
+        customer: server.card.customer ?? local.card.customer,
+      },
+    };
   }
 
   const localUpdated = new Date(local.card.updatedAt).getTime();
@@ -75,8 +91,11 @@ export function useCardDetail(
   const [twilioEnabled, setTwilioEnabled] = useState(false);
   const [resendEnabled, setResendEnabled] = useState(false);
   const [changeOrders, setChangeOrders] = useState<Array<{ id: string; title: string }>>([]);
+  const loadRequestRef = useRef(0);
 
   const loadCard = async (syncBoard = false) => {
+    const requestId = ++loadRequestRef.current;
+
     if (!payload) {
       setLoading(true);
     } else {
@@ -85,28 +104,39 @@ export function useCardDetail(
     setError(null);
 
     try {
-      const [response, changeOrderResponse] = await Promise.all([
-        fetch(`/api/cards/${cardId}`),
-        fetch(`/api/cards/${cardId}/change-orders`),
+      const [cardResult, changeOrderResult] = await Promise.all([
+        apiFetch<CardPayload>(`/api/cards/${cardId}`),
+        apiFetch<Array<{ id: string; title: string }>>(`/api/cards/${cardId}/change-orders`),
       ]);
-      const data = await response.json();
-      const changeOrderData = await changeOrderResponse.json();
-      if (!response.ok) {
-        throw new Error(data.error ?? 'Failed to load card.');
+
+      if (requestId !== loadRequestRef.current) {
+        return;
       }
 
-      setPayload((current) => mergePayload(data.data as CardPayload, current));
-      if (syncBoard && data.data?.card) {
-        boardSync.syncFromDetail(data.data.card);
+      if (!cardResult.ok) {
+        throw new Error(cardResult.error);
       }
-      if (changeOrderData.data) {
-        setChangeOrders(changeOrderData.data);
+
+      const hasPendingLocalChanges = boardSync.hasPendingForCard(cardId);
+      setPayload((current) =>
+        mergePayload(cardResult.data as CardPayload, current, hasPendingLocalChanges),
+      );
+      if (syncBoard && cardResult.data?.card) {
+        boardSync.syncFromDetail(cardResult.data.card);
+      }
+      if (changeOrderResult.ok && changeOrderResult.data) {
+        setChangeOrders(changeOrderResult.data);
       }
     } catch (loadError) {
+      if (requestId !== loadRequestRef.current) {
+        return;
+      }
       setError(loadError instanceof Error ? loadError.message : 'Failed to load card.');
     } finally {
-      setLoading(false);
-      setHydrating(false);
+      if (requestId === loadRequestRef.current) {
+        setLoading(false);
+        setHydrating(false);
+      }
     }
   };
 
@@ -124,26 +154,25 @@ export function useCardDetail(
 
   useEffect(() => {
     void loadCard();
-    void fetch('/api/members')
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.data) setMembers(data.data);
-      });
-    void fetch('/api/integrations')
-      .then((response) => response.json())
-      .then((data) => {
-        const stripe = data.data?.stripe;
-        if (stripe?.configured && stripe.status === 'active') {
-          setStripeEnabled(true);
-        }
-        const twilio = data.data?.twilio;
-        if (twilio?.configured && twilio.status === 'active') {
-          setTwilioEnabled(true);
-        }
-        if (data.data?.resend?.configured) {
-          setResendEnabled(true);
-        }
-      });
+    void apiFetch<OrgMemberView[]>('/api/members').then((result) => {
+      if (result.ok) setMembers(result.data);
+    });
+    void apiFetch<{ stripe?: { configured?: boolean; status?: string }; twilio?: { configured?: boolean; status?: string }; resend?: { configured?: boolean } }>(
+      '/api/integrations',
+    ).then((result) => {
+      if (!result.ok) return;
+      const stripe = result.data?.stripe;
+      if (stripe?.configured && stripe.status === 'active') {
+        setStripeEnabled(true);
+      }
+      const twilio = result.data?.twilio;
+      if (twilio?.configured && twilio.status === 'active') {
+        setTwilioEnabled(true);
+      }
+      if (result.data?.resend?.configured) {
+        setResendEnabled(true);
+      }
+    });
   }, [cardId]);
 
   useEffect(() => {

@@ -44,9 +44,39 @@ export default function IntegrationsSettingsPage() {
             <ul className="mt-3 space-y-2 text-sm text-[var(--text-secondary)]">
               <li>Accounting ledger — invoices and payments recorded automatically</li>
               <li>Estimate approval — customer portal e-sign (name + IP audit)</li>
+              <li>Public inquiry form — quote requests create inquiry cards</li>
               <li>Public booking page — site visit requests create cards</li>
             </ul>
           </section>
+
+          {status.inquiryPageUrl ? (
+            <section className="ops-section-card">
+              <h2 className="font-semibold text-[var(--text-primary)]">Public inquiry form</h2>
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                Share this link on your website, email signature, or QR codes for quote requests.
+              </p>
+              <a
+                href={status.inquiryPageUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="ops-link mt-3 block truncate text-sm"
+              >
+                {status.inquiryPageUrl}
+              </a>
+              {status.inquiryLinkPresets.length ? (
+                <ul className="mt-4 space-y-2">
+                  {status.inquiryLinkPresets.map((preset) => (
+                    <li key={preset.url} className="text-sm">
+                      <span className="font-medium text-[var(--text-primary)]">{preset.label}: </span>
+                      <a href={preset.url} target="_blank" rel="noreferrer" className="ops-link break-all">
+                        {preset.url}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </section>
+          ) : null}
 
           {status.bookingPageUrl ? (
             <section className="ops-section-card">

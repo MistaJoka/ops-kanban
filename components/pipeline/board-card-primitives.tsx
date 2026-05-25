@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { CalendarDays, CircleDollarSign, Clock3, GripVertical, MapPin } from 'lucide-react';
 
@@ -11,6 +14,10 @@ import {
   isDueSoon,
   truncateText,
 } from '@/lib/domain/cards/boardCardFormatters';
+import {
+  pickVisibleBoardSignals,
+  type BoardSignalKey,
+} from '@/lib/domain/cards/pickVisibleBoardSignals';
 import type { ColumnCategory } from '@/lib/domain/pipeline/types';
 import { CATEGORY_ACCENT } from '@/lib/domain/pipeline/types';
 import { cn } from '@/lib/utils';
@@ -97,16 +104,23 @@ export function CardStatusDot({
   );
 }
 
-export function CardHeaderStatus({ card }: { card: BoardCardView }) {
+export function CardHeaderStatus({
+  card,
+  hasDueSignalInMeta = false,
+}: {
+  card: BoardCardView;
+  hasDueSignalInMeta?: boolean;
+}) {
   const showUnassigned = !card.assigneeInitials && card.stateKey !== 'archived';
+  const showOverdueDot = card.isOverdue && !hasDueSignalInMeta;
 
-  if (!showUnassigned && !card.isOverdue) {
+  if (!showUnassigned && !showOverdueDot) {
     return null;
   }
 
   return (
     <div className="ops-board-card__status">
-      {card.isOverdue ? <CardStatusDot variant="overdue" label="Overdue" /> : null}
+      {showOverdueDot ? <CardStatusDot variant="overdue" label="Overdue" /> : null}
       {showUnassigned ? <CardStatusDot variant="unassigned" label="Unassigned" /> : null}
     </div>
   );
@@ -270,55 +284,48 @@ export function CardSignalOverflow({ count }: { count: number }) {
   );
 }
 
+function renderSignal(card: BoardCardView, key: BoardSignalKey): ReactNode {
+  switch (key) {
+    case 'jobType':
+      return card.jobType ? <CardJobTypeChip key={key} jobType={card.jobType} /> : null;
+    case 'money':
+      return card.moneyBadge !== 'none' ? (
+        <CardMoneySignal
+          key={key}
+          badge={card.moneyBadge}
+          quoteTotal={card.quoteTotal}
+          balanceDue={card.balanceDue}
+        />
+      ) : null;
+    case 'due':
+      return card.dueDate ? (
+        <CardDueSignal key={key} dueDate={card.dueDate} isOverdue={card.isOverdue} />
+      ) : null;
+    case 'schedule':
+      return card.scheduledStart ? (
+        <CardScheduleSignal key={key} scheduledStart={card.scheduledStart} />
+      ) : null;
+    case 'daysInColumn':
+      return <CardDaysSignal key={key} days={card.daysInColumn} />;
+    default:
+      return null;
+  }
+}
+
 export function CardMetaRow({ card }: { card: BoardCardView }) {
-  const primarySignals: ReactNode[] = [];
-
-  if (card.jobType) {
-    primarySignals.push(<CardJobTypeChip key="job-type" jobType={card.jobType} />);
-  }
-
-  if (card.moneyBadge !== 'none') {
-    primarySignals.push(
-      <CardMoneySignal
-        key="money"
-        badge={card.moneyBadge}
-        quoteTotal={card.quoteTotal}
-        balanceDue={card.balanceDue}
-      />,
-    );
-  }
-
-  if (card.dueDate && (card.isOverdue || isDueSoon(card.dueDate))) {
-    primarySignals.push(
-      <CardDueSignal key="due" dueDate={card.dueDate} isOverdue={card.isOverdue} />,
-    );
-  }
-
-  if (card.scheduledStart) {
-    primarySignals.push(<CardScheduleSignal key="schedule" scheduledStart={card.scheduledStart} />);
-  }
-
-  const showDaysBadge = card.columnCategory === 'sales' && card.daysInColumn > 2;
-  if (showDaysBadge) {
-    primarySignals.push(<CardDaysSignal key="days" days={card.daysInColumn} />);
-  }
-
+  const { visible, overflow } = pickVisibleBoardSignals(card);
   const hasAssignee = Boolean(card.assigneeInitials);
-  const maxPrimary = hasAssignee ? 3 : 4;
-  const visible = primarySignals.slice(0, maxPrimary);
-  const overflowCount = primarySignals.length - visible.length;
-
-  const isEmpty = primarySignals.length === 0;
+  const isEmpty = visible.length === 0;
 
   return (
     <div className={cn('ops-board-card__meta', isEmpty && 'ops-board-card__meta--sparse')}>
       <div className="ops-board-card__meta-primary">
         {isEmpty ? (
-          <span className="ops-board-card__meta-placeholder">Add estimate or schedule</span>
+          <span className="ops-board-card__meta-cta">Add estimate or schedule</span>
         ) : (
           <>
-            {visible}
-            <CardSignalOverflow count={overflowCount} />
+            {visible.map((key) => renderSignal(card, key))}
+            <CardSignalOverflow count={overflow} />
           </>
         )}
       </div>
@@ -353,18 +360,39 @@ export function CardFooter({
   isOverdue,
   isStuck = false,
   columnCategory,
+  canEditNextAction = false,
+  onPatchNextAction,
+  hasDueSignalInMeta = false,
 }: {
   nextAction: string | null;
   daysInColumn: number;
   isOverdue: boolean;
   isStuck?: boolean;
   columnCategory: ColumnCategory;
+  canEditNextAction?: boolean;
+  onPatchNextAction?: (value: string | null) => void;
+  hasDueSignalInMeta?: boolean;
 }) {
+  const [editingNext, setEditingNext] = useState(false);
+  const [nextDraft, setNextDraft] = useState(nextAction ?? '');
+
+  const commitNext = () => {
+    setEditingNext(false);
+    const trimmed = nextDraft.trim();
+    if (trimmed === (nextAction ?? '')) {
+      setNextDraft(nextAction ?? '');
+      return;
+    }
+    onPatchNextAction?.(trimmed || null);
+  };
+
   const next = nextAction ? truncateText(nextAction, 52) : null;
-  const showStageDays = columnCategory !== 'sales' || daysInColumn > 2;
+  const hideStageDaysInSales =
+    columnCategory === 'sales' && daysInColumn <= 2 && Boolean(nextAction);
+  const showStageDays = !hideStageDaysInSales && (columnCategory !== 'sales' || daysInColumn > 2);
   const stageParts: string[] = [];
 
-  if (isOverdue) {
+  if (isOverdue && !hasDueSignalInMeta) {
     stageParts.push('Overdue');
   } else if (isStuck) {
     stageParts.push('Stuck');
@@ -376,7 +404,7 @@ export function CardFooter({
 
   const stageText = stageParts.join(' · ');
 
-  if (!next && !stageText) {
+  if (!next && !stageText && !canEditNextAction) {
     return null;
   }
 
@@ -386,14 +414,61 @@ export function CardFooter({
         className="ops-board-card__footer-line"
         title={[nextAction, stageText].filter(Boolean).join(' · ') || undefined}
       >
-        {next ? (
+        {editingNext ? (
+          <input
+            value={nextDraft}
+            autoFocus
+            aria-label="Next action"
+            className="ops-board-card__next-input"
+            onClick={(event) => event.stopPropagation()}
+            onChange={(event) => setNextDraft(event.target.value)}
+            onBlur={() => commitNext()}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                commitNext();
+              }
+              if (event.key === 'Escape') {
+                setNextDraft(nextAction ?? '');
+                setEditingNext(false);
+              }
+            }}
+          />
+        ) : next ? (
           <>
             <span className="ops-board-card__next-label">Next</span>
             <span className="ops-board-card__next-sep" aria-hidden>
               :
             </span>
-            <span className="ops-board-card__next-text">{next}</span>
+            <span
+              className={cn(
+                'ops-board-card__next-text',
+                canEditNextAction && 'cursor-text',
+              )}
+              onClick={(event) => {
+                if (!canEditNextAction) {
+                  return;
+                }
+                event.stopPropagation();
+                setNextDraft(nextAction ?? '');
+                setEditingNext(true);
+              }}
+            >
+              {next}
+            </span>
           </>
+        ) : canEditNextAction ? (
+          <button
+            type="button"
+            className="ops-board-card__meta-cta"
+            onClick={(event) => {
+              event.stopPropagation();
+              setNextDraft('');
+              setEditingNext(true);
+            }}
+          >
+            Set next action
+          </button>
         ) : null}
         {next && stageText ? (
           <span className="ops-board-card__footer-sep" aria-hidden>
@@ -405,7 +480,7 @@ export function CardFooter({
           <span
             className={cn(
               'ops-board-card__stage',
-              isOverdue && 'ops-board-card__stage--overdue',
+              isOverdue && !hasDueSignalInMeta && 'ops-board-card__stage--overdue',
               isStuck && !isOverdue && 'ops-board-card__stage--stuck',
             )}
           >

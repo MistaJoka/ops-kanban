@@ -39,7 +39,7 @@ describe.skipIf(!wave4Ready)('INT-W4 Wave 4 scale', () => {
         boardId: user.boardId,
         columnId: await getColumnId(service, user.boardId, 'inquiry'),
         title: 'Report seed card',
-        jobType: 'Maintenance',
+        jobType: 'maintenance',
         actorId: user.id,
         role: 'owner',
       });
@@ -74,6 +74,14 @@ describe.skipIf(!wave4Ready)('INT-W4 Wave 4 scale', () => {
         actorId: user.id,
         role: 'owner',
       });
+
+      const scheduledStart = new Date(Date.now() + 86_400_000).toISOString();
+      const { error: scheduleError } = await service
+        .from('cards')
+        .update({ scheduled_start: scheduledStart })
+        .eq('id', card.id)
+        .eq('organization_id', user.organizationId);
+      expect(scheduleError).toBeNull();
 
       await moveCard(service, {
         organizationId: user.organizationId,

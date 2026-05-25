@@ -13,7 +13,7 @@ import { appOrigin, type ToolHandler } from './toolHelpers';
 
 export const moneyToolHandlers: Record<string, ToolHandler> = {
   createQuoteDraft: async (input, ctx, _boardCtx) => {
-    const { client, organizationId, userId } = ctx;
+    const { client, organizationId, userId, role } = ctx;
     const cardId = String(input.cardId);
     const detail = await getCardDetail(client, organizationId, cardId);
     if (!detail) {
@@ -40,13 +40,13 @@ export const moneyToolHandlers: Record<string, ToolHandler> = {
       lineItems = parsed.lineItems;
 
       if (parsed.assumptions.length) {
-        await createCardComment(
-          client,
+        await createCardComment(client, {
           organizationId,
           cardId,
-          userId,
-          `Estimate assumptions: ${parsed.assumptions.join('; ')}`,
-        );
+          authorId: userId,
+          role,
+          body: `Estimate assumptions: ${parsed.assumptions.join('; ')}`,
+        });
       }
     }
 

@@ -53,6 +53,7 @@ export type BoardSyncHandlers = {
   enqueue: (mutation: OutboundMutation, sidecar?: EnqueueSidecar) => void;
   flush: (cardId?: string) => void;
   retryFailed: () => boolean;
+  hasPendingForCard: (cardId: string) => boolean;
   retryFailedSync: () => boolean;
   subscribeFailures: (listener: (event: SyncFailureEvent) => void) => () => void;
   getBoardSnapshot: () => BoardCardView[];
@@ -70,7 +71,8 @@ export function useBoardState(initialBoard: BoardView) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [syncIssue, setSyncIssue] = useState<string | null>(null);
   const [lastSyncedAt, setLastSyncedAt] = useState<number>(() => Date.now());
-  const [liveConnected, setLiveConnected] = useState(true);
+  const [liveConnected, setLiveConnected] = useState(false);
+  const pendingCatchUpRef = useRef(false);
   const queueEnabled = isOutboundQueueEnabled();
 
   const boardRef = useRef(board);
@@ -241,6 +243,12 @@ export function useBoardState(initialBoard: BoardView) {
     reapplyFailedMutation,
     onSyncSuccess: markSynced,
     onSyncFailure: showError,
+    onDrain: () => {
+      if (pendingCatchUpRef.current) {
+        pendingCatchUpRef.current = false;
+        void refreshBoard();
+      }
+    },
   });
 
   const hasPendingMutations = useCallback(() => {
@@ -303,6 +311,7 @@ export function useBoardState(initialBoard: BoardView) {
     enqueue: outboundSync.enqueue,
     flush: outboundSync.flush,
     retryFailed: outboundSync.retryFailed,
+    hasPendingForCard: outboundSync.hasPendingForCard,
     retryFailedSync,
     subscribeFailures: outboundSync.subscribeFailures,
     getBoardSnapshot: () => boardRef.current.cards,
@@ -359,5 +368,8 @@ export function useBoardState(initialBoard: BoardView) {
     boardSync,
     hasPendingMutations,
     setLiveConnected,
+    markPendingCatchUp: () => {
+      pendingCatchUpRef.current = true;
+    },
   };
 }

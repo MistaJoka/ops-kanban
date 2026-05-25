@@ -1,5 +1,7 @@
 # Pre-build confirmation checklist
 
+> **Historical — signed before TASK-P0-001.** Scaffold and P0–P17 are complete. Use [`PILOT_DEPLOY_CHECKLIST.md`](../ops/PILOT_DEPLOY_CHECKLIST.md) for deploy.
+
 Sign-off that blueprint + policy are aligned before **TASK-P0-001**.
 
 | #   | Confirmation                                          | Status |

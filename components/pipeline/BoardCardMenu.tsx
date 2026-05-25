@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Archive, Calendar, MoreVertical, UserRound } from 'lucide-react';
+import { Archive, Calendar, Flag, MoreVertical, UserRound } from 'lucide-react';
 
 import type { BoardColumnView } from '@/lib/domain/board/getBoard';
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
@@ -22,13 +22,16 @@ function BoardCardMenuPanel({
   members,
   canAssign,
   canSetDueDate,
+  canSetPriority,
   canMove,
   canArchive,
   showAssign,
   showDueDate,
+  showPriority,
   showMove,
   setShowAssign,
   setShowDueDate,
+  setShowPriority,
   setShowMove,
   onPatch,
   onMove,
@@ -42,13 +45,16 @@ function BoardCardMenuPanel({
   members: OrgMemberView[];
   canAssign: boolean;
   canSetDueDate: boolean;
+  canSetPriority: boolean;
   canMove: boolean;
   canArchive: boolean;
   showAssign: boolean;
   showDueDate: boolean;
+  showPriority: boolean;
   showMove: boolean;
   setShowAssign: React.Dispatch<React.SetStateAction<boolean>>;
   setShowDueDate: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowPriority: React.Dispatch<React.SetStateAction<boolean>>;
   setShowMove: React.Dispatch<React.SetStateAction<boolean>>;
   onPatch: (patch: BoardCardPatch) => void | Promise<void>;
   onMove: (targetColumnId: string) => void | Promise<void>;
@@ -74,6 +80,7 @@ function BoardCardMenuPanel({
             onClick={() => {
               setShowAssign((current) => !current);
               setShowDueDate(false);
+              setShowPriority(false);
               setShowMove(false);
             }}
           >
@@ -114,6 +121,7 @@ function BoardCardMenuPanel({
             onClick={() => {
               setShowDueDate((current) => !current);
               setShowAssign(false);
+              setShowPriority(false);
               setShowMove(false);
             }}
           >
@@ -136,6 +144,42 @@ function BoardCardMenuPanel({
         </>
       ) : null}
 
+      {canSetPriority ? (
+        <>
+          <button
+            type="button"
+            role="menuitem"
+            className="ops-menu-item flex items-center gap-2"
+            onClick={() => {
+              setShowPriority((current) => !current);
+              setShowAssign(false);
+              setShowDueDate(false);
+              setShowMove(false);
+            }}
+          >
+            <Flag className="size-3.5 shrink-0 opacity-70" strokeWidth={2.25} />
+            Priority
+          </button>
+          {showPriority ? (
+            <select
+              value={card.priority}
+              aria-label="Priority"
+              className="ops-control mx-1 mb-1 h-8 w-[calc(100%-0.5rem)] py-0 text-xs capitalize"
+              onChange={(event) => {
+                void onPatch({ priority: event.target.value });
+                closeMenu();
+              }}
+            >
+              {['low', 'medium', 'high', 'urgent'].map((priority) => (
+                <option key={priority} value={priority}>
+                  {priority}
+                </option>
+              ))}
+            </select>
+          ) : null}
+        </>
+      ) : null}
+
       {canMove ? (
         <>
           <button
@@ -146,6 +190,7 @@ function BoardCardMenuPanel({
               setShowMove((current) => !current);
               setShowAssign(false);
               setShowDueDate(false);
+              setShowPriority(false);
             }}
           >
             Move to column
@@ -221,6 +266,7 @@ export function BoardCardMenu({
   const [open, setOpen] = useState(false);
   const [showAssign, setShowAssign] = useState(false);
   const [showDueDate, setShowDueDate] = useState(false);
+  const [showPriority, setShowPriority] = useState(false);
   const [showMove, setShowMove] = useState(false);
   const [placement, setPlacement] = useState<MenuPlacement | null>(null);
   const anchorRef = useRef<HTMLButtonElement>(null);
@@ -229,6 +275,7 @@ export function BoardCardMenu({
   const canEdit = orgRole !== 'viewer';
   const canAssign = ADMIN_ROLES.includes(orgRole);
   const canSetDueDate = canEdit;
+  const canSetPriority = canAssign;
   const canMove = canMoveCard(orgRole) && card.stateKey !== 'archived';
   const canArchive = canArchiveCard(orgRole) && card.stateKey !== 'archived';
 
@@ -236,6 +283,7 @@ export function BoardCardMenu({
     setOpen(false);
     setShowAssign(false);
     setShowDueDate(false);
+    setShowPriority(false);
     setShowMove(false);
     setPlacement(null);
   }, []);
@@ -288,7 +336,7 @@ export function BoardCardMenu({
       window.removeEventListener('resize', onScrollOrResize);
       window.removeEventListener('scroll', onScrollOrResize, true);
     };
-  }, [open, showAssign, showDueDate, showMove, updatePlacement]);
+  }, [open, showAssign, showDueDate, showPriority, showMove, updatePlacement]);
 
   useEffect(() => {
     if (!open) {
@@ -338,13 +386,16 @@ export function BoardCardMenu({
             members={members}
             canAssign={canAssign}
             canSetDueDate={canSetDueDate}
+            canSetPriority={canSetPriority}
             canMove={canMove}
             canArchive={canArchive}
             showAssign={showAssign}
             showDueDate={showDueDate}
+            showPriority={showPriority}
             showMove={showMove}
             setShowAssign={setShowAssign}
             setShowDueDate={setShowDueDate}
+            setShowPriority={setShowPriority}
             setShowMove={setShowMove}
             onPatch={onPatch}
             onMove={onMove}

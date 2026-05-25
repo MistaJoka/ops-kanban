@@ -1,15 +1,14 @@
 import { jsonData } from '@/lib/api/response';
+import { withApiRouteNoRequest } from '@/lib/api/withApiRoute';
 import { listPendingApprovals } from '@/lib/domain/ai/persistToolCall';
-import { getHandlerContext, isHandlerContext } from '@/lib/domain/api/handlerContext';
 
 export async function GET() {
-  const context = await getHandlerContext();
-  if (!isHandlerContext(context)) return context;
+  return withApiRouteNoRequest(async (context) => {
+    const items = await listPendingApprovals(context.client, context.organizationId);
 
-  const items = await listPendingApprovals(context.client, context.organizationId);
-
-  return jsonData({
-    count: items.length,
-    items,
-  });
+    return jsonData({
+      count: items.length,
+      items,
+    });
+  }, { route: '/api/ai/pending' });
 }

@@ -216,6 +216,7 @@
 | TASK-P10-003 | Automations engine       | done   | INT-W4-002    |
 | TASK-P10-004 | Reports page             | done   | INT-W4-001    |
 | TASK-P10-005 | Recurring contracts      | done   | INT-W4-003    |
+| TASK-P10-006 | Unified intake (web/QR/SMS) | done | WH-INQ-\*     |
 
 ---
 
@@ -331,3 +332,32 @@ QA runs parallel from P1 onward.
 | TASK-AI-P5-003 | App context API (`GET /api/app/context`)           | done     | —           |
 | TASK-AI-P5-004 | Streaming responses (SSE)                          | done     | AI-SSE-\*   |
 | TASK-AI-P5-005 | Vision on attachments                              | done     | analyzeAttachment |
+
+---
+
+## Phase 17 — Backend reliability completion
+
+**Goal:** Complete P16 hardening — 100% route wrappers, idempotency races, atomic intake/booking, public rate limits.  
+**DoD:** DONE-17 | **Depends on:** P16
+
+| ID | Task | Status | Tests | Deps |
+| --- | --- | --- | --- | --- |
+| TASK-P17-000 | Prerequisites: migration 020, route inventory, baseline tests | done | baseline | P16 |
+| TASK-P17-001 | `parseJsonBody` helper + unit tests | done | UNIT-API-001 | P17-000 |
+| TASK-P17-002 | `withPublicRoute` + `withWebhookRoute` + unit tests | done | UNIT-API-002 | P17-001 |
+| TASK-P17-003 | Wrapper batch 2A: board, cards, move, reorder | done | INT-API-101–103, REL-003 | P17-002 |
+| TASK-P17-004 | Wrapper batch 2B: customers, members, calendar | done | — | P17-003 |
+| TASK-P17-005 | Wrapper batch 2C: money, documents, card sub-routes | done | — | P17-004 |
+| TASK-P17-006 | Wrapper batch 2D: settings, automations, contracts | done | — | P17-005 |
+| TASK-P17-007 | Wrapper batch 2E: AI routes (streaming special case) | done | INT-API-001–020 | P17-006 |
+| TASK-P17-008 | Wrapper batch 2F: public, webhooks, health, dev | done | — | P17-007 |
+| TASK-P17-009 | `DomainError` base + migrate throw sites + comment auth to domain | done | UNIT-ERR | P17-008 |
+| TASK-P17-010 | Extract shared `CARD_SELECT` | done | unit card tests | P17-009 |
+| TASK-P17-011 | Fix `client_mutations` idempotency race | done | INT-IDEM-002 | P17-010 |
+| TASK-P17-012 | Fix `inquiry_requests` idempotency race | done | INT-IDEM-003 | P17-011 |
+| TASK-P17-013 | `process_intake_atomic` RPC (migration 021) | done | WH-INQ-* | P17-012 |
+| TASK-P17-014 | `create_booking_atomic` RPC | done | booking.test | P17-013 |
+| TASK-P17-015 | Public rate limiter + apply to inquiry/book/portal | done | INT-API-PUB-001 | P17-008 |
+| TASK-P17-016 | Rate limit unit tests + health endpoint hygiene | done | UNIT-RATE-001 | P17-015 |
+| TASK-P17-017 | Core API contract test backfill | done | INT-API-* | P17-011–016 |
+| TASK-P17-018 | DONE-17 exit: LEARN-022, PROGRESS, full gate | done | full gate | P17-017 |

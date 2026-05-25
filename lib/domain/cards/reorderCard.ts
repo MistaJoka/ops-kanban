@@ -5,6 +5,7 @@ import { runAutomationsForColumnEnter } from '@/lib/domain/automations/runAutoma
 import type { OrgRole } from '@/lib/domain/auth/roles';
 import { canMoveCardOnBoard, type CardAuthContext } from '@/lib/domain/cards/authorizeCardMutation';
 import { mapCardRowToBoardView, type BoardCardView } from '@/lib/domain/cards/boardCard';
+import { BOARD_CARD_SELECT } from '@/lib/domain/cards/cardSelect';
 import { computeInsertPosition } from '@/lib/domain/cards/cardPosition';
 import { validateMove } from '@/lib/domain/pipeline/validateMove';
 
@@ -29,17 +30,6 @@ export class ReorderCardError extends Error {
     this.name = 'ReorderCardError';
   }
 }
-
-const CARD_SELECT = `
-  id, title, column_id, priority, job_type, position, due_date,
-  scheduled_start, next_action, updated_at, column_entered_at, customer_id,
-  assigned_to, archived_at,
-  columns!inner(state_key),
-  customers(name, address),
-  profiles:assigned_to(full_name),
-  quotes(status, total, quote_items(id)),
-  invoices(status, balance_due)
-`;
 
 type PositionRow = { id: string; position: number };
 
@@ -73,7 +63,7 @@ export async function reorderCard(
 ): Promise<BoardCardView> {
   const { data: card, error: cardError } = await client
     .from('cards')
-    .select(CARD_SELECT)
+    .select(BOARD_CARD_SELECT)
     .eq('id', input.cardId)
     .eq('organization_id', input.organizationId)
     .single();
@@ -192,7 +182,7 @@ export async function reorderCard(
     .update(updatePayload)
     .eq('id', input.cardId)
     .eq('organization_id', input.organizationId)
-    .select(CARD_SELECT)
+    .select(BOARD_CARD_SELECT)
     .single();
 
   if (updateError || !updated) {

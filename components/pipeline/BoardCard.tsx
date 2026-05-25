@@ -18,8 +18,10 @@ import {
   formatPropertyLine,
 } from '@/components/pipeline/board-card-primitives';
 import { BoardCardMenu, type BoardCardPatch } from '@/components/pipeline/BoardCardMenu';
+import { BoardCardQuickActions } from '@/components/pipeline/BoardCardQuickActions';
 import { BoardCardSelectCheckbox } from '@/components/pipeline/BoardCardSelectCheckbox';
 import { BoardCardSkeleton } from '@/components/pipeline/BoardCardSkeleton';
+import { pickVisibleBoardSignals } from '@/lib/domain/cards/pickVisibleBoardSignals';
 import type { OrgRole } from '@/lib/domain/auth/roles';
 import type { OrgMemberView } from '@/lib/domain/organization/listMembers';
 import { cn } from '@/lib/utils';
@@ -78,8 +80,10 @@ export const BoardCardSurface = memo(function BoardCardSurface({
   const [titleDraft, setTitleDraft] = useState(card.title);
   const propertyLine = formatPropertyLine(card);
   const canEditTitle = role !== 'viewer';
+  const canEditNextAction = role !== 'viewer';
   const isStuck =
     card.stateKey !== 'archived' && card.daysInColumn >= 5 && card.columnCategory !== 'aftercare';
+  const hasDueSignalInMeta = pickVisibleBoardSignals(card).visible.includes('due');
 
   useEffect(() => {
     if (!editingTitle) {
@@ -111,6 +115,7 @@ export const BoardCardSurface = memo(function BoardCardSurface({
   return (
     <article
       ref={setNodeRef}
+      data-card-id={card.id}
       style={style}
       {...(isOverlay ? {} : sortableProps)}
       aria-label={cardLabel}
@@ -136,7 +141,7 @@ export const BoardCardSurface = memo(function BoardCardSurface({
 
       <div className="ops-board-card__surface">
         <div className="ops-board-card__inner">
-          <header className="ops-board-card__header">
+          <header className="relative ops-board-card__header">
             {editingTitle ? (
               <input
                 value={titleDraft}
@@ -180,7 +185,7 @@ export const BoardCardSurface = memo(function BoardCardSurface({
                   label={isSelected ? `Deselect ${card.title}` : `Select ${card.title}`}
                 />
               ) : null}
-              <CardHeaderStatus card={card} />
+              <CardHeaderStatus card={card} hasDueSignalInMeta={hasDueSignalInMeta} />
               <CardPriorityBadge priority={card.priority} />
               {!isOverlay ? (
                 <BoardCardMenu
@@ -194,6 +199,16 @@ export const BoardCardSurface = memo(function BoardCardSurface({
                 />
               ) : null}
             </div>
+            {!isOverlay ? (
+              <BoardCardQuickActions
+                card={card}
+                columns={columns}
+                members={members}
+                role={role}
+                onPatch={onPatch}
+                onMove={onMove}
+              />
+            ) : null}
           </header>
 
           {propertyLine ? <CardPropertyLine line={propertyLine} /> : null}
@@ -206,6 +221,9 @@ export const BoardCardSurface = memo(function BoardCardSurface({
             isOverdue={card.isOverdue}
             isStuck={isStuck}
             columnCategory={card.columnCategory}
+            canEditNextAction={canEditNextAction && !isOverlay}
+            hasDueSignalInMeta={hasDueSignalInMeta}
+            onPatchNextAction={(value) => void onPatch({ nextAction: value })}
           />
         </div>
       </div>

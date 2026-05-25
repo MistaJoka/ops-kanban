@@ -43,9 +43,12 @@
     --card-stack-gap: 8px;
     --card-accent-width: 4px;
     --card-title-size: 14px;
-    --card-body-size: 11.5px;
-    --card-footer-size: 10.5px;
-    --card-meta-size: 10.5px;
+    --card-body-size: 12px;
+    --card-footer-size: 11px;
+    --card-meta-size: 11px;
+    --card-footer-action-size: 11.5px;
+    --card-footer-action-weight: 500;
+    --card-min-height: 128px;
     --shadow-card: 0 1px 2px rgba(26, 31, 22, 0.06), 0 0 0 1px var(--border-subtle);
     --shadow-card-hover: 0 4px 14px rgba(26, 31, 22, 0.09), 0 0 0 1px rgba(26, 31, 22, 0.04);
     --shadow-lift: 0 8px 24px rgba(26, 31, 22, 0.11), 0 2px 6px rgba(26, 31, 22, 0.05);
@@ -186,7 +189,15 @@
   }
 
   .ops-toolbar--command {
-    @apply py-2.5 md:py-3;
+    @apply gap-0 px-3 py-1.5 md:px-4 md:py-2;
+  }
+
+  .ops-toolbar-command-head {
+    @apply flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0;
+  }
+
+  .ops-toolbar-command-bar {
+    @apply mt-1 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5;
   }
 
   .ops-toolbar-lead {
@@ -196,6 +207,10 @@
   .ops-toolbar-health {
     @apply mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs;
     color: var(--text-secondary);
+  }
+
+  .ops-toolbar--command .ops-toolbar-health {
+    @apply mt-0 min-w-0 flex-1;
   }
 
   .ops-toolbar-health__stat {
@@ -230,6 +245,17 @@
     @apply ml-1 hidden rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide sm:inline-flex;
     border-color: var(--border-subtle);
     color: var(--text-tertiary);
+  }
+
+  .ops-toolbar--command .ops-toolbar-health__mode {
+    @apply ml-0.5 px-1.5 py-px text-[9px];
+  }
+
+  .ops-toolbar-error {
+    @apply max-w-[min(100%,14rem)] shrink truncate rounded-full border px-2 py-0.5 text-[11px] font-medium;
+    border-color: color-mix(in srgb, var(--urgent) 45%, var(--topbar-border));
+    background: color-mix(in srgb, var(--urgent) 8%, var(--control-bg));
+    color: var(--urgent);
   }
 
   .ops-search-field {
@@ -335,76 +361,100 @@
     background: var(--accent-muted);
   }
 
-  .ops-sync-status {
-    @apply inline-flex max-w-full items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors;
+  .ops-sync-gauge {
+    @apply inline-flex h-7 max-w-full shrink-0 items-center gap-1.5 rounded-md border px-2 text-[11px] font-medium transition-colors;
+    width: 7.75rem;
     border-color: var(--topbar-border);
     background: var(--control-bg);
     color: var(--text-secondary);
   }
 
-  .ops-sync-status__icon {
-    @apply inline-flex shrink-0 items-center justify-center;
+  .ops-sync-gauge__track {
+    @apply inline-flex shrink-0 items-stretch gap-0.5;
+    width: 2.75rem;
+    height: 0.375rem;
   }
 
-  .ops-sync-status__label {
-    @apply truncate;
+  .ops-sync-gauge__segment {
+    @apply flex-1 rounded-[2px] transition-colors;
+    background: color-mix(in srgb, var(--topbar-border) 55%, var(--control-bg));
   }
 
-  .ops-sync-status__meta {
-    @apply hidden truncate text-[10px] tabular-nums sm:inline;
-    color: var(--text-tertiary);
+  .ops-sync-gauge__segment--confirmed {
+    background: var(--accent);
   }
 
-  .ops-sync-status--synced {
+  .ops-sync-gauge__segment--active {
+    background: var(--warning, #d97706);
+    animation: ops-sync-gauge-pulse 1.4s ease-in-out infinite;
+  }
+
+  .ops-sync-gauge__segment--failed {
+    background: var(--urgent);
+  }
+
+  .ops-sync-gauge__segment--idle {
+    background: color-mix(in srgb, var(--topbar-border) 65%, var(--control-bg));
+  }
+
+  @keyframes ops-sync-gauge-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.55;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ops-sync-gauge__segment--active {
+      animation: none;
+    }
+  }
+
+  .ops-sync-gauge__label {
+    @apply min-w-0 flex-1 truncate tabular-nums;
+    color: var(--text-primary);
+  }
+
+  .ops-sync-gauge--synced {
     border-color: color-mix(in srgb, var(--accent) 28%, var(--topbar-border));
-    color: var(--text-primary);
   }
 
-  .ops-sync-status--synced .ops-sync-status__icon {
-    color: var(--accent);
-  }
-
-  .ops-sync-status--syncing {
+  .ops-sync-gauge--syncing {
     border-color: color-mix(in srgb, var(--warning, #d97706) 35%, var(--topbar-border));
-    color: var(--text-primary);
   }
 
-  .ops-sync-status--syncing .ops-sync-status__icon {
-    color: var(--warning, #d97706);
-  }
-
-  .ops-sync-status--refreshing {
+  .ops-sync-gauge--refreshing {
     border-color: color-mix(in srgb, var(--accent) 35%, var(--topbar-border));
-    color: var(--text-primary);
   }
 
-  .ops-sync-status--refreshing .ops-sync-status__icon {
-    color: var(--accent);
-  }
-
-  .ops-sync-status--misaligned {
+  .ops-sync-gauge--misaligned {
+    width: 9.5rem;
     border-color: color-mix(in srgb, var(--urgent) 40%, var(--topbar-border));
     color: var(--urgent);
     background: color-mix(in srgb, var(--urgent) 8%, var(--control-bg));
   }
 
-  .ops-sync-status--misaligned .ops-sync-status__icon {
+  .ops-sync-gauge--misaligned .ops-sync-gauge__label {
     color: var(--urgent);
   }
 
-  .ops-sync-status__retry {
-    @apply ml-1.5 inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold transition-colors;
+  .ops-sync-gauge__retry {
+    @apply -mr-0.5 inline-flex min-h-6 shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold transition-colors;
     border-color: color-mix(in srgb, var(--urgent) 45%, var(--topbar-border));
     background: var(--surface-card);
     color: var(--urgent);
   }
 
-  .ops-sync-status__retry:hover:not(:disabled) {
+  .ops-sync-gauge__retry:hover:not(:disabled) {
     background: color-mix(in srgb, var(--urgent) 12%, var(--surface-card));
   }
 
   .ops-board-card {
-    @apply relative isolate min-h-[128px] cursor-grab overflow-hidden rounded-[var(--radius-card)] border transition-all;
+    @apply relative isolate cursor-grab overflow-hidden rounded-[var(--radius-card)] border transition-all;
+    min-height: var(--card-min-height);
     border-color: var(--topbar-border);
     background: var(--surface-card);
     box-shadow: var(--shadow-card);
@@ -472,7 +522,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    min-height: 128px;
+    min-height: var(--card-min-height);
     padding: var(--card-padding-y) var(--card-padding-x);
     padding-left: calc(var(--card-padding-x) + var(--card-accent-width) + 4px);
   }
@@ -538,7 +588,7 @@
   }
 
   .ops-board-card:hover .ops-board-card__grip {
-    @apply opacity-35;
+    opacity: 0.55;
   }
 
   .ops-board-card__header {
@@ -581,19 +631,19 @@
   }
 
   .ops-board-card__meta--sparse {
-    border-style: dashed;
+    border-bottom: 1px dashed var(--border-subtle);
+    padding-bottom: 4px;
   }
 
-  .ops-board-card__meta-placeholder {
-    @apply italic;
+  .ops-board-card__meta-cta {
+    @apply inline-flex items-center rounded-md border border-dashed px-2 py-0.5 font-medium;
     font-size: var(--card-meta-size);
-    color: var(--text-tertiary);
+    color: var(--text-secondary);
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--border-subtle));
   }
 
   .ops-board-card__meta {
-    @apply flex min-h-[26px] items-center justify-between gap-2 rounded-lg px-2 py-1.5;
-    background: color-mix(in srgb, var(--surface-inset) 40%, var(--surface-card));
-    border: 1px solid var(--border-subtle);
+    @apply flex min-h-[24px] items-center justify-between gap-2;
   }
 
   .ops-board-card__meta-primary {
@@ -601,8 +651,8 @@
   }
 
   .ops-board-card__meta-assignee {
-    @apply shrink-0 pl-1;
-    border-left: 1px solid var(--border-subtle);
+    @apply shrink-0 pl-1.5;
+    border-left: 1px solid color-mix(in srgb, var(--border-subtle) 70%, transparent);
   }
 
   .ops-board-card__signals {
@@ -677,8 +727,16 @@
   }
 
   .ops-board-card__next-text {
+    font-size: var(--card-footer-action-size);
+    font-weight: var(--card-footer-action-weight);
     color: var(--text-primary);
-    font-weight: 500;
+  }
+
+  .ops-board-card__next-input {
+    @apply w-full rounded border bg-[var(--control-bg)] px-1 py-0.5 outline-none;
+    font-size: var(--card-footer-action-size);
+    border-color: var(--border-strong);
+    color: var(--text-primary);
   }
 
   .ops-board-card__footer-sep {
@@ -720,7 +778,7 @@
   }
 
   .ops-board-card--source {
-    @apply opacity-35;
+    opacity: 0.5;
     transform: scale(0.97);
     box-shadow: none;
     filter: none;
@@ -743,12 +801,6 @@
   .ops-board-card--overdue {
     outline: 2px dotted var(--overdue);
     outline-offset: -1px;
-  }
-
-  .ops-board-card--stuck {
-    box-shadow:
-      var(--shadow-card),
-      inset 0 0 0 1px color-mix(in srgb, var(--cat-billing) 22%, transparent);
   }
 
   .ops-board-card--skeleton {
@@ -822,6 +874,113 @@
     transition-timing-function: var(--ease-out-expo);
   }
 
+  .ops-column__header {
+    @apply rounded-t-xl border-b border-[var(--border-subtle)] px-3 py-2.5;
+    background: var(--group-header-bg);
+    border-top-width: 3px;
+    border-top-style: solid;
+  }
+
+  .ops-column--sales .ops-column__header {
+    border-top-color: var(--cat-sales);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--cat-sales) 8%, var(--group-header-bg)) 0%,
+      var(--group-header-bg) 100%
+    );
+  }
+
+  .ops-column--production .ops-column__header {
+    border-top-color: var(--cat-production);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--cat-production) 8%, var(--group-header-bg)) 0%,
+      var(--group-header-bg) 100%
+    );
+  }
+
+  .ops-column--billing .ops-column__header {
+    border-top-color: var(--cat-billing);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--cat-billing) 8%, var(--group-header-bg)) 0%,
+      var(--group-header-bg) 100%
+    );
+  }
+
+  .ops-column--aftercare .ops-column__header {
+    border-top-color: var(--cat-aftercare);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--cat-aftercare) 8%, var(--group-header-bg)) 0%,
+      var(--group-header-bg) 100%
+    );
+  }
+
+  .ops-filter-chips {
+    @apply flex flex-wrap items-center gap-1.5 px-3 pb-2;
+  }
+
+  .ops-toolbar--command .ops-filter-chips {
+    @apply min-w-0 flex-1 flex-nowrap gap-1 overflow-x-auto px-0 pb-0;
+    scrollbar-width: none;
+  }
+
+  .ops-toolbar--command .ops-filter-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ops-filter-chip {
+    @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors;
+    border-color: var(--topbar-border);
+    background: var(--control-bg);
+    color: var(--text-secondary);
+  }
+
+  .ops-filter-chip:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+
+  .ops-filter-chip--active {
+    border-color: color-mix(in srgb, var(--cat-sales) 45%, var(--topbar-border));
+    background: color-mix(in srgb, var(--cat-sales) 12%, var(--control-bg));
+    color: var(--cat-sales);
+    font-weight: 600;
+  }
+
+  .ops-filter-chip__count {
+    @apply tabular-nums opacity-80;
+  }
+
+  .ops-board-card__quick-actions {
+    @apply flex items-center gap-0.5 opacity-0 transition-opacity;
+  }
+
+  .group\/card:hover .ops-board-card__quick-actions,
+  .ops-board-card__quick-actions:focus-within {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    .ops-board-card__quick-actions {
+      opacity: 1;
+    }
+  }
+
+  .ops-board-card__quick-btn {
+    @apply inline-flex size-6 items-center justify-center rounded border transition-colors;
+    border-color: var(--border-subtle);
+    background: var(--control-bg);
+    color: var(--text-secondary);
+  }
+
+  .ops-board-card__quick-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-muted);
+  }
+
   .ops-column--drop-target {
     border-color: var(--accent);
     background: linear-gradient(180deg, var(--accent-muted) 0%, var(--surface-rail) 48%);
@@ -844,6 +1003,36 @@
     font-family: var(--font-display);
     @apply text-xl font-semibold tracking-tight;
     color: var(--text-primary);
+  }
+
+  .ops-page-title--compact {
+    @apply shrink-0 text-base font-semibold leading-tight md:text-lg;
+  }
+
+  .ops-toolbar--command .ops-toolbar-actions {
+    @apply ml-auto shrink-0 gap-1;
+  }
+
+  .ops-toolbar--command .ops-btn-secondary,
+  .ops-toolbar--command .ops-control,
+  .ops-toolbar--command .ops-search-field__input {
+    @apply h-8 px-2.5 text-xs;
+  }
+
+  .ops-toolbar--command .ops-filter-chip {
+    @apply shrink-0 px-2 py-0.5 text-[10px];
+  }
+
+  .ops-toolbar--command .ops-search-field {
+    @apply sm:min-w-[168px] lg:min-w-[200px];
+  }
+
+  .ops-toolbar--command .ops-search-field__icon {
+    @apply left-2 size-3.5;
+  }
+
+  .ops-toolbar--command .ops-search-field__input {
+    @apply pl-7 pr-7;
   }
 
   .ops-page-shell {
@@ -879,6 +1068,90 @@
     @apply rounded-xl border bg-[var(--surface-card)] p-5;
     border-color: var(--topbar-border);
     box-shadow: var(--shadow-card);
+  }
+
+  .ops-calendar-week-wrap {
+    @apply min-h-0 flex-1 overflow-auto p-3 md:p-4;
+  }
+
+  .ops-calendar-week {
+    @apply w-full min-w-[640px] border-collapse;
+    table-layout: fixed;
+  }
+
+  .ops-calendar-week th {
+    @apply border-b px-2 pb-2 text-left text-xs font-semibold tracking-tight;
+    border-color: var(--topbar-border);
+    color: var(--text-primary);
+  }
+
+  .ops-calendar-week__head--today {
+    color: var(--accent);
+  }
+
+  .ops-calendar-week td {
+    @apply align-top border-r p-2;
+    border-color: var(--topbar-border);
+    vertical-align: top;
+  }
+
+  .ops-calendar-week td:last-child {
+    @apply border-r-0;
+  }
+
+  .ops-calendar-week__cell--today {
+    background: color-mix(in srgb, var(--accent-muted) 35%, transparent);
+  }
+
+  .ops-calendar-week__jobs {
+    @apply flex min-h-[4rem] flex-col gap-1.5;
+  }
+
+  .ops-calendar-week__empty {
+    @apply py-4 text-center text-[11px];
+    color: var(--text-tertiary);
+  }
+
+  .ops-calendar-job {
+    @apply rounded-lg border p-2;
+    border-color: var(--border-subtle);
+    background: var(--surface-rail);
+  }
+
+  .ops-calendar-job__title {
+    @apply line-clamp-2 text-xs font-medium leading-snug;
+    color: var(--text-primary);
+  }
+
+  .ops-calendar-job__time {
+    @apply mt-1 text-[10px] tabular-nums;
+    color: var(--text-tertiary);
+  }
+
+  @media (max-width: 767px) {
+    .ops-calendar-week thead {
+      display: none;
+    }
+
+    .ops-calendar-week tbody tr {
+      @apply flex flex-col gap-3;
+    }
+
+    .ops-calendar-week td {
+      @apply block rounded-xl border p-3;
+      border-color: var(--topbar-border);
+      background: var(--surface-card);
+    }
+
+    .ops-calendar-week td::before {
+      content: attr(data-label);
+      @apply mb-2 block text-xs font-semibold;
+      color: var(--text-primary);
+    }
+
+    .ops-calendar-week__cell--today::before {
+      color: var(--accent);
+    }
   }
 
   .ops-settings-layout {
@@ -1009,6 +1282,16 @@
     content: '';
     @apply absolute inset-x-1 bottom-0 h-0.5 rounded-full;
     background: var(--accent);
+  }
+
+  .ops-tab__badge {
+    @apply ml-1 inline-flex min-w-[1rem] items-center justify-center rounded-full px-1 text-[9px] font-bold tabular-nums;
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+    color: var(--accent);
+  }
+
+  .ops-tab-bar__more {
+    @apply relative shrink-0;
   }
 
   .ops-icon-btn {
@@ -1158,7 +1441,15 @@
   }
 
   .ops-column-empty__action {
-    @apply mt-2 text-xs font-semibold text-[var(--accent)] hover:underline;
+    @apply mt-2 inline-flex items-center rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors;
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--topbar-border));
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent-muted) 50%, var(--surface-card));
+  }
+
+  .ops-column-empty__action:hover {
+    border-color: var(--accent);
+    background: var(--accent-muted);
   }
 
   .ops-skeleton {
@@ -1479,6 +1770,32 @@
 
   .ops-toolbar {
     @apply px-3 py-2.5;
+  }
+
+  .ops-toolbar--command {
+    @apply py-2;
+  }
+
+  .ops-toolbar-command-bar {
+    @apply flex-col items-stretch gap-y-2;
+  }
+
+  .ops-toolbar--command .ops-filter-chips {
+    @apply flex-wrap overflow-visible;
+  }
+
+  .ops-toolbar--command .ops-toolbar-actions {
+    @apply w-full justify-end gap-1.5;
+  }
+
+  .ops-toolbar--command .ops-btn-secondary,
+  .ops-toolbar--command .ops-control,
+  .ops-toolbar--command .ops-search-field__input {
+    @apply min-h-11;
+  }
+
+  .ops-toolbar--command .ops-dropdown > button {
+    @apply min-h-11 min-w-11;
   }
 
   .ops-toolbar-actions {

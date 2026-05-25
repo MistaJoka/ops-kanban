@@ -182,6 +182,16 @@ Format: **LEARN-NNN** — When / Problem / Solution / Verify / Refs
 | **Verify**   | Hover reveals ⋮; menu assign/move does not open panel; drag still works; >2 signals collapse to `+N`                                                                                                                                                                          |
 | **Refs**     | `components/pipeline/BoardCard.tsx`, `BoardCardMenu.tsx`, `board-card-primitives.tsx`                                                                                                                                                                                         |
 
+### LEARN-023 — Category-aware board signal picker + quick actions
+
+|              |                                                                                                                                                                                                                                                                               |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**     | Board card scan density, column-category polish, or one-click assign/date/priority from the pipeline                                                                                                                                                                          |
+| **Problem**  | Fixed signal order overflows meta row; column headers don't echo lifecycle color; common ops require opening panel or ⋮ menu                                                                                                                                                  |
+| **Solution** | `pickVisibleBoardSignals(card)` in domain — category priority + fixed 2-slot budget; `BoardCardQuickActions` hover strip reuses `onPatch`/`onMove`; filter chips computed client-side from `BoardCardView[]`                                   |
+| **Verify**   | `npm run test:unit -- pickVisibleBoardSignals`; quick assign doesn't open panel                                                                                                                                                          |
+| **Refs**     | `lib/domain/cards/pickVisibleBoardSignals.ts`, `BoardCardQuickActions.tsx`, `KanbanBoardToolbar.tsx`, `KanbanColumn.tsx`                                                                                                                                                      |
+
 ### LEARN-014 — Gemini function calling with regex fallback
 
 |              |                                                                                                                                                                               |
@@ -212,6 +222,16 @@ Format: **LEARN-NNN** — When / Problem / Solution / Verify / Refs
 | **Verify**   | E2E-WORKSPACE-004/005; `?` opens modal; `/` focuses search on pipeline only                                                                                                    |
 | **Refs**     | `components/workspace/WorkspaceShortcutsProvider.tsx`, `components/pipeline/PipelineSearchProvider.tsx`                                                                        |
 
+### LEARN-021 — Unified intake: attach before create
+
+| Field        | Value                                                                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**     | External leads arrive via web form, QR URL, SMS, or webhook JSON                                                                      |
+| **Problem**  | Duplicate cards for same customer; SMS/booking/web each had different insert paths; automations skipped on create                     |
+| **Solution** | `processIntake()` in `lib/domain/intake/`: idempotency via `inquiry_requests`, attach to open card by phone/email, `createCardFromSystem`, `runAutomationsForColumnEnter` on new inquiry |
+| **Verify**   | WH-INQ-001–004 after migration 020; WH-SMS-002 still green                                                                            |
+| **Refs**     | `lib/domain/intake/processIntake.ts`, `app/inquiry/[slug]/`, migration `020_inquiry_intake.sql`                                       |
+
 ### LEARN-019 — Mega-file split pattern (AI slop remediation)
 
 |              |                                                                                                                                                                                                                                                                                                                                       |
@@ -231,6 +251,36 @@ Format: **LEARN-NNN** — When / Problem / Solution / Verify / Refs
 | **Solution** | Pure `OutboundSyncQueue` in domain (per-card FIFO, PATCH coalesce, retry); `useOutboundSync` enqueues API work; UI applies optimistic state then returns; sync pill shows `pending + queued`; rollback on 4xx |
 | **Verify**   | UNIT-SYNC-\*; E2E-SYNC-002/003; rapid drag manual QA                                                                                                                                                          |
 | **Refs**     | `lib/domain/board/outboundSyncQueue.ts`, `components/pipeline/useOutboundSync.ts`, `useBoardState.ts`                                                                                                         |
+
+### LEARN-020 — Stability hardening (P16)
+
+|              |                                                                                                                                                                                                               |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**     | Pilot staging needs crash containment, session recovery, sync catch-up, and observability beyond optimistic UI alone                                                                                            |
+| **Problem**  | Single `(app)/error.tsx`; API routes without try/catch; client fetches threw on network failure; realtime disconnect dropped events; `X-Client-Mutation-Id` ignored server-side; no Sentry                     |
+| **Solution** | `withApiRoute` + `mapSupabaseError`; `global-error` / public `error.tsx`; `apiFetch` + `SessionGuardProvider`; realtime reconnect + `pendingCatchUp` on queue drain; migration `019_client_mutations` idempotency; `@sentry/nextjs` gated on `SENTRY_DSN` |
+| **Verify**   | UNIT-ERR-\*; INT-API-500; INT-IDEM-001 (after migration 019); E2E-RT-001 / REL-001 / REL-003; `npm run test:unit`                                                                                           |
+| **Refs**     | `lib/api/withApiRoute.ts`, `lib/client/apiFetch.ts`, `components/pipeline/useBoardRealtime.ts`, `supabase/migrations/019_client_mutations.sql`                                                                |
+
+### LEARN-022 — Backend reliability completion (P17)
+
+|              |                                                                                                                                                                                                               |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**     | P16 shipped wrappers on 6 routes only; idempotency and public endpoints still had race/abuse gaps                                                                                                             |
+| **Problem**  | Inconsistent error capture; read-then-insert idempotency races; multi-step intake/booking partial failure; unrate-limited public POSTs                                                                        |
+| **Solution** | Roll out `withApiRoute`/`withPublicRoute`/`withWebhookRoute` to all routes; `parseJsonBody` + `DomainError`; claim-first idempotency (`claimClientMutation`, `claimInquiryRequest`); RPC `021_atomic_intake`; `publicRateLimit` on inquiry/book/portal |
+| **Verify**   | UNIT-API-001/002, UNIT-RATE-001, INT-IDEM-002/003, INT-API-PUB-001, api-contracts.test.ts; apply migrations 020–021 on staging                                                                              |
+| **Refs**     | `lib/api/withApiRoute.ts`, `lib/domain/mutations/idempotency.ts`, `supabase/migrations/021_atomic_intake.sql`, `docs/testing/API_CONTRACTS.md` route inventory                                               |
+
+### LEARN-024 — Doc drift: front/back pass + check:doc-sync
+
+|              |                                                                                                                                                                                                               |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **When**     | Canonical specs lag code after fast P16–P17 ships; agents read stale `API_ROUTES` / `MVP_SCHEMA` while tests and LOG hold truth                                                                               |
+| **Problem**  | README said migrations 001–015; `API_ROUTES` Wave 0 only; `MVP_SCHEMA` deferred shipped tables; no automated collision detection                                                                             |
+| **Solution** | Split API spec: `API_PATTERNS.md` + slim `API_ROUTES.md` + `API_CONTRACTS` inventory; `SCHEMA_CHANGELOG.md` for 007–021; refresh entry points (`README`, `context/`); ops runbooks; `npm run check:doc-sync` |
+| **Verify**   | `npm run check:doc-sync`; manual spot-check inquiry route in PAGES + runbook + contracts                                                                                                                      |
+| **Refs**     | `scripts/check-doc-sync.mjs`, `docs/api/API_PATTERNS.md`, `docs/database/SCHEMA_CHANGELOG.md`, `docs/ops/INQUIRY_INTAKE.md`, AI_BUILD_PROTOCOL Layer 6                                                      |
 
 ---
 

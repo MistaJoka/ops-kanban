@@ -1,5 +1,7 @@
 # Gate G6 sign-off — Wave 4: Scale
 
+> **Historical sign-off context:** G6 approved QuickBooks sync. QB adapter was later **removed** in favor of native ledger (migration 016). Automations, portal, reports remain shipped.
+
 **Status:** ✅ **APPROVED for staging** — 2025-05-21  
 **Build:** v0.5.0-wave4  
 **Sign-off:** Code complete; apply migrations 013–014 before enabling automations, QuickBooks, contracts, and reports on staging.

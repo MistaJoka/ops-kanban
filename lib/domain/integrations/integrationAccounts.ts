@@ -1,6 +1,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { ensureBookingPage } from '@/lib/domain/booking/bookingPages';
+import {
+  buildInquiryLinkPresets,
+  ensureInquiryPage,
+} from '@/lib/domain/intake/inquiryPages';
 import { isStripeConfigured } from '@/lib/integrations/stripe/adapter';
 import { isTwilioConfigured } from '@/lib/integrations/twilio/adapter';
 
@@ -25,6 +29,8 @@ export type IntegrationStatusView = {
     enabled: boolean;
   };
   bookingPageUrl: string | null;
+  inquiryPageUrl: string | null;
+  inquiryLinkPresets: Array<{ label: string; url: string }>;
 };
 
 export async function getIntegrationStatus(
@@ -42,6 +48,8 @@ export async function getIntegrationStatus(
   const twilioRow = data?.find((row) => row.provider === 'twilio');
 
   let bookingPageUrl: string | null = null;
+  let inquiryPageUrl: string | null = null;
+  let inquiryLinkPresets: Array<{ label: string; url: string }> = [];
 
   try {
     const { data: org } = await client
@@ -53,9 +61,17 @@ export async function getIntegrationStatus(
     if (org?.name) {
       const page = await ensureBookingPage(client, organizationId, org.name);
       bookingPageUrl = baseUrl ? `${baseUrl}/book/${page.slug}` : `/book/${page.slug}`;
+
+      const inquiryPage = await ensureInquiryPage(client, organizationId, org.name);
+      inquiryPageUrl = baseUrl
+        ? `${baseUrl}/inquiry/${inquiryPage.slug}`
+        : `/inquiry/${inquiryPage.slug}`;
+      inquiryLinkPresets = buildInquiryLinkPresets(baseUrl ?? '', inquiryPage.slug);
     }
   } catch {
     bookingPageUrl = null;
+    inquiryPageUrl = null;
+    inquiryLinkPresets = [];
   }
 
   return {
@@ -79,6 +95,8 @@ export async function getIntegrationStatus(
       enabled: true,
     },
     bookingPageUrl,
+    inquiryPageUrl,
+    inquiryLinkPresets,
   };
 }
 
