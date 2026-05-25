@@ -1,0 +1,12 @@
+{
+  "id": "WH-TEST-PAYPAL-COMPLETED",
+  "event_type": "PAYMENT.CAPTURE.COMPLETED",
+  "resource": {
+    "id": "CAPTURE-TEST-001",
+    "amount": {
+      "currency_code": "USD",
+      "value": "500.00"
+    },
+    "custom_id": "{\"organization_id\":\"00000000-0000-4000-8000-000000000001\",\"invoice_id\":\"00000000-0000-4000-8000-000000000002\",\"card_id\":\"00000000-0000-4000-8000-000000000003\"}"
+  }
+}

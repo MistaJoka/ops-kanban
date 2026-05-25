@@ -2,14 +2,14 @@ import { jsonData, jsonError } from '@/lib/api/response';
 import { withApiRoute } from '@/lib/api/withApiRoute';
 import { createInvoicePaymentLink } from '@/lib/domain/integrations/payments';
 import { InvoiceError } from '@/lib/domain/money/invoices';
-import { isStripeConfigured } from '@/lib/integrations/stripe/adapter';
+import { isPayPalConfigured } from '@/lib/integrations/paypal/adapter';
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   return withApiRoute(
     request,
     async (context, req) => {
-      if (!isStripeConfigured()) {
-        return jsonError('Stripe is not configured.', 503, 'SERVICE_UNAVAILABLE');
+      if (!isPayPalConfigured()) {
+        return jsonError('PayPal is not configured.', 503, 'SERVICE_UNAVAILABLE');
       }
 
       const { id } = await params;

@@ -68,7 +68,7 @@ Notifications: inline on pipeline (AI approval bell) — no separate notificatio
 | ------- | ------ |
 | Overview / General | Shipped — org name, pipeline mode |
 | Team | Shipped — members & roles |
-| Integrations | Shipped — inquiry URL, preset links, Stripe/Twilio toggles |
+| Integrations | Shipped — inquiry URL, preset links, PayPal/Twilio toggles |
 | Templates | Shipped — message templates |
 | Automations | Shipped — column-enter rules |
 | Contracts | Shipped — recurring contracts |

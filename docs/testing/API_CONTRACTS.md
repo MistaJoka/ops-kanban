@@ -111,7 +111,7 @@ Breaking change = version bump + regression run.
 | `/api/settings/ai-memory` | GET, PATCH | handler | none → withApiRoute | no | — |
 | `/api/settings/organization` | GET, PATCH | handler | none → withApiRoute | no | — |
 | `/api/settings/pipeline-mode` | PATCH | handler | none → withApiRoute | no | — |
-| `/api/webhooks/stripe` | POST | webhook | none → withWebhookRoute | event dedup | — |
+| `/api/webhooks/paypal` | POST | webhook | none → withWebhookRoute | event dedup | — |
 | `/api/webhooks/twilio` | POST | webhook | none → withWebhookRoute | event dedup | — |
 
 **P17 targets:** 49/49 wrapped; INT-IDEM-002/003 concurrent idempotency; INT-API-PUB-001 rate limit 429.

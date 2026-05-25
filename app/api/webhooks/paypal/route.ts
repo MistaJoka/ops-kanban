@@ -1,6 +1,6 @@
 import { jsonData, jsonError } from '@/lib/api/response';
 import { withWebhookRoute } from '@/lib/api/withApiRoute';
-import { stripePaymentAdapter } from '@/lib/integrations/stripe/adapter';
+import { paypalPaymentAdapter } from '@/lib/integrations/paypal/adapter';
 import { processPaymentWebhook } from '@/lib/domain/integrations/processPaymentWebhook';
 import { createServiceClient } from '@/lib/db/supabase/service';
 
@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   return withWebhookRoute(
     request,
     async (req) => {
-      const verified = await stripePaymentAdapter.verifyWebhook(req);
+      const verified = await paypalPaymentAdapter.verifyWebhook(req);
       if (!verified) {
         return jsonError('Invalid webhook signature.', 401, 'UNAUTHORIZED');
       }
@@ -23,6 +23,6 @@ export async function POST(request: Request) {
         return jsonError(message, 500);
       }
     },
-    { route: '/api/webhooks/stripe' },
+    { route: '/api/webhooks/paypal' },
   );
 }

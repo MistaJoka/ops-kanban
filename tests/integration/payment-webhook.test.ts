@@ -6,7 +6,7 @@ import { processPaymentWebhook } from '@/lib/domain/integrations/processPaymentW
 import { createInvoiceDraft } from '@/lib/domain/money/invoices';
 import { getQuoteForCard, upsertQuoteDraft } from '@/lib/domain/money/quotes';
 import type { WebhookEvent } from '@/lib/integrations/types';
-import { POST as stripeWebhookPost } from '@/app/api/webhooks/stripe/route';
+import { POST as paypalWebhookPost } from '@/app/api/webhooks/paypal/route';
 import { createTestUser, deleteTestUser } from '@/tests/helpers/auth';
 import { hasTestSupabaseEnv } from '@/tests/helpers/env';
 import { hasMigrationsApplied, hasWave1MigrationsApplied } from '@/tests/helpers/migrate';
@@ -66,9 +66,9 @@ function buildPaymentEvent(params: {
   eventType?: WebhookEvent['eventType'];
 }): WebhookEvent {
   return {
-    provider: 'stripe',
+    provider: 'paypal',
     eventType: params.eventType ?? 'payment.completed',
-    externalId: params.externalId ?? `cs_test_${randomUUID()}`,
+    externalId: params.externalId ?? `PAYPAL-ORDER-${randomUUID()}`,
     organizationId: params.organizationId,
     invoiceId: params.invoiceId,
     cardId: params.cardId,
@@ -80,14 +80,14 @@ function buildPaymentEvent(params: {
 
 describe.skipIf(!wave1Ready)('WH-PAY payment webhooks', () => {
   it('WH-PAY-001: invalid signature returns 401', async () => {
-    const previous = process.env.STRIPE_WEBHOOK_SECRET;
-    process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_invalid';
+    const previous = process.env.PAYPAL_WEBHOOK_ID;
+    process.env.PAYPAL_WEBHOOK_ID = 'WH-TEST-INVALID';
 
     try {
-      const response = await stripeWebhookPost(
-        new Request('http://localhost/api/webhooks/stripe', {
+      const response = await paypalWebhookPost(
+        new Request('http://localhost/api/webhooks/paypal', {
           method: 'POST',
-          body: JSON.stringify({ type: 'checkout.session.completed' }),
+          body: JSON.stringify({ event_type: 'PAYMENT.CAPTURE.COMPLETED' }),
           headers: { 'Content-Type': 'application/json' },
         }),
       );
@@ -95,9 +95,9 @@ describe.skipIf(!wave1Ready)('WH-PAY payment webhooks', () => {
       expect(response.status).toBe(401);
     } finally {
       if (previous) {
-        process.env.STRIPE_WEBHOOK_SECRET = previous;
+        process.env.PAYPAL_WEBHOOK_ID = previous;
       } else {
-        delete process.env.STRIPE_WEBHOOK_SECRET;
+        delete process.env.PAYPAL_WEBHOOK_ID;
       }
     }
   });
@@ -141,7 +141,7 @@ describe.skipIf(!wave1Ready)('WH-PAY payment webhooks', () => {
   it('WH-PAY-003: duplicate external_id is idempotent', async () => {
     const user = await createTestUser('wh-pay-003');
     const { service, card, invoice } = await seedInvoice(user, 320);
-    const externalId = `cs_test_${randomUUID()}`;
+    const externalId = `PAYPAL-ORDER-${randomUUID()}`;
 
     try {
       const event = buildPaymentEvent({

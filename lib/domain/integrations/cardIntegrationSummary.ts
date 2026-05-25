@@ -5,7 +5,7 @@ import type { InvoiceView } from '@/lib/domain/money/invoices';
 import type { PaymentView } from '@/lib/domain/integrations/payments';
 
 export type CardIntegrationSummary = {
-  stripe: { label: string; status: 'active' | 'inactive' | 'paid' | 'pending' };
+  paypal: { label: string; status: 'active' | 'inactive' | 'paid' | 'pending' };
   estimateSign: { label: string; status: 'signed' | 'awaiting' | 'inactive' };
   twilio: { label: string; status: 'active' | 'inactive'; unread: number };
   accounting: { label: string; status: 'paid' | 'due' | 'inactive' };
@@ -38,22 +38,22 @@ export async function getCardIntegrationSummary(
       .eq('status', 'received'),
   ]);
 
-  let stripeStatus: CardIntegrationSummary['stripe']['status'] = 'inactive';
-  let stripeLabel = 'Stripe not configured';
+  let paypalStatus: CardIntegrationSummary['paypal']['status'] = 'inactive';
+  let paypalLabel = 'PayPal not configured';
 
-  if (integrationStatus.stripe.configured && integrationStatus.stripe.status === 'active') {
+  if (integrationStatus.paypal.configured && integrationStatus.paypal.status === 'active') {
     if (invoice?.status === 'paid') {
-      stripeStatus = 'paid';
-      stripeLabel = `Paid $${invoice.total.toFixed(2)}`;
+      paypalStatus = 'paid';
+      paypalLabel = `Paid $${invoice.total.toFixed(2)}`;
     } else if (payment?.paymentUrl) {
-      stripeStatus = 'pending';
-      stripeLabel = `Link pending $${payment.amount.toFixed(2)}`;
+      paypalStatus = 'pending';
+      paypalLabel = `Link pending $${payment.amount.toFixed(2)}`;
     } else if (invoice && invoice.balanceDue > 0) {
-      stripeStatus = 'active';
-      stripeLabel = `$${invoice.balanceDue.toFixed(2)} due`;
+      paypalStatus = 'active';
+      paypalLabel = `$${invoice.balanceDue.toFixed(2)} due`;
     } else {
-      stripeStatus = 'active';
-      stripeLabel = 'Ready for payment link';
+      paypalStatus = 'active';
+      paypalLabel = 'Ready for payment link';
     }
   }
 
@@ -89,7 +89,7 @@ export async function getCardIntegrationSummary(
   }
 
   return {
-    stripe: { label: stripeLabel, status: stripeStatus },
+    paypal: { label: paypalLabel, status: paypalStatus },
     estimateSign: { label: estimateSignLabel, status: estimateSignStatus },
     twilio: {
       label: twilioActive ? 'SMS enabled' : 'Twilio not configured',

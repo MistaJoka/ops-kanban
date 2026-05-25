@@ -14,7 +14,7 @@ Use before promoting MVP to a pilot production environment. Couples to `RELEASE_
   - `GEMINI_API_KEY` (optional — intent router works without it)
   - `SENTRY_DSN` (optional — error monitoring; see `docs/ops/MONITORING.md`)
   - `CRON_SECRET` (optional — Vercel Cron auth for `/api/contracts/run-due`)
-  - Optional delivery pipes: Stripe, Twilio, Resend
+  - Optional delivery pipes: PayPal, Twilio, Resend
 - [ ] Rotate any keys that were used in dev/staging
 - [ ] Confirm RLS enabled on all public tables (`004_rls_policies.sql`)
 

@@ -9,7 +9,7 @@ Parent doc: `PLATFORM_CAPABILITIES.md`.
 ## 1. Integration pattern
 
 ```txt
-Optional provider (Stripe, Twilio, Resend)
+Optional provider (PayPal, Twilio, Resend)
     ↕ API key (Settings)
 Next.js API route (/api/integrations/... or /api/webhooks/{provider})
     ↕ domain service (validate, map, idempotent write)
@@ -74,7 +74,7 @@ Processor runs idempotent: if `external_id` exists and `processed`, skip.
 | Event           | Ledger entry       | Hook                                             |
 | --------------- | ------------------ | ------------------------------------------------ |
 | Invoice created | `invoice_issued`   | `createInvoiceDraft`                             |
-| Payment settled | `payment_received` | `settleInvoicePayment` (manual + Stripe webhook) |
+| Payment settled | `payment_received` | `settleInvoicePayment` (manual + PayPal webhook) |
 
 Table: `accounting_transactions` — org-scoped, RLS, CSV export via `/api/accounting/export`.
 
@@ -100,9 +100,9 @@ No Calendly integration.
 
 ## 7. Provider-specific notes (optional pipes)
 
-### Stripe
+### PayPal
 
-- Payment Links on invoice total.
+- Checkout Orders on invoice total.
 - Webhook → `settleInvoicePayment` → ledger + archive card.
 - **Fallback:** Manual mark paid
 
@@ -143,8 +143,10 @@ Magic link: `/p/{token}` → read-only + scoped actions (approve, pay redirect).
 
 ```env
 # Wave 1
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
+PAYPAL_CLIENT_ID=
+PAYPAL_CLIENT_SECRET=
+PAYPAL_WEBHOOK_ID=
+PAYPAL_API_BASE=https://api-m.sandbox.paypal.com
 
 # Wave 2
 TWILIO_ACCOUNT_SID=
@@ -160,7 +162,7 @@ No QuickBooks, DocuSign, or Calendly env vars.
 
 ```txt
 Integrations
-  Stripe       ● Paid $1,240 · 5/20/26
+  PayPal       ● Paid $1,240 · 5/20/26
   Estimate sign ○ Awaiting portal approval
   Twilio       ● 2 unread SMS
   Accounting   ● AR $420 due

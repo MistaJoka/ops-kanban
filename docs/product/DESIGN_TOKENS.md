@@ -57,7 +57,7 @@ Load via `next/font/google` in root layout.
 | Token                 | Value | Use             |
 | --------------------- | ----- | --------------- |
 | `--column-width`      | 300px | Kanban column   |
-| `--sidebar-expanded`  | 240px | Nav             |
+| `--sidebar-expanded`  | 208px | Nav             |
 | `--sidebar-collapsed` | 64px  | Nav rail        |
 | `--panel-width`       | 720px | Card slide-over |
 | `--ai-dock-collapsed` | 48px  |                 |

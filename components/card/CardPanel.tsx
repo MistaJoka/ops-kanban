@@ -165,7 +165,7 @@ export function CardPanel({
               members={detail.members}
               changeOrders={detail.changeOrders}
               canManageMoney={canManageMoney}
-              stripeEnabled={detail.stripeEnabled}
+              paypalEnabled={detail.paypalEnabled}
               twilioEnabled={detail.twilioEnabled}
               resendEnabled={detail.resendEnabled}
               mutations={mutations}

@@ -2,7 +2,14 @@
 
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { CalendarDays, CircleDollarSign, Clock3, GripVertical, MapPin } from 'lucide-react';
+import {
+  CalendarDays,
+  CircleDollarSign,
+  Clock3,
+  GripVertical,
+  MapPin,
+  User,
+} from 'lucide-react';
 
 import type { BoardCardView } from '@/lib/domain/cards/boardCard';
 import type { MoneyBadge } from '@/lib/domain/cards/cardSignals';
@@ -170,11 +177,11 @@ export function CardAssigneeChip({ initials, name }: { initials: string; name?: 
 export function CardAssigneePlaceholder() {
   return (
     <span
-      className="ops-board-card__chip ops-board-card__chip--assignee ops-board-card__chip--unassigned"
+      className="ops-board-card__chip ops-board-card__chip--assignee ops-board-card__chip--vacant"
       title="Unassigned"
       aria-label="Unassigned"
     >
-      ?
+      <User className="size-3 opacity-60" strokeWidth={2.25} aria-hidden />
     </span>
   );
 }
@@ -318,10 +325,13 @@ export function CardMetaRow({ card }: { card: BoardCardView }) {
   const isEmpty = visible.length === 0;
 
   return (
-    <div className={cn('ops-board-card__meta', isEmpty && 'ops-board-card__meta--sparse')}>
+    <div className={cn('ops-board-card__meta', isEmpty && 'ops-board-card__meta--empty')}>
       <div className="ops-board-card__meta-primary">
         {isEmpty ? (
-          <span className="ops-board-card__meta-cta">Add estimate or schedule</span>
+          <span className="ops-board-card__meta-hints" title="Add estimate or schedule">
+            <span className="ops-board-card__hint-pill">Est.</span>
+            <span className="ops-board-card__hint-pill">Sched.</span>
+          </span>
         ) : (
           <>
             {visible.map((key) => renderSignal(card, key))}
@@ -460,14 +470,18 @@ export function CardFooter({
         ) : canEditNextAction ? (
           <button
             type="button"
-            className="ops-board-card__meta-cta"
+            className="ops-board-card__next-hint"
             onClick={(event) => {
               event.stopPropagation();
               setNextDraft('');
               setEditingNext(true);
             }}
           >
-            Set next action
+            <span className="ops-board-card__next-label">Next</span>
+            <span className="ops-board-card__next-sep" aria-hidden>
+              :
+            </span>
+            <span className="ops-board-card__next-placeholder">add action</span>
           </button>
         ) : null}
         {next && stageText ? (

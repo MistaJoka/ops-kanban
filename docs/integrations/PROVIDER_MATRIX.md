@@ -4,7 +4,7 @@ Curated vendors for reliability and SMB pricing. Swap via adapter interface in c
 
 | Capability    | Recommended                     | Alternative         | Native (no vendor)          |
 | ------------- | ------------------------------- | ------------------- | --------------------------- |
-| Payments      | **Stripe** Payment Links        | **PayPal** Checkout | Manual mark paid            |
+| Payments      | **PayPal** Checkout             | Manual mark paid            | Manual mark paid            |
 | Email         | **Resend**                      | SendGrid, Postmark  | mailto: draft only          |
 | SMS           | **Twilio**                      | —                   | Manual log                  |
 | E-sign        | **Native portal approve**       | PDF download only   | —                           |
@@ -14,7 +14,7 @@ Curated vendors for reliability and SMB pricing. Swap via adapter interface in c
 | Accounting    | **Native ledger** (AR + income) | CSV export          | Invoices + payments on card |
 | Maps (future) | Mapbox                          | Google Maps         | Address text only           |
 
-**MVP:** Native + manual. **Wave 1:** Stripe (optional). **Wave 2:** Twilio + Resend (optional). **Wave 3+:** Native e-sign, files, native accounting ledger.
+**MVP:** Native + manual. **Wave 1:** PayPal (optional). **Wave 2:** Twilio + Resend (optional). **Wave 3+:** Native e-sign, files, native accounting ledger.
 
 ---
 

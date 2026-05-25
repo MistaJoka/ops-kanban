@@ -41,7 +41,7 @@ export function CardPanelBody({
   members,
   changeOrders,
   canManageMoney,
-  stripeEnabled,
+  paypalEnabled,
   twilioEnabled,
   resendEnabled,
   mutations,
@@ -55,7 +55,7 @@ export function CardPanelBody({
   members: OrgMemberView[];
   changeOrders: Array<{ id: string; title: string }>;
   canManageMoney: boolean;
-  stripeEnabled: boolean;
+  paypalEnabled: boolean;
   twilioEnabled: boolean;
   resendEnabled: boolean;
   mutations: Mutations;
@@ -135,7 +135,7 @@ export function CardPanelBody({
               quote={payload.quote}
               invoice={payload.invoice}
               payment={payload.payment}
-              stripeEnabled={stripeEnabled}
+              paypalEnabled={paypalEnabled}
               canManage={canManageMoney}
               onCreateInvoice={mutations.createInvoice}
               onMarkPaid={mutations.markPaid}

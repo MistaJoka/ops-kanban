@@ -186,14 +186,14 @@ export const PRODUCT_CHANGELOG: ProductRelease[] = [
     version: '0.1.1',
     title: 'Wave 1 — payments',
     releasedAt: '2025-05-21T14:00:00.000Z',
-    summary: 'Stripe payment links, webhooks, and integration health.',
+    summary: 'PayPal payment links, webhooks, and integration health.',
     sections: [
       {
         title: 'Added',
         items: [
-          'Stripe payment links on invoices with webhook settlement',
+          'PayPal payment links on invoices with webhook settlement',
           'Estimate PDF export and email send',
-          'Integration health checks for Stripe, Twilio, and Resend',
+          'Integration health checks for PayPal, Twilio, and Resend',
         ],
       },
     ],

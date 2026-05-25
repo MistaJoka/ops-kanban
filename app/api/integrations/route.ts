@@ -12,7 +12,7 @@ import {
 import { canManageMoney } from '@/lib/domain/auth/roles';
 
 const patchSchema = z.object({
-  stripe: z.enum(['active', 'disconnected']).optional(),
+  paypal: z.enum(['active', 'disconnected']).optional(),
   twilio: z.enum(['active', 'disconnected']).optional(),
 });
 
@@ -41,12 +41,12 @@ export async function PATCH(request: Request) {
         return parsed.response;
       }
 
-      if (parsed.data.stripe) {
+      if (parsed.data.paypal) {
         await upsertIntegrationAccount(
           context.client,
           context.organizationId,
-          'stripe',
-          parsed.data.stripe,
+          'paypal',
+          parsed.data.paypal,
         );
       }
 

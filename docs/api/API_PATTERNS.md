@@ -40,7 +40,7 @@ Every `app/api/**/route.ts` uses one of:
 | `withApiRoute` | Session (`getHandlerContext`) | Authenticated org-scoped mutations/reads |
 | `withApiRouteNoRequest` | Session | GET handlers without body |
 | `withPublicRoute` | Service role inside handler | Inquiry, book, portal, health, dev reset |
-| `withWebhookRoute` | Signature verify in handler | Stripe, Twilio webhooks |
+| `withWebhookRoute` | Signature verify in handler | PayPal, Twilio webhooks |
 
 Wrappers catch errors, call `captureApiError`, return JSON envelope. **Target:** 49/49 wrapped (P17).
 
@@ -93,7 +93,7 @@ Exceeded → `429` `RATE_LIMITED` (`INT-API-PUB-001`, `UNIT-RATE-001`).
 
 ## Webhooks
 
-- `POST /api/webhooks/stripe` — payment events; dedupe by event id
+- `POST /api/webhooks/paypal` — payment events; dedupe by event id
 - `POST /api/webhooks/twilio` — inbound SMS → `processSmsWebhook` → `processIntake`
 
 Use `withWebhookRoute`; verify provider signature before domain work.

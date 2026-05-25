@@ -69,7 +69,7 @@ Bootstrap must insert **zero cards** — `NO_MOCK_DATA_POLICY.md`.
 | POST   | `/api/cards/:id/quotes/send`  | —                         | Send quote to customer      |
 | POST   | `/api/cards/:id/invoices`     | `{ fromQuoteId? }`        | Invoice draft               |
 | POST   | `/api/invoices/:id/mark-paid` | `{ method?: string }`     | Manual paid — owner/manager |
-| POST   | `/api/invoices/:id/payment-link` | —                      | Stripe payment link         |
+| POST   | `/api/invoices/:id/payment-link` | —                      | PayPal payment link         |
 
 ---
 
@@ -142,7 +142,7 @@ UI pages: `/inquiry/[slug]`, `/book/[slug]`, `/p/[token]`. Runbook: [`docs/ops/I
 
 | Method | Path                    | Purpose                          |
 | ------ | ----------------------- | -------------------------------- |
-| POST   | `/api/webhooks/stripe`  | Payment confirmation             |
+| POST   | `/api/webhooks/paypal`  | Payment confirmation             |
 | POST   | `/api/webhooks/twilio`  | Inbound SMS → `processIntake`    |
 
 ---

@@ -5,11 +5,11 @@ import {
   buildInquiryLinkPresets,
   ensureInquiryPage,
 } from '@/lib/domain/intake/inquiryPages';
-import { isStripeConfigured } from '@/lib/integrations/stripe/adapter';
+import { isPayPalConfigured } from '@/lib/integrations/paypal/adapter';
 import { isTwilioConfigured } from '@/lib/integrations/twilio/adapter';
 
 export type IntegrationStatusView = {
-  stripe: {
+  paypal: {
     configured: boolean;
     status: 'active' | 'disconnected' | 'error';
     errorMessage?: string | null;
@@ -42,9 +42,9 @@ export async function getIntegrationStatus(
     .from('integration_accounts')
     .select('provider, status, error_message')
     .eq('organization_id', organizationId)
-    .in('provider', ['stripe', 'twilio']);
+    .in('provider', ['paypal', 'twilio']);
 
-  const stripeRow = data?.find((row) => row.provider === 'stripe');
+  const paypalRow = data?.find((row) => row.provider === 'paypal');
   const twilioRow = data?.find((row) => row.provider === 'twilio');
 
   let bookingPageUrl: string | null = null;
@@ -75,10 +75,10 @@ export async function getIntegrationStatus(
   }
 
   return {
-    stripe: {
-      configured: isStripeConfigured(),
-      status: stripeRow?.status ?? (isStripeConfigured() ? 'active' : 'disconnected'),
-      errorMessage: stripeRow?.error_message ?? null,
+    paypal: {
+      configured: isPayPalConfigured(),
+      status: paypalRow?.status ?? (isPayPalConfigured() ? 'active' : 'disconnected'),
+      errorMessage: paypalRow?.error_message ?? null,
     },
     twilio: {
       configured: isTwilioConfigured(),
@@ -103,7 +103,7 @@ export async function getIntegrationStatus(
 export async function upsertIntegrationAccount(
   client: SupabaseClient,
   organizationId: string,
-  provider: 'stripe' | 'twilio',
+  provider: 'paypal' | 'twilio',
   status: 'active' | 'disconnected',
 ) {
   const { error } = await client.from('integration_accounts').upsert(

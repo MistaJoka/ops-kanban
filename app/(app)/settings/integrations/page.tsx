@@ -101,27 +101,27 @@ export default function IntegrationsSettingsPage() {
               <article className="ops-section-card">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="font-semibold text-[var(--text-primary)]">Stripe payments</h2>
+                    <h2 className="font-semibold text-[var(--text-primary)]">PayPal payments</h2>
                     <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                      {status.stripe.configured
+                      {status.paypal.configured
                         ? 'Platform keys detected. Enable to show payment links on invoices.'
-                        : 'Set STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET in your environment.'}
+                        : 'Set PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, and PAYPAL_WEBHOOK_ID in your environment.'}
                     </p>
                   </div>
-                  <StatusBadge status={status.stripe.status} />
+                  <StatusBadge status={status.paypal.status} />
                 </div>
-                {status.stripe.configured ? (
+                {status.paypal.configured ? (
                   <div className="mt-4 flex gap-2">
                     <button
                       type="button"
-                      onClick={() => void patch({ stripe: 'active' })}
+                      onClick={() => void patch({ paypal: 'active' })}
                       className="ops-btn-primary"
                     >
                       Enable
                     </button>
                     <button
                       type="button"
-                      onClick={() => void patch({ stripe: 'disconnected' })}
+                      onClick={() => void patch({ paypal: 'disconnected' })}
                       className="ops-btn-secondary"
                     >
                       Disable

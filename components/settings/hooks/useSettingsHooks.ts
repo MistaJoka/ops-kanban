@@ -117,7 +117,7 @@ export type OrgSettings = {
 };
 
 export type IntegrationStatus = {
-  stripe: { configured: boolean; status: string; errorMessage?: string | null };
+  paypal: { configured: boolean; status: string; errorMessage?: string | null };
   twilio: { configured: boolean; status: string; errorMessage?: string | null };
   resend: { configured: boolean };
   nativeAccounting: { enabled: boolean };
@@ -195,7 +195,7 @@ export function useSettingsContracts() {
 export function summarizeIntegrations(status: IntegrationStatus | null): string | null {
   if (!status) return null;
   const connected: string[] = [];
-  if (status.stripe.status === 'active') connected.push('Stripe');
+  if (status.paypal.status === 'active') connected.push('PayPal');
   if (status.twilio.status === 'active') connected.push('SMS');
   if (status.resend.configured) connected.push('Email');
   return connected.length > 0 ? `${connected.join(', ')} connected` : 'Native modules on';

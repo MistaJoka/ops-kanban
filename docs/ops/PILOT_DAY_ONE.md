@@ -10,7 +10,7 @@ Couples to [`PILOT_DEPLOY_CHECKLIST.md`](./PILOT_DEPLOY_CHECKLIST.md) and [`INQU
 
 1. Apply migrations **`001` → `021`**: `npm run db:migrate`
 2. Set `DISABLE_AUTH=false` on production
-3. Configure env vars (Supabase, optional Gemini, Sentry, Stripe/Twilio)
+3. Configure env vars (Supabase, optional Gemini, Sentry, PayPal/Twilio)
 4. Run smoke: `npm run test:e2e:smoke`
 5. Run `npm run check:no-mock` and `npm run check:doc-sync`
 

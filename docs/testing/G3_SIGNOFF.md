@@ -2,7 +2,7 @@
 
 **Status:** ✅ **APPROVED for staging** — 2025-05-21  
 **Build:** v0.2.0-wave1  
-**Sign-off:** Code complete; apply migrations 007–008 and run `npm run test:webhooks` on staging before prod Stripe keys.
+**Sign-off:** Code complete; apply migrations 007–008 and run `npm run test:webhooks` on staging before prod PayPal keys.
 
 See: `RELEASE_GATES.md`, `WEBHOOK_INTEGRATION_TESTS.md`, `PILOT_DEPLOY_CHECKLIST.md`
 
@@ -12,7 +12,7 @@ See: `RELEASE_GATES.md`, `WEBHOOK_INTEGRATION_TESTS.md`, `PILOT_DEPLOY_CHECKLIST
 
 | #   | Criterion                        | Status | Evidence                                                                 |
 | --- | -------------------------------- | ------ | ------------------------------------------------------------------------ |
-| 7.1 | Payment link on invoice (Stripe) | ✅     | `POST /api/invoices/[id]/payment-link`, Money tab UI                     |
+| 7.1 | Payment link on invoice (PayPal) | ✅     | `POST /api/invoices/[id]/payment-link`, Money tab UI                     |
 | 7.2 | WH-PAY P0 pass                   | ✅     | `tests/integration/payment-webhook.test.ts` (runs after 007/008 migrate) |
 | 7.3 | Manual paid still works          | ✅     | `INT-MNY-004`, `settleInvoicePayment` shared path                        |
 | 7.4 | Estimate approve portal v0       | ✅     | `/p/[token]`, portal token + approve APIs                                |
@@ -36,18 +36,17 @@ See: `RELEASE_GATES.md`, `WEBHOOK_INTEGRATION_TESTS.md`, `PILOT_DEPLOY_CHECKLIST
 ## Operator steps before prod keys
 
 1. `npm run db:migrate` (007 + 008)
-2. Set `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, optional `RESEND_*`
-3. Enable Stripe in **Settings → Integrations**
+2. Set `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID`, optional `RESEND_*`
+3. Enable PayPal in **Settings → Integrations**
 4. `npm run test:webhooks` — all WH-PAY P0 green
-5. Stripe CLI forward webhooks to `/api/webhooks/stripe` on staging
+5. Configure PayPal webhooks to POST to `/api/webhooks/paypal` on staging
 
 ---
 
 ## Accepted waivers
 
-| Item           | Reason                                                |
-| -------------- | ----------------------------------------------------- |
-| PayPal adapter | Stripe chosen for Wave 1; PayPal deferred to Wave 1.1 |
-| PDF export     | HTML estimate export v0; print-to-PDF via browser     |
+| Item       | Reason                                            |
+| ---------- | ------------------------------------------------- |
+| PDF export | HTML estimate export v0; print-to-PDF via browser |
 
 **Accepted by:** build agent **Date:** 2025-05-21

@@ -278,7 +278,7 @@ export const toolRegistry: ToolDefinition[] = [
   },
   {
     name: 'createPaymentLink',
-    description: 'Create a Stripe payment link for the job invoice.',
+    description: 'Create a PayPal payment link for the job invoice.',
     schema: z.object({
       cardId: z.string().uuid(),
     }),

@@ -87,7 +87,7 @@ export function useCardDetail(
   const [loading, setLoading] = useState(!initialBoardCard);
   const [hydrating, setHydrating] = useState(Boolean(initialBoardCard));
   const [error, setError] = useState<string | null>(null);
-  const [stripeEnabled, setStripeEnabled] = useState(false);
+  const [paypalEnabled, setPaypalEnabled] = useState(false);
   const [twilioEnabled, setTwilioEnabled] = useState(false);
   const [resendEnabled, setResendEnabled] = useState(false);
   const [changeOrders, setChangeOrders] = useState<Array<{ id: string; title: string }>>([]);
@@ -157,13 +157,13 @@ export function useCardDetail(
     void apiFetch<OrgMemberView[]>('/api/members').then((result) => {
       if (result.ok) setMembers(result.data);
     });
-    void apiFetch<{ stripe?: { configured?: boolean; status?: string }; twilio?: { configured?: boolean; status?: string }; resend?: { configured?: boolean } }>(
+    void apiFetch<{ paypal?: { configured?: boolean; status?: string }; twilio?: { configured?: boolean; status?: string }; resend?: { configured?: boolean } }>(
       '/api/integrations',
     ).then((result) => {
       if (!result.ok) return;
-      const stripe = result.data?.stripe;
-      if (stripe?.configured && stripe.status === 'active') {
-        setStripeEnabled(true);
+      const paypal = result.data?.paypal;
+      if (paypal?.configured && paypal.status === 'active') {
+        setPaypalEnabled(true);
       }
       const twilio = result.data?.twilio;
       if (twilio?.configured && twilio.status === 'active') {
@@ -189,7 +189,7 @@ export function useCardDetail(
     hydrating,
     error,
     setError,
-    stripeEnabled,
+    paypalEnabled,
     twilioEnabled,
     resendEnabled,
     changeOrders,

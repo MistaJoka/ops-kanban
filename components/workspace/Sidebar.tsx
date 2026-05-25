@@ -150,9 +150,9 @@ export function Sidebar({
 }) {
   return (
     <aside
-      className={cn('ops-sidebar', collapsed ? 'w-16' : 'w-60', mobileOpen && 'ops-sidebar--open')}
+      className={cn('ops-sidebar', collapsed ? 'w-16' : 'w-52', mobileOpen && 'ops-sidebar--open')}
     >
-      <div className="flex items-center gap-3 border-b border-white/10 px-4 py-4">
+      <div className="flex items-center gap-2.5 border-b border-white/10 px-3 py-3">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[var(--nav-active)] shadow-[0_2px_8px_rgba(0,0,0,0.25)]">
           <Image src="/brand/mark.svg" alt="" width={22} height={22} className="size-[22px]" />
         </div>

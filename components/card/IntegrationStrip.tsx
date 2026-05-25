@@ -12,7 +12,7 @@ function statusDot(status: string): string {
 
 export function IntegrationStrip({ integrations }: { integrations: CardIntegrationSummary }) {
   const items = [
-    { key: 'Stripe', ...integrations.stripe },
+    { key: 'PayPal', ...integrations.paypal },
     { key: 'Estimate sign', ...integrations.estimateSign },
     {
       key: 'Twilio',

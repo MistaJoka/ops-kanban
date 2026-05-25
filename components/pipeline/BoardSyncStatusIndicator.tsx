@@ -43,7 +43,11 @@ export function BoardSyncStatusIndicator({
               `ops-sync-gauge__segment--${segment.state}`,
             )}
             title={`${segment.shortLabel}: ${segment.hint}`}
-          />
+          >
+            <span className="ops-sync-gauge__segment-label">
+              {segment.shortLabel.charAt(0)}
+            </span>
+          </span>
         ))}
       </div>
 

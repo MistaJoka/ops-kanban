@@ -252,7 +252,7 @@ const ALL_DECLARATIONS: FunctionDeclaration[] = [
   },
   {
     name: 'createPaymentLink',
-    description: 'Create a Stripe payment link for the job invoice (high risk).',
+    description: 'Create a PayPal payment link for the job invoice (high risk).',
     parameters: {
       type: OBJECT,
       properties: { cardId: { type: STRING } },

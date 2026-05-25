@@ -5,15 +5,15 @@ import { useEffect, useState } from 'react';
 import { SettingsNav } from '@/components/settings/SettingsNav';
 
 type IntegrationStatus = {
-  stripe: { configured: boolean; status: string };
+  paypal: { configured: boolean; status: string };
   twilio: { configured: boolean; status: string };
 };
 
 function needsIntegrationsAttention(status: IntegrationStatus | null): boolean {
   if (!status) return false;
-  const stripeNeeds = status.stripe.configured && status.stripe.status !== 'active';
+  const paypalNeeds = status.paypal.configured && status.paypal.status !== 'active';
   const twilioNeeds = status.twilio.configured && status.twilio.status !== 'active';
-  return stripeNeeds || twilioNeeds;
+  return paypalNeeds || twilioNeeds;
 }
 
 export function SettingsShell({ children }: { children: React.ReactNode }) {

@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import { stripePaymentAdapter, isStripeConfigured } from '@/lib/integrations/stripe/adapter';
+import { paypalPaymentAdapter, isPayPalConfigured } from '@/lib/integrations/paypal/adapter';
 import { logActivity } from '@/lib/domain/activities/logActivity';
 import { InvoiceError } from '@/lib/domain/money/invoices';
 import { getInvoiceForCard } from '@/lib/domain/money/invoices';
@@ -27,8 +27,8 @@ export async function createInvoicePaymentLink(
     customerEmail?: string | null;
   },
 ): Promise<PaymentView> {
-  if (!isStripeConfigured()) {
-    throw new InvoiceError('Stripe is not configured for this environment.', 'VALIDATION_ERROR');
+  if (!isPayPalConfigured()) {
+    throw new InvoiceError('PayPal is not configured for this environment.', 'VALIDATION_ERROR');
   }
 
   const { data: invoice, error } = await client
@@ -51,7 +51,7 @@ export async function createInvoicePaymentLink(
     throw new InvoiceError('Nothing due on this invoice.', 'VALIDATION_ERROR');
   }
 
-  const link = await stripePaymentAdapter.createPaymentLink({
+  const link = await paypalPaymentAdapter.createPaymentLink({
     invoiceId: invoice.id,
     cardId: invoice.card_id,
     organizationId,
@@ -69,7 +69,7 @@ export async function createInvoicePaymentLink(
         organization_id: organizationId,
         card_id: invoice.card_id,
         invoice_id: invoice.id,
-        provider: 'stripe',
+        provider: 'paypal',
         external_id: link.externalId,
         amount,
         currency: 'usd',
@@ -92,8 +92,8 @@ export async function createInvoicePaymentLink(
     entityType: 'invoice',
     entityId: invoice.id,
     action: 'payment.link_created',
-    summary: `Stripe payment link created ($${amount.toFixed(2)})`,
-    metadata: { provider: 'stripe', external_id: link.externalId },
+    summary: `PayPal payment link created ($${amount.toFixed(2)})`,
+    metadata: { provider: 'paypal', external_id: link.externalId },
   });
 
   return {

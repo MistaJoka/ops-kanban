@@ -1,7 +1,7 @@
-export type IntegrationProvider = 'stripe' | 'paypal' | 'twilio' | 'resend';
+export type IntegrationProvider = 'paypal' | 'stripe' | 'twilio' | 'resend';
 
 export type PaymentWebhookEvent = {
-  provider: 'stripe' | 'paypal';
+  provider: 'paypal' | 'stripe';
   eventType: string;
   externalId: string;
   organizationId: string;

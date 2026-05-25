@@ -6,7 +6,7 @@
 
 ## Test harness
 
-- Mock provider payloads in `tests/fixtures/webhooks/{paypal,stripe,twilio,docusign}/`
+- Mock provider payloads in `tests/fixtures/webhooks/{paypal,twilio,docusign}/`
 - POST to `/api/webhooks/{provider}`
 - Assert `integration_events` + card state
 

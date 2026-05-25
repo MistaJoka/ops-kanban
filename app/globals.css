@@ -35,12 +35,13 @@
     --overdue: #c44d34;
     --paid: #2d5a3d;
     --success: #2d5a3d;
+    --warning: #b8860b;
     --draft: #8a8478;
     --radius-card: 10px;
     --radius-control: 8px;
     --card-padding-x: 13px;
     --card-padding-y: 13px;
-    --card-stack-gap: 8px;
+    --card-stack-gap: 6px;
     --card-accent-width: 4px;
     --card-title-size: 14px;
     --card-body-size: 12px;
@@ -61,7 +62,7 @@
 
     /* Layout tokens */
     --column-width: 288px;
-    --sidebar-expanded: 240px;
+    --sidebar-expanded: 208px;
     --sidebar-collapsed: 64px;
     --panel-width: 720px;
     --ai-dock-collapsed: 48px;
@@ -128,6 +129,7 @@
     --overdue: #e06850;
     --paid: #4a9464;
     --success: #4a9464;
+    --warning: #d4a843;
     --draft: #8a938a;
     --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.28), 0 0 0 1px var(--border-subtle);
     --shadow-card-hover: 0 4px 14px rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(255, 255, 255, 0.04);
@@ -370,40 +372,80 @@
   }
 
   .ops-sync-gauge__track {
-    @apply inline-flex shrink-0 items-stretch gap-0.5;
-    width: 2.75rem;
-    height: 0.375rem;
+    @apply inline-flex shrink-0 items-stretch gap-px overflow-hidden rounded-[3px] border p-px;
+    width: 2.875rem;
+    height: 0.625rem;
+    border-color: var(--border-strong);
+    background: var(--surface-inset);
+    box-shadow: inset 0 1px 2px rgba(26, 31, 22, 0.12);
   }
 
   .ops-sync-gauge__segment {
-    @apply flex-1 rounded-[2px] transition-colors;
-    background: color-mix(in srgb, var(--topbar-border) 55%, var(--control-bg));
+    @apply relative flex min-w-0 flex-1 items-center justify-center overflow-hidden rounded-[1px] transition-[background-color,box-shadow,color,opacity];
+  }
+
+  .ops-sync-gauge__segment-label {
+    @apply pointer-events-none select-none font-mono text-[7px] font-bold uppercase leading-none tracking-tight;
+    color: var(--text-tertiary);
+    opacity: 0.55;
+  }
+
+  .ops-sync-gauge__segment--idle {
+    background: color-mix(in srgb, var(--topbar-border) 22%, transparent);
+    box-shadow: inset 0 1px 1px rgba(26, 31, 22, 0.1);
+  }
+
+  .ops-sync-gauge__segment--idle .ops-sync-gauge__segment-label {
+    opacity: 0.45;
   }
 
   .ops-sync-gauge__segment--confirmed {
-    background: var(--accent);
+    background: var(--success);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      0 0 0 1px color-mix(in srgb, var(--success) 35%, transparent);
+  }
+
+  .ops-sync-gauge__segment--confirmed .ops-sync-gauge__segment-label {
+    color: rgba(255, 255, 255, 0.92);
+    opacity: 1;
+    text-shadow: 0 1px 0 rgba(26, 31, 22, 0.25);
   }
 
   .ops-sync-gauge__segment--active {
-    background: var(--warning, #d97706);
+    background: var(--warning);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      0 0 0 1px color-mix(in srgb, var(--warning) 40%, transparent);
     animation: ops-sync-gauge-pulse 1.4s ease-in-out infinite;
+  }
+
+  .ops-sync-gauge__segment--active .ops-sync-gauge__segment-label {
+    color: var(--text-primary);
+    opacity: 0.95;
   }
 
   .ops-sync-gauge__segment--failed {
     background: var(--urgent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 0 0 1px color-mix(in srgb, var(--urgent) 45%, transparent);
   }
 
-  .ops-sync-gauge__segment--idle {
-    background: color-mix(in srgb, var(--topbar-border) 65%, var(--control-bg));
+  .ops-sync-gauge__segment--failed .ops-sync-gauge__segment-label {
+    color: rgba(255, 255, 255, 0.95);
+    opacity: 1;
   }
 
   @keyframes ops-sync-gauge-pulse {
     0%,
     100% {
       opacity: 1;
+      filter: brightness(1);
     }
     50% {
-      opacity: 0.55;
+      opacity: 0.72;
+      filter: brightness(1.08);
     }
   }
 
@@ -419,15 +461,49 @@
   }
 
   .ops-sync-gauge--synced {
-    border-color: color-mix(in srgb, var(--accent) 28%, var(--topbar-border));
+    border-color: color-mix(in srgb, var(--success) 42%, var(--topbar-border));
+    background: color-mix(in srgb, var(--success) 6%, var(--control-bg));
+  }
+
+  .ops-sync-gauge--synced .ops-sync-gauge__label {
+    color: var(--success);
+  }
+
+  .ops-sync-gauge--synced .ops-sync-gauge__segment--confirmed {
+    background: var(--success);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.34),
+      0 0 4px color-mix(in srgb, var(--success) 55%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--success) 65%, transparent);
   }
 
   .ops-sync-gauge--syncing {
-    border-color: color-mix(in srgb, var(--warning, #d97706) 35%, var(--topbar-border));
+    border-color: color-mix(in srgb, var(--warning) 45%, var(--topbar-border));
   }
 
   .ops-sync-gauge--refreshing {
-    border-color: color-mix(in srgb, var(--accent) 35%, var(--topbar-border));
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--topbar-border));
+  }
+
+  .dark .ops-sync-gauge__track {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.38);
+  }
+
+  .dark .ops-sync-gauge__segment--idle {
+    background: color-mix(in srgb, var(--topbar-border) 32%, transparent);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.28);
+  }
+
+  .dark .ops-sync-gauge__segment--idle .ops-sync-gauge__segment-label {
+    color: var(--text-secondary);
+    opacity: 0.5;
+  }
+
+  .dark .ops-sync-gauge--synced .ops-sync-gauge__segment--confirmed {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 0 6px color-mix(in srgb, var(--success) 72%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--success) 78%, transparent);
   }
 
   .ops-sync-gauge--misaligned {
@@ -521,7 +597,7 @@
   .ops-board-card__inner {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--card-stack-gap);
     min-height: var(--card-min-height);
     padding: var(--card-padding-y) var(--card-padding-x);
     padding-left: calc(var(--card-padding-x) + var(--card-accent-width) + 4px);
@@ -596,8 +672,9 @@
   }
 
   .ops-board-card__title {
-    @apply line-clamp-2 font-display font-semibold leading-snug tracking-tight;
+    @apply line-clamp-2 font-sans font-semibold leading-[1.25];
     font-size: var(--card-title-size);
+    letter-spacing: -0.015em;
     color: var(--text-primary);
   }
 
@@ -630,20 +707,28 @@
     background: transparent;
   }
 
-  .ops-board-card__meta--sparse {
-    border-bottom: 1px dashed var(--border-subtle);
-    padding-bottom: 4px;
+  .ops-board-card__meta--empty .ops-board-card__meta-primary {
+    min-height: 22px;
   }
 
-  .ops-board-card__meta-cta {
-    @apply inline-flex items-center rounded-md border border-dashed px-2 py-0.5 font-medium;
+  .ops-board-card__meta-hints {
+    @apply inline-flex items-center gap-1;
     font-size: var(--card-meta-size);
-    color: var(--text-secondary);
-    border-color: color-mix(in srgb, var(--accent) 30%, var(--border-subtle));
+    color: var(--text-tertiary);
+  }
+
+  .ops-board-card__hint-pill {
+    @apply inline-flex items-center rounded px-1.5 py-0.5 font-medium leading-none;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    color: var(--text-tertiary);
+    background: color-mix(in srgb, var(--surface-inset) 55%, var(--surface-card));
+    border: 1px solid var(--border-subtle);
   }
 
   .ops-board-card__meta {
-    @apply flex min-h-[24px] items-center justify-between gap-2;
+    @apply flex min-h-[22px] items-center justify-between gap-2;
   }
 
   .ops-board-card__meta-primary {
@@ -651,8 +736,8 @@
   }
 
   .ops-board-card__meta-assignee {
-    @apply shrink-0 pl-1.5;
-    border-left: 1px solid color-mix(in srgb, var(--border-subtle) 70%, transparent);
+    @apply shrink-0 pl-1;
+    border-left: 1px solid color-mix(in srgb, var(--border-subtle) 55%, transparent);
   }
 
   .ops-board-card__signals {
@@ -660,8 +745,9 @@
   }
 
   .ops-board-card__signal {
-    @apply inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium leading-none;
+    @apply inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-semibold leading-none;
     font-size: var(--card-meta-size);
+    border: 1px solid transparent;
   }
 
   .ops-board-card__signal--money {
@@ -670,33 +756,39 @@
   }
 
   .ops-board-card__signal--neutral {
-    background: color-mix(in srgb, var(--surface-card) 70%, var(--surface-inset));
+    background: color-mix(in srgb, var(--surface-inset) 45%, var(--surface-card));
+    border-color: var(--border-subtle);
     color: var(--text-secondary);
   }
 
   .ops-board-card__signal--today {
-    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    background: color-mix(in srgb, var(--accent) 14%, var(--surface-card));
+    border-color: color-mix(in srgb, var(--accent) 28%, var(--border-subtle));
     color: var(--accent);
     font-weight: 600;
   }
 
   .ops-board-card__signal--sales {
-    background: color-mix(in srgb, var(--cat-sales) 14%, transparent);
+    background: color-mix(in srgb, var(--cat-sales) 12%, var(--surface-card));
+    border-color: color-mix(in srgb, var(--cat-sales) 28%, var(--border-subtle));
     color: var(--cat-sales);
   }
 
   .ops-board-card__signal--billing {
-    background: color-mix(in srgb, var(--cat-billing) 14%, transparent);
+    background: color-mix(in srgb, var(--cat-billing) 12%, var(--surface-card));
+    border-color: color-mix(in srgb, var(--cat-billing) 28%, var(--border-subtle));
     color: var(--cat-billing);
   }
 
   .ops-board-card__signal--urgent {
-    background: color-mix(in srgb, var(--urgent) 12%, transparent);
+    background: color-mix(in srgb, var(--urgent) 10%, var(--surface-card));
+    border-color: color-mix(in srgb, var(--urgent) 30%, var(--border-subtle));
     color: var(--urgent);
   }
 
   .ops-board-card__signal--paid {
     background: var(--accent-muted);
+    border-color: color-mix(in srgb, var(--paid) 25%, var(--border-subtle));
     color: var(--paid);
   }
 
@@ -705,7 +797,8 @@
   }
 
   .ops-board-card__footer {
-    @apply mt-auto border-t border-dashed border-[var(--border-subtle)] pt-2;
+    @apply mt-auto border-t pt-1.5;
+    border-color: color-mix(in srgb, var(--border-subtle) 80%, transparent);
   }
 
   .ops-board-card__footer-line {
@@ -730,6 +823,27 @@
     font-size: var(--card-footer-action-size);
     font-weight: var(--card-footer-action-weight);
     color: var(--text-primary);
+  }
+
+  .ops-board-card__next-hint {
+    @apply inline-flex min-w-0 max-w-full items-baseline gap-0 border-0 bg-transparent p-0 text-left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .ops-board-card__next-hint:hover .ops-board-card__next-placeholder {
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    text-underline-offset: 2px;
+  }
+
+  .ops-board-card__next-placeholder {
+    font-size: var(--card-footer-action-size);
+    font-weight: var(--card-footer-action-weight);
+    color: var(--text-tertiary);
+    font-style: normal;
   }
 
   .ops-board-card__next-input {
@@ -841,11 +955,13 @@
   }
 
   .ops-board-card__chip--job {
-    background: color-mix(in srgb, var(--text-primary) 6%, var(--surface-card));
+    background: color-mix(in srgb, var(--surface-inset) 40%, var(--surface-card));
     border: 1px solid var(--border-subtle);
     color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 10px;
     font-weight: 600;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.03em;
   }
 
   .ops-board-card__chip--assignee {
@@ -854,11 +970,11 @@
     color: var(--accent);
   }
 
-  .ops-board-card__chip--unassigned {
-    @apply font-medium text-[var(--text-tertiary)];
-    background: transparent;
+  .ops-board-card__chip--vacant {
+    @apply ring-0 text-[var(--text-tertiary)];
+    background: color-mix(in srgb, var(--surface-inset) 50%, var(--surface-card));
     color: var(--text-tertiary);
-    border: 1px dashed var(--border-strong);
+    border: 1px solid var(--border-subtle);
   }
 
   .ops-board-card__chip--overflow {
@@ -1761,7 +1877,7 @@
   }
 
   .ops-sidebar {
-    @apply fixed inset-y-0 left-0 z-40 w-60 -translate-x-full shadow-[4px_0_24px_rgba(0,0,0,0.35)];
+    @apply fixed inset-y-0 left-0 z-40 w-52 -translate-x-full shadow-[4px_0_24px_rgba(0,0,0,0.35)];
   }
 
   .ops-sidebar--open {

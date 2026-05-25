@@ -83,7 +83,7 @@ export function buildApprovalPreview(params: {
     case 'createPaymentLink':
       return {
         summary: `Create payment link for “${cardTitle}”`,
-        details: ['Stripe payment link will be generated for the invoice balance.'],
+        details: ['PayPal payment link will be generated for the invoice balance.'],
       };
 
     case 'createCustomer':

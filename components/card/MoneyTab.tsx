@@ -8,7 +8,7 @@ export function MoneyTab({
   quote,
   invoice,
   payment,
-  stripeEnabled,
+  paypalEnabled,
   canManage,
   onCreateInvoice,
   onMarkPaid,
@@ -19,7 +19,7 @@ export function MoneyTab({
   quote: QuoteView | null;
   invoice: InvoiceView | null;
   payment: PaymentView | null;
-  stripeEnabled: boolean;
+  paypalEnabled: boolean;
   canManage: boolean;
   onCreateInvoice: () => Promise<void>;
   onMarkPaid: () => Promise<void>;
@@ -32,7 +32,7 @@ export function MoneyTab({
       <div>
         <h3 className="text-base font-semibold text-[var(--text-primary)]">Invoice & balance</h3>
         <p className="text-sm text-[var(--text-secondary)]">
-          Native accounting ledger records invoices and payments automatically. Stripe payment links
+          Native accounting ledger records invoices and payments automatically. PayPal payment links
           when configured; manual mark paid always available.
         </p>
       </div>
@@ -73,7 +73,7 @@ export function MoneyTab({
 
           {payment?.paymentUrl && invoice.status !== 'paid' ? (
             <div className="rounded-lg bg-[var(--surface-rail)] px-3 py-2 text-sm">
-              <p className="font-medium text-[var(--text-primary)]">Stripe payment link</p>
+              <p className="font-medium text-[var(--text-primary)]">PayPal payment link</p>
               <a
                 href={payment.paymentUrl}
                 target="_blank"
@@ -87,7 +87,7 @@ export function MoneyTab({
 
           {canManage && invoice.status !== 'paid' && invoice.balanceDue > 0 ? (
             <div className="flex flex-wrap gap-2">
-              {stripeEnabled ? (
+              {paypalEnabled ? (
                 <button
                   type="button"
                   disabled={saving}
